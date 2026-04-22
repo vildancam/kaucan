@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KAÜ CAN Chat Bot</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Kafkas Üniversitesi</p>
+          <h1>KAÜ CAN</h1>
+        </div>
+        <div class="status" id="statusBadge" aria-live="polite">
+          <span class="status-dot"></span>
+          Kontrol ediliyor
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="chat-panel" aria-label="Sohbet">
+          <div class="messages" id="messages">
+            <article class="message assistant">
+              <div class="avatar">KAÜ</div>
+              <div class="bubble">
+                <p class="message-title">📌 **KAÜ CAN**</p>
+                <p>📖 Açıklama:<br />Kafkas Üniversitesi İktisadi ve İdari Bilimler Fakültesi danışma ekranı hazırdır.</p>
+              </div>
+            </article>
+          </div>
+
+          <form class="composer" id="askForm">
+            <label class="sr-only" for="questionInput">Soru</label>
+            <textarea
+              id="questionInput"
+              name="question"
+              rows="3"
+              maxlength="700"
+              placeholder="Sorunuzu yazınız..."
+              autocomplete="off"
+              required
+            ></textarea>
+            <div class="composer-actions">
+              <button type="button" class="secondary-button" id="clearButton">Temizle</button>
+              <button type="submit" class="primary-button" id="submitButton">Gönder</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="query-panel" aria-label="Hızlı sorgular">
+          <h2>Başlıklar</h2>
+          <div class="provider-box" id="providerBox">Yanıt motoru kontrol ediliyor.</div>
+          <button class="query-chip" type="button">Güncel duyurular nelerdir?</button>
+          <button class="query-chip" type="button">Ara sınav programı hakkında bilgi verir misiniz?</button>
+          <button class="query-chip" type="button">Fakültenin bölümleri nelerdir?</button>
+          <button class="query-chip" type="button">Akademik personel hakkında bilgi verir misiniz?</button>
+        </aside>
+      </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: kau-can-chat-bot
+    env: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: KAU_LLM_PROVIDER
+        value: local
+      - key: KAU_CRAWL_SCOPE
+        value: faculty
+      - key: KAU_REFRESH_ON_START
+        value: true
+      - key: KAU_REQUEST_DELAY
+        value: 0.8
+      - key: KAU_RATE_LIMIT_WAIT
+        value: 75
