@@ -169,6 +169,16 @@ Bulut ortamında Ollama çalıştırılmayacaksa `KAU_LLM_PROVIDER=local` veya O
 için `KAU_LLM_PROVIDER=openai` ve `OPENAI_API_KEY` kullanılmalıdır. Yerel/VPS
 kurulumlarında `docker-compose.yml` Ollama servisini de ayağa kaldırır.
 
+GitHub Pages bu uygulamanın tamamını çalıştıramaz; Pages yalnızca statik dosya
+yayınlar. FastAPI backend, indeksleme ve Ollama için Docker destekli bir sunucu
+gereklidir. Ollama dahil VPS kurulumu için:
+
+```bash
+docker compose -f docker-compose.server.yml up -d --build
+```
+
+Ayrıntılı canlıya alma notları için `docs/deployment.md` dosyasına bakınız.
+
 ## Önemli Notlar
 
 - Uygulama web sitesi dışındaki bilgilerle yanıt üretmez.
