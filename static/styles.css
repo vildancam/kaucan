@@ -339,6 +339,17 @@ textarea {
   padding: 0 16px;
 }
 
+.history-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.history-clear-button {
+  min-height: 52px;
+  white-space: nowrap;
+}
+
 .history-search:focus,
 textarea:focus {
   border-color: var(--line-strong);
@@ -742,6 +753,32 @@ textarea {
   font-size: 1.15rem;
 }
 
+.composer-buttons {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.voice-button {
+  width: 58px;
+  min-width: 58px;
+  padding: 0;
+  font-size: 1.05rem;
+}
+
+.voice-button.listening {
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #d94141 0%, #b91c1c 100%);
+  box-shadow: 0 14px 28px rgba(185, 28, 28, 0.24);
+}
+
+.voice-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .highlight-card {
   min-height: 240px;
 }
@@ -891,7 +928,12 @@ textarea {
     grid-template-columns: 1fr;
   }
 
-  .submit-icon-button {
+  .composer-buttons {
+    width: 100%;
+  }
+
+  .submit-icon-button,
+  .voice-button {
     width: 100%;
   }
 

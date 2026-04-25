@@ -28,6 +28,7 @@
   var messages = document.getElementById("messages");
   var submitButton = document.getElementById("submitButton");
   var clearButton = document.getElementById("clearButton");
+  var voiceButton = document.getElementById("voiceButton");
   var statusBadge = document.getElementById("statusBadge");
   var typingRow = document.getElementById("typingRow");
   var chips = document.querySelectorAll(".query-chip");
@@ -40,6 +41,7 @@
   var historyToggleButton = document.getElementById("historyToggleButton");
   var historyCloseButton = document.getElementById("historyCloseButton");
   var newChatButton = document.getElementById("newChatButton");
+  var deleteAllChatsButton = document.getElementById("deleteAllChatsButton");
   var historySearchInput = document.getElementById("historySearchInput");
   var historyList = document.getElementById("historyList");
   var themeToggleButton = document.getElementById("themeToggleButton");
@@ -52,6 +54,7 @@
     news: document.getElementById("newsTrack"),
     events: document.getElementById("eventsTrack"),
   };
+  var SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition || null;
 
   var audioState = {
     context: null,
@@ -73,6 +76,13 @@
       announcements: 0,
       news: 0,
       events: 0,
+    },
+    voice: {
+      supported: !!SpeechRecognitionClass,
+      listening: false,
+      recognition: null,
+      baseText: "",
+      denied: false,
     },
   };
 
@@ -406,6 +416,16 @@
   function autoResize() {
     input.style.height = "auto";
     input.style.height = Math.min(input.scrollHeight, 180) + "px";
+  }
+
+  function setVoiceButtonState(listening) {
+    if (!voiceButton) {
+      return;
+    }
+
+    voiceButton.classList.toggle("listening", !!listening);
+    voiceButton.setAttribute("aria-pressed", listening ? "true" : "false");
+    voiceButton.title = listening ? "Dikteyi durdur" : "Sesli yazma";
   }
 
   function getAudioContext() {
@@ -746,6 +766,157 @@
     playTone("delete");
   }
 
+  function deleteAllConversations() {
+    stopVoiceInput(false);
+    state.conversations = [createConversation()];
+    state.activeConversationId = state.conversations[0].id;
+    state.pendingConversationId = null;
+    if (historySearchInput) {
+      historySearchInput.value = "";
+    }
+    persistState();
+    renderHistoryList();
+    renderConversation();
+    closeHistory();
+    playTone("delete");
+  }
+
+  function resolveRecognitionLanguage() {
+    var text = String(input.value || "").toLowerCase();
+    if (/\b(hello|who|what|where|when|why|how|dean|department|news|events)\b/.test(text)) {
+      return "en-US";
+    }
+    return "tr-TR";
+  }
+
+  function joinVoiceText(baseText, transcript) {
+    var prefix = String(baseText || "").trim();
+    var suffix = String(transcript || "").trim();
+    if (!prefix) {
+      return suffix;
+    }
+    if (!suffix) {
+      return prefix;
+    }
+    return prefix + " " + suffix;
+  }
+
+  function stopVoiceInput(updateStatus) {
+    if (state.voice.recognition && state.voice.listening) {
+      state.voice.listening = false;
+      try {
+        state.voice.recognition.stop();
+      } catch (error) {
+        return;
+      }
+    }
+    setVoiceButtonState(false);
+    if (updateStatus && !state.pendingConversationId) {
+      setStatus("Hazır", "ready");
+    }
+  }
+
+  function ensureVoiceRecognition() {
+    if (!state.voice.supported || state.voice.recognition) {
+      return state.voice.recognition;
+    }
+
+    state.voice.recognition = new SpeechRecognitionClass();
+    state.voice.recognition.continuous = true;
+    state.voice.recognition.interimResults = true;
+    state.voice.recognition.maxAlternatives = 1;
+
+    state.voice.recognition.onstart = function () {
+      state.voice.listening = true;
+      setVoiceButtonState(true);
+      setStatus("Dinleniyor", "busy");
+    };
+
+    state.voice.recognition.onresult = function (event) {
+      var finalTranscript = "";
+      var interimTranscript = "";
+      var index;
+
+      for (index = 0; index < event.results.length; index += 1) {
+        if (event.results[index].isFinal) {
+          finalTranscript += event.results[index][0].transcript + " ";
+        } else {
+          interimTranscript += event.results[index][0].transcript + " ";
+        }
+      }
+
+      input.value = joinVoiceText(state.voice.baseText, (finalTranscript + interimTranscript).trim());
+      autoResize();
+    };
+
+    state.voice.recognition.onerror = function (event) {
+      state.voice.listening = false;
+      setVoiceButtonState(false);
+      if (event && (event.error === "not-allowed" || event.error === "service-not-allowed")) {
+        state.voice.denied = true;
+        setStatus("Mikrofon izni gerekli", "error");
+        return;
+      }
+      if (!state.pendingConversationId) {
+        setStatus("Sesli yazma durdu", "ready");
+      }
+    };
+
+    state.voice.recognition.onend = function () {
+      state.voice.listening = false;
+      setVoiceButtonState(false);
+      autoResize();
+      if (!state.pendingConversationId && !state.voice.denied) {
+        setStatus("Hazır", "ready");
+      }
+    };
+
+    return state.voice.recognition;
+  }
+
+  function toggleVoiceInput() {
+    var recognition;
+
+    if (!state.voice.supported) {
+      return;
+    }
+
+    if (state.voice.listening) {
+      stopVoiceInput(true);
+      return;
+    }
+
+    recognition = ensureVoiceRecognition();
+    if (!recognition) {
+      return;
+    }
+
+    state.voice.denied = false;
+    state.voice.baseText = String(input.value || "").trim();
+    recognition.lang = resolveRecognitionLanguage();
+
+    try {
+      recognition.start();
+      playTone("history");
+    } catch (error) {
+      setStatus("Mikrofon başlatılamadı", "error");
+    }
+  }
+
+  function initializeVoiceButton() {
+    if (!voiceButton) {
+      return;
+    }
+
+    if (!state.voice.supported) {
+      voiceButton.disabled = true;
+      voiceButton.title = "Tarayıcı sesli yazmayı desteklemiyor";
+      return;
+    }
+
+    setVoiceButtonState(false);
+  }
+
   function renderHistoryList() {
     var filterText = historySearchInput ? historySearchInput.value : "";
     var hasItem = false;
@@ -887,6 +1058,7 @@
   }
 
   function createNewConversation() {
+    stopVoiceInput(false);
     var conversation = createConversation();
     state.conversations.unshift(conversation);
     state.activeConversationId = conversation.id;
@@ -903,6 +1075,7 @@
   }
 
   function resetActiveConversation() {
+    stopVoiceInput(false);
     var conversation = getActiveConversation();
     conversation.title = "Yeni Sohbet";
     conversation.updatedAt = Date.now();
@@ -972,6 +1145,7 @@
       return;
     }
 
+    stopVoiceInput(false);
     conversation = getActiveConversation();
     rememberMessage(conversation.id, "user", question, {}, state.activeConversationId === conversation.id);
     input.value = "";
@@ -1170,12 +1344,24 @@
       resetActiveConversation();
     });
 
+    if (voiceButton) {
+      voiceButton.addEventListener("click", function () {
+        toggleVoiceInput();
+      });
+    }
+
     historyToggleButton.addEventListener("click", openHistory);
     historyCloseButton.addEventListener("click", closeHistory);
     historyBackdrop.addEventListener("click", closeHistory);
 
     if (newChatButton) {
       newChatButton.addEventListener("click", createNewConversation);
+    }
+
+    if (deleteAllChatsButton) {
+      deleteAllChatsButton.addEventListener("click", function () {
+        deleteAllConversations();
+      });
     }
 
     if (historySearchInput) {
@@ -1227,6 +1413,7 @@
     document.body.classList.add("js-ready");
     loadTheme();
     ensureConversationState();
+    initializeVoiceButton();
     bindEvents();
     autoResize();
     renderHistoryList();

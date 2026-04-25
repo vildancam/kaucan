@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KAÜCAN | Kafkas Üniversitesi Dijital Asistanı</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260426a" />
+    <link rel="stylesheet" href="/static/styles.css?v=20260426b" />
   </head>
   <body data-theme="light">
     <div class="history-backdrop" id="historyBackdrop" hidden></div>
@@ -20,7 +20,18 @@
         </button>
       </div>
 
-      <button class="primary-button new-chat-button" type="button" id="newChatButton">Yeni Sohbet</button>
+      <div class="history-toolbar">
+        <button class="primary-button new-chat-button" type="button" id="newChatButton">Yeni Sohbet</button>
+        <button
+          class="secondary-button history-clear-button"
+          type="button"
+          id="deleteAllChatsButton"
+          aria-label="Tüm sohbetleri sil"
+          title="Tüm sohbetleri sil"
+        >
+          Tümünü Sil
+        </button>
+      </div>
 
       <label class="sr-only" for="historySearchInput">Sohbetlerde ara</label>
       <input
@@ -159,15 +170,27 @@
               required
             ></textarea>
 
-            <button
-              type="submit"
-              class="primary-button submit-icon-button"
-              id="submitButton"
-              aria-label="Mesaj gönder"
-              title="Mesaj gönder"
-            >
-              <span aria-hidden="true">➤</span>
-            </button>
+            <div class="composer-buttons">
+              <button
+                type="button"
+                class="secondary-button voice-button"
+                id="voiceButton"
+                aria-label="Sesli yazma"
+                title="Sesli yazma"
+              >
+                <span aria-hidden="true">🎙</span>
+              </button>
+
+              <button
+                type="submit"
+                class="primary-button submit-icon-button"
+                id="submitButton"
+                aria-label="Mesaj gönder"
+                title="Mesaj gönder"
+              >
+                <span aria-hidden="true">➤</span>
+              </button>
+            </div>
           </form>
         </section>
 
@@ -212,6 +235,6 @@
       </footer>
     </div>
 
-    <script defer src="/static/app.js?v=20260426a"></script>
+    <script defer src="/static/app.js?v=20260426b"></script>
   </body>
 </html>
