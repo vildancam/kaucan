@@ -95,7 +95,7 @@ class OpenAIAnswerGenerator:
         answer = (response.output_text or "").strip()
         return answer or None
 
-    def generate_general(self, query: str) -> str | None:
+    def generate_general(self, query: str, memory_context: str = "") -> str | None:
         if not self.is_configured:
             return None
 
@@ -111,7 +111,7 @@ class OpenAIAnswerGenerator:
         response = client.responses.create(
             model=self.settings.openai_model,
             instructions=_general_prompt_for_query(query),
-            input=query,
+            input=_general_input(query, memory_context),
             max_output_tokens=min(self.settings.openai_max_output_tokens, 320),
         )
         answer = (response.output_text or "").strip()
@@ -151,7 +151,7 @@ class OllamaAnswerGenerator:
         answer = response.message.content.strip()
         return answer or None
 
-    def generate_general(self, query: str) -> str | None:
+    def generate_general(self, query: str, memory_context: str = "") -> str | None:
         if not self.is_configured:
             return None
 
@@ -165,7 +165,7 @@ class OllamaAnswerGenerator:
             model=self.settings.ollama_model,
             messages=[
                 {"role": "system", "content": _general_prompt_for_query(query)},
-                {"role": "user", "content": query},
+                {"role": "user", "content": _general_input(query, memory_context)},
             ],
             options={
                 "temperature": 0.2,
@@ -196,6 +196,12 @@ def _general_prompt_for_query(query: str) -> str:
     if is_english_query(query):
         return GENERAL_SYSTEM_PROMPT + "\n- Keep the tone natural and concise in English."
     return GENERAL_SYSTEM_PROMPT
+
+
+def _general_input(query: str, memory_context: str) -> str:
+    if not memory_context:
+        return query
+    return f"{memory_context}\n\nUser question:\n{query}"
 
 
 def _format_source(index: int, result: SearchResult) -> str:

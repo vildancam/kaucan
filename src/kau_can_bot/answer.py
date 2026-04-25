@@ -20,6 +20,16 @@ from .config import (
 from .indexer import SearchIndex
 from .learning import expand_query, log_interaction, log_query
 from .llm import OllamaAnswerGenerator, OpenAIAnswerGenerator
+from .memory import (
+    build_user_summary,
+    find_relevant_user_fact,
+    get_user_memory,
+    learn_from_user_message,
+    touch_user,
+    user_department_name,
+    user_display_name,
+    user_role_name,
+)
 from .models import AssistantResponse, Chunk, SearchResult
 from .official_data import (
     department_keys_for_query,
@@ -151,11 +161,19 @@ def _text_for_language(language: str, tr_text: str, en_text: str) -> str:
     return en_text if language == "en" else tr_text
 
 
-def _welcome_message(language: str) -> str:
-    return _text_for_language(
+def _welcome_message(language: str, user_memory: dict[str, object] | None = None) -> str:
+    greeting = _text_for_language(
         language,
         WELCOME_MESSAGE,
         "👋 Hello, I am KAUCAN - the Digital Assistant of Kafkas University. I can help with IIBF announcements, academic information, staff, contact, exams, cafeteria menu, and many other topics.",
+    )
+    display_name = user_display_name(user_memory or {})
+    if not display_name:
+        return greeting
+    return _text_for_language(
+        language,
+        f"👋 Merhaba {display_name}, ben KAÜCAN. İİBF, genel bilgi ve günlük sorularda yardımcı olabilirim.",
+        f"👋 Hello {display_name}, I am KAUCAN. I can help with IIBF topics, general questions, and everyday conversation.",
     )
 
 
@@ -168,14 +186,19 @@ class WebsiteGroundedAssistant:
         self.settings = settings or Settings()
         self.index = index or SearchIndex.load(INDEX_PATH)
 
-    def answer(self, query: str) -> str:
-        return self.answer_with_context(query).answer
+    def answer(self, query: str, client_id: str | None = None) -> str:
+        return self.answer_with_context(query, client_id=client_id).answer
 
-    def answer_with_context(self, query: str) -> AssistantResponse:
+    def answer_with_context(self, query: str, client_id: str | None = None) -> AssistantResponse:
         original_query = clean_text(query)
         normalized_query = normalize_query(original_query) or original_query
         general_query = original_query or normalized_query
         language = _response_language(general_query)
+        client_key = clean_text(client_id or "")
+        if client_key:
+            touch_user(client_key)
+        memory_update = learn_from_user_message(client_key, original_query) if client_key else None
+        user_memory = get_user_memory(client_key) if client_key else {}
 
         if has_inappropriate_language(normalized_query):
             return AssistantResponse(
@@ -193,8 +216,37 @@ class WebsiteGroundedAssistant:
                 status="blocked_safety",
             )
 
+        memory_recall_response = _memory_recall_shortcut(original_query or normalized_query, language, user_memory, client_key)
+        if memory_recall_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                memory_recall_response.text,
+                memory_recall_response.sources,
+                "memory_recall",
+            )
+            return AssistantResponse(
+                answer=memory_recall_response.text,
+                sources=memory_recall_response.sources,
+                interaction_id=interaction.id,
+                status="memory_recall",
+            )
+
+        if memory_update and memory_update.saved and memory_update.memory_only:
+            memory_saved_response = _memory_saved_shortcut(memory_update, language, user_memory)
+            interaction = log_interaction(
+                original_query or normalized_query,
+                memory_saved_response.text,
+                [],
+                "memory_saved",
+            )
+            return AssistantResponse(
+                answer=memory_saved_response.text,
+                interaction_id=interaction.id,
+                status="memory_saved",
+            )
+
         if is_greeting_query(normalized_query):
-            answer = _welcome_message(language)
+            answer = _welcome_message(language, user_memory)
             interaction = log_interaction(original_query or normalized_query, answer, [], "greeting")
             return AssistantResponse(
                 answer=answer,
@@ -277,8 +329,22 @@ class WebsiteGroundedAssistant:
                 status="official",
             )
 
+        custom_memory_response = _custom_memory_fact_shortcut(original_query or normalized_query, language, user_memory, client_key)
+        if custom_memory_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                custom_memory_response.text,
+                [],
+                "memory_fact",
+            )
+            return AssistantResponse(
+                answer=custom_memory_response.text,
+                interaction_id=interaction.id,
+                status="memory_fact",
+            )
+
         if is_smalltalk_query(normalized_query):
-            answer = _smalltalk_response(normalized_query, language)
+            answer = _smalltalk_response(normalized_query, language, user_memory)
             interaction = log_interaction(
                 original_query or normalized_query,
                 answer,
@@ -304,7 +370,7 @@ class WebsiteGroundedAssistant:
             )
 
         if _should_answer_with_general_knowledge(general_query):
-            general_answer = self._generate_general_with_llm(general_query)
+            general_answer = self._generate_general_with_llm(general_query, user_memory)
             if general_answer:
                 answer = _sanitize_answer_text(general_answer)
                 if answer:
@@ -410,13 +476,14 @@ class WebsiteGroundedAssistant:
         except Exception:
             return None
 
-    def _generate_general_with_llm(self, query: str) -> str | None:
+    def _generate_general_with_llm(self, query: str, user_memory: dict[str, object] | None = None) -> str | None:
         generator = _general_generator_for_settings(self.settings)
         if not generator.is_configured:
             return None
 
         try:
-            return generator.generate_general(query)
+            memory_context = _general_memory_context(user_memory or {}, _response_language(query))
+            return generator.generate_general(query, memory_context=memory_context)
         except Exception:
             return None
 
@@ -833,6 +900,158 @@ def _location_shortcut(query: str, language: str) -> ComposedAnswer | None:
             "📌 The map link below can be used for location information. It can be opened directly in the Maps application.",
         ),
         sources=_build_link_sources([MAPS_LINK]),
+    )
+
+
+def _memory_saved_shortcut(memory_update, language: str, user_memory: dict[str, object]) -> ComposedAnswer:
+    display_name = user_display_name(user_memory)
+    saved_labels: list[str] = []
+    profile_label_map = {
+        "name": _text_for_language(language, "ad", "name"),
+        "preferred_name": _text_for_language(language, "hitap adı", "preferred name"),
+        "department": _text_for_language(language, "bölüm", "department"),
+        "role": _text_for_language(language, "rol", "role"),
+    }
+    for key in ("name", "preferred_name", "department", "role"):
+        value = clean_text(memory_update.profile_updates.get(key, ""))
+        if value:
+            saved_labels.append(f"{profile_label_map[key]}: {value}")
+
+    saved_labels.extend(memory_update.facts[:2])
+    summary = ", ".join(saved_labels[:3])
+
+    if display_name:
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"✅ Tamam {display_name}, bu bilgi belleğe kaydedildi." + (f" {summary}" if summary else ""),
+                f"✅ Alright {display_name}, I saved that to memory." + (f" {summary}" if summary else ""),
+            ),
+            sources=[],
+        )
+
+    return ComposedAnswer(
+        text=_text_for_language(
+            language,
+            "✅ Paylaşılan bilgi belleğe kaydedildi." + (f" {summary}" if summary else ""),
+            "✅ The shared information has been saved to memory." + (f" {summary}" if summary else ""),
+        ),
+        sources=[],
+    )
+
+
+def _memory_recall_shortcut(
+    query: str,
+    language: str,
+    user_memory: dict[str, object],
+    client_id: str,
+) -> ComposedAnswer | None:
+    if not client_id or not user_memory:
+        return None
+
+    normalized = _query_key(query)
+    display_name = user_display_name(user_memory)
+    department = user_department_name(user_memory, language)
+    role = user_role_name(user_memory, language)
+    summary = build_user_summary(user_memory, language)
+
+    if any(term in normalized for term in ("adim ne", "ismim ne", "what is my name", "my name")):
+        if not display_name:
+            return _missing_memory_answer(language)
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"👤 Daha önce paylaşılan bilgiye göre adı {display_name} olarak kayıtlı.",
+                f"👤 According to the saved information, the name is recorded as {display_name}.",
+            ),
+            sources=[],
+        )
+
+    if any(term in normalized for term in ("hangi bolumdeyim", "bolumum ne", "what do i study", "which department")):
+        if not department:
+            return _missing_memory_answer(language)
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"📌 Kayıtlı bilgiye göre {department} bölümünde {role or 'kişi'} olarak yer alıyor.",
+                f"📌 According to the saved information, the user is recorded as a {role or 'member'} in {department}.",
+            ),
+            sources=[],
+        )
+
+    if any(term in normalized for term in ("bana nasil hitap", "beni nasil cagir", "what should you call me", "call me what")):
+        if not display_name:
+            return _missing_memory_answer(language)
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"😊 Kayıtlı bilgiye göre {display_name} diye hitap edilmesi uygun olur.",
+                f"😊 According to the saved information, it would be appropriate to address the user as {display_name}.",
+            ),
+            sources=[],
+        )
+
+    if any(term in normalized for term in ("beni taniyor musun", "ben kimim", "do you know me", "who am i", "do you remember me")):
+        if not summary:
+            return _missing_memory_answer(language)
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"😊 Evet, bellekte şu bilgiler bulunuyor: {summary}.",
+                f"😊 Yes, the following information is stored in memory: {summary}.",
+            ),
+            sources=[],
+        )
+
+    return None
+
+
+def _custom_memory_fact_shortcut(
+    query: str,
+    language: str,
+    user_memory: dict[str, object],
+    client_id: str,
+) -> ComposedAnswer | None:
+    if not client_id:
+        return None
+
+    fact = find_relevant_user_fact(client_id, query)
+    if not fact:
+        return None
+
+    fact_text = clean_text(fact.get("text", ""))
+    if not fact_text:
+        return None
+
+    return ComposedAnswer(
+        text=_text_for_language(
+            language,
+            f"📌 Daha önce paylaşılan bilgiye göre: {fact_text}",
+            f"📌 Based on the previously shared information: {fact_text}",
+        ),
+        sources=[],
+    )
+
+
+def _general_memory_context(user_memory: dict[str, object], language: str) -> str:
+    summary = build_user_summary(user_memory, language)
+    if not summary:
+        return ""
+    return _text_for_language(
+        language,
+        f"Kullanıcı hakkında daha önce paylaşılan bilgiler: {summary}. Uygun olduğunda doğal biçimde dikkate alınabilir.",
+        f"Previously shared information about the user: {summary}. Use it naturally when helpful.",
+    )
+
+
+def _missing_memory_answer(language: str) -> ComposedAnswer:
+    return ComposedAnswer(
+        text=_text_for_language(
+            language,
+            "⚠️ Bu konuda bellekte yeterli kişisel bilgi bulunmuyor. İstenirse ad, bölüm veya özel bilgi paylaşılabilir.",
+            "⚠️ There is not enough personal information in memory yet. The user may share a name, department, or another detail.",
+        ),
+        sources=[],
     )
 
 
@@ -1411,16 +1630,19 @@ def _is_academic_staff_query(query: str) -> bool:
     return any(term in normalized for term in ("akademik kadro", "akademik personel", "academic staff"))
 
 
-def _smalltalk_response(query: str, language: str) -> str:
+def _smalltalk_response(query: str, language: str, user_memory: dict[str, object] | None = None) -> str:
     normalized = _query_key(query)
+    display_name = user_display_name(user_memory or {})
     for pattern, response in SMALLTALK_RESPONSES.items():
         if pattern in normalized:
-            return response.get(language, response["tr"])
-    return _text_for_language(
+            base_response = response.get(language, response["tr"])
+            return f"{display_name}, {base_response}" if display_name else base_response
+    fallback_response = _text_for_language(
         language,
         "😊 Elbette, sohbet edilebilir. İstenirse günlük bir konuya ya da bilgi sorusuna birlikte devam edilebilir.",
         "😊 Of course, we can chat. If you'd like, we can continue with a casual topic or an information question.",
     )
+    return f"{display_name}, {fallback_response}" if display_name else fallback_response
 
 
 def _should_answer_with_general_knowledge(query: str) -> bool:
@@ -1706,7 +1928,7 @@ class LocalOnlyGenerator:
     def generate(self, query: str, results: list[SearchResult]) -> str | None:
         return None
 
-    def generate_general(self, query: str) -> str | None:
+    def generate_general(self, query: str, memory_context: str = "") -> str | None:
         return None
 
 

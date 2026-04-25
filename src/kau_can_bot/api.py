@@ -34,6 +34,7 @@ async def disable_cache_for_ui(request, call_next):
 
 class AskRequest(BaseModel):
     question: str
+    client_id: str = ""
 
 
 class SourceItem(BaseModel):
@@ -113,7 +114,7 @@ def ask(request: AskRequest) -> AskResponse:
     )
 
     assistant = WebsiteGroundedAssistant()
-    response = assistant.answer_with_context(request.question)
+    response = assistant.answer_with_context(request.question, client_id=request.client_id)
     return AskResponse(
         answer=response.answer,
         sources=[

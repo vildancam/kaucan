@@ -18,6 +18,7 @@ INDEX_PATH = DATA_DIR / "search_index.joblib"
 QUERY_LOG_PATH = LOG_DIR / "queries.jsonl"
 INTERACTION_LOG_PATH = LOG_DIR / "interactions.jsonl"
 FEEDBACK_LOG_PATH = LOG_DIR / "feedback.jsonl"
+USER_MEMORY_PATH = DATA_DIR / "user_memory.json"
 
 FALLBACK_RESPONSE = (
     "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte "

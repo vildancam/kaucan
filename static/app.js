@@ -1,6 +1,7 @@
 (function () {
   var STORAGE_KEY = "kaucan-conversations-v3";
   var THEME_KEY = "kaucan-theme";
+  var CLIENT_ID_KEY = "kaucan-client-id";
   var WELCOME_MESSAGE =
     "👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve diğer konularda yardımcı olabilirim.";
   var FALLBACK_MESSAGE =
@@ -84,6 +85,7 @@
       baseText: "",
       denied: false,
     },
+    clientId: "",
   };
 
   function setStatus(text, stateName) {
@@ -416,6 +418,34 @@
   function autoResize() {
     input.style.height = "auto";
     input.style.height = Math.min(input.scrollHeight, 180) + "px";
+  }
+
+  function buildClientId() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+    return "kaucan-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  }
+
+  function ensureClientId() {
+    var storedClientId;
+
+    try {
+      storedClientId = window.localStorage.getItem(CLIENT_ID_KEY);
+    } catch (error) {
+      storedClientId = "";
+    }
+
+    if (!storedClientId) {
+      storedClientId = buildClientId();
+      try {
+        window.localStorage.setItem(CLIENT_ID_KEY, storedClientId);
+      } catch (error) {
+        return storedClientId;
+      }
+    }
+
+    return storedClientId;
   }
 
   function setVoiceButtonState(listening) {
@@ -1105,7 +1135,7 @@
     fetch("/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: question }),
+      body: JSON.stringify({ question: question, client_id: state.clientId || "" }),
     })
       .then(function (response) {
         if (!response.ok) {
@@ -1412,6 +1442,7 @@
   function init() {
     document.body.classList.add("js-ready");
     loadTheme();
+    state.clientId = ensureClientId();
     ensureConversationState();
     initializeVoiceButton();
     bindEvents();
