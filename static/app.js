@@ -1,20 +1,57 @@
 (function () {
+  var STORAGE_KEY = "kaucan-conversations-v3";
+  var THEME_KEY = "kaucan-theme";
+  var WELCOME_MESSAGE =
+    "👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve diğer konularda yardımcı olabilirim.";
+  var FALLBACK_MESSAGE =
+    "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm.";
+  var HIGHLIGHT_FALLBACKS = {
+    announcements: {
+      title: "İİBF Duyuruları",
+      url: "https://www.kafkas.edu.tr/iibf/tr/tumduyurular2",
+      summary: "Güncel duyurular için resmi İİBF duyuru sayfasını açabilirsiniz.",
+    },
+    news: {
+      title: "İİBF Haberleri",
+      url: "https://www.kafkas.edu.tr/iibf/tr/tumHaberler",
+      summary: "Güncel haberler için resmi İİBF haberler sayfasını açabilirsiniz.",
+    },
+    events: {
+      title: "İİBF Etkinlikleri",
+      url: "https://www.kafkas.edu.tr/iibf/tr/tumEtkinlikler2",
+      summary: "Güncel etkinlikler için resmi İİBF etkinlikler sayfasını açabilirsiniz.",
+    },
+  };
+
   var form = document.getElementById("askForm");
   var input = document.getElementById("questionInput");
   var messages = document.getElementById("messages");
   var submitButton = document.getElementById("submitButton");
   var clearButton = document.getElementById("clearButton");
   var statusBadge = document.getElementById("statusBadge");
-  var providerBox = document.getElementById("providerBox");
   var typingRow = document.getElementById("typingRow");
   var chips = document.querySelectorAll(".query-chip");
   var brandLogo = document.getElementById("brandLogo");
   var brandFallback = document.getElementById("brandFallback");
   var initialChatLogo = document.getElementById("initialChatLogo");
   var typingChatLogo = document.getElementById("typingChatLogo");
-
-  var FALLBACK_MESSAGE =
-    "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm.";
+  var historyPanel = document.getElementById("historyPanel");
+  var historyBackdrop = document.getElementById("historyBackdrop");
+  var historyToggleButton = document.getElementById("historyToggleButton");
+  var historyCloseButton = document.getElementById("historyCloseButton");
+  var newChatButton = document.getElementById("newChatButton");
+  var historySearchInput = document.getElementById("historySearchInput");
+  var historyList = document.getElementById("historyList");
+  var themeToggleButton = document.getElementById("themeToggleButton");
+  var themeToggleIcon = document.getElementById("themeToggleIcon");
+  var scrollUpButton = document.getElementById("scrollUpButton");
+  var scrollDownButton = document.getElementById("scrollDownButton");
+  var highlightNavButtons = document.querySelectorAll(".highlight-nav");
+  var highlightTracks = {
+    announcements: document.getElementById("announcementsTrack"),
+    news: document.getElementById("newsTrack"),
+    events: document.getElementById("eventsTrack"),
+  };
 
   var audioState = {
     context: null,
@@ -22,16 +59,32 @@
   var runtimeBranding = {
     chatLogoUrl: initialChatLogo ? initialChatLogo.getAttribute("src") : null,
   };
+  var state = {
+    conversations: [],
+    activeConversationId: null,
+    pendingConversationId: null,
+    theme: "light",
+    highlights: {
+      announcements: [],
+      news: [],
+      events: [],
+    },
+    carouselIndex: {
+      announcements: 0,
+      news: 0,
+      events: 0,
+    },
+  };
 
-  function setStatus(text, state) {
-    state = state || "ready";
+  function setStatus(text, stateName) {
+    stateName = stateName || "ready";
     statusBadge.innerHTML = "";
 
     var dot = document.createElement("span");
     dot.className = "status-dot";
     statusBadge.appendChild(dot);
     statusBadge.appendChild(document.createTextNode(text));
-    statusBadge.className = state === "ready" ? "status" : "status " + state;
+    statusBadge.className = stateName === "ready" ? "status" : "status " + stateName;
   }
 
   function createUserAvatarIcon() {
@@ -85,7 +138,7 @@
     }
 
     cleaned = cleaned.replace(/^(?:📖|📎)?\s*(açıklama|description|detaylar?)\s*:\s*/i, "");
-    cleaned = cleaned.replace(/^(?:✅)?\s*(sonuç|sonuc)\s*:\s*/i, "");
+    cleaned = cleaned.replace(/^(?:✅)?\s*(sonuç|sonuc|result)\s*:\s*/i, "");
 
     if (/^(?:🔗)?\s*(kaynak|source|sources)\s*:?.*$/i.test(cleaned)) {
       return "";
@@ -95,10 +148,10 @@
       return "";
     }
 
-    cleaned = cleaned.replace(/https?:\/\/[^\s]+/g, "").trim();
     if (/^\d+[.)]?$/.test(cleaned)) {
       return "";
     }
+
     return cleaned;
   }
 
@@ -172,18 +225,40 @@
     return "<p>" + linkify(escapeHtml(lines.join("\n"))).replace(/\n/g, "<br />") + "</p>";
   }
 
-  function renderAssistantText(text) {
-    var sanitized = sanitizeAssistantText(text);
-    if (!sanitized) {
-      return "<p>" + escapeHtml(FALLBACK_MESSAGE) + "</p>";
-    }
-
-    return sanitized
+  function renderRichText(text) {
+    return sanitizeAssistantText(text)
       .split(/\n{2,}/)
       .map(function (block) {
         return renderBlock(block);
       })
       .join("");
+  }
+
+  function renderAssistantText(text) {
+    var sourceText = String(text || "");
+    if (!sourceText.trim()) {
+      return "<p>" + escapeHtml(FALLBACK_MESSAGE) + "</p>";
+    }
+
+    var parts = sourceText.split("```");
+    var html = [];
+    var index;
+
+    for (index = 0; index < parts.length; index += 1) {
+      if (index % 2 === 1) {
+        var code = parts[index].replace(/^\s*[a-z0-9_+-]+\n/i, "").replace(/^\n+|\n+$/g, "");
+        if (code) {
+          html.push('<pre class="code-block"><code>' + escapeHtml(code) + "</code></pre>");
+        }
+      } else {
+        var rich = renderRichText(parts[index]);
+        if (rich) {
+          html.push(rich);
+        }
+      }
+    }
+
+    return html.length ? html.join("") : "<p>" + escapeHtml(FALLBACK_MESSAGE) + "</p>";
   }
 
   function renderUserText(text) {
@@ -208,11 +283,10 @@
       link.href = uniqueSources[index].url;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      if (uniqueSources.length === 1 && uniqueSources[index].title) {
-        link.textContent = "🔗 " + uniqueSources[index].title;
-      } else {
-        link.textContent = "🔗 Kaynağı Aç " + (index + 1);
-      }
+      link.textContent =
+        uniqueSources.length === 1 && uniqueSources[index].title
+          ? "🔗 " + uniqueSources[index].title
+          : "🔗 Kaynağı Aç " + (index + 1);
       wrapper.appendChild(link);
     }
 
@@ -241,7 +315,7 @@
       });
   }
 
-  function addMessage(role, text, meta) {
+  function buildMessageElement(role, text, meta) {
     meta = meta || {};
 
     var article = document.createElement("article");
@@ -302,74 +376,556 @@
 
     article.appendChild(avatar);
     article.appendChild(bubble);
-    messages.appendChild(article);
-    scrollMessages();
-
-    window.setTimeout(function () {
-      article.classList.remove("message-enter");
-    }, 500);
+    return article;
   }
 
-  function scrollMessages() {
+  function appendMessage(role, text, meta) {
+    var article = buildMessageElement(role, text, meta);
+    messages.appendChild(article);
+    scrollMessagesToBottom();
+    window.setTimeout(function () {
+      article.classList.remove("message-enter");
+    }, 450);
+  }
+
+  function scrollMessagesToBottom() {
     messages.scrollTop = messages.scrollHeight;
   }
 
-  function showTyping() {
-    typingRow.hidden = false;
-    scrollMessages();
+  function scrollMessagesBy(offset) {
+    messages.scrollTop += offset;
   }
 
-  function hideTyping() {
-    typingRow.hidden = true;
+  function syncTyping() {
+    typingRow.hidden = state.pendingConversationId !== state.activeConversationId;
+    if (!typingRow.hidden) {
+      scrollMessagesToBottom();
+    }
   }
 
   function autoResize() {
     input.style.height = "auto";
-    input.style.height = Math.min(input.scrollHeight, 200) + "px";
+    input.style.height = Math.min(input.scrollHeight, 180) + "px";
+  }
+
+  function getAudioContext() {
+    var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) {
+      return null;
+    }
+
+    if (!audioState.context) {
+      audioState.context = new AudioContextClass();
+    }
+
+    if (audioState.context.state === "suspended") {
+      audioState.context.resume();
+    }
+
+    return audioState.context;
+  }
+
+  function scheduleTone(context, frequency, startTime, duration, type, peakGain) {
+    var oscillator = context.createOscillator();
+    var gain = context.createGain();
+
+    oscillator.type = type || "sine";
+    oscillator.frequency.setValueAtTime(frequency, startTime);
+    gain.gain.setValueAtTime(0.0001, startTime);
+    gain.gain.exponentialRampToValueAtTime(peakGain || 0.025, startTime + 0.014);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(startTime);
+    oscillator.stop(startTime + duration);
   }
 
   function playTone(kind) {
-    var AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContextClass) {
-      return;
-    }
+    var context;
+    var now;
 
     try {
-      if (!audioState.context) {
-        audioState.context = new AudioContextClass();
+      context = getAudioContext();
+      if (!context) {
+        return;
       }
 
-      if (audioState.context.state === "suspended") {
-        audioState.context.resume();
+      now = context.currentTime + 0.01;
+
+      if (kind === "send") {
+        scheduleTone(context, 620, now, 0.08, "triangle", 0.022);
+        scheduleTone(context, 840, now + 0.07, 0.11, "triangle", 0.021);
+        scheduleTone(context, 980, now + 0.14, 0.08, "sine", 0.018);
+        return;
       }
 
-      var oscillator = audioState.context.createOscillator();
-      var gain = audioState.context.createGain();
-      var now = audioState.context.currentTime;
+      if (kind === "receive") {
+        scheduleTone(context, 500, now, 0.08, "sine", 0.018);
+        scheduleTone(context, 660, now + 0.08, 0.1, "sine", 0.02);
+        scheduleTone(context, 780, now + 0.18, 0.12, "triangle", 0.02);
+        return;
+      }
 
-      oscillator.type = kind === "receive" ? "sine" : "triangle";
-      oscillator.frequency.setValueAtTime(kind === "receive" ? 540 : 660, now);
-      oscillator.frequency.exponentialRampToValueAtTime(kind === "receive" ? 760 : 880, now + 0.12);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.025, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+      if (kind === "new-chat") {
+        scheduleTone(context, 460, now, 0.07, "triangle", 0.018);
+        scheduleTone(context, 620, now + 0.06, 0.09, "triangle", 0.018);
+        scheduleTone(context, 860, now + 0.13, 0.12, "sine", 0.016);
+        return;
+      }
 
-      oscillator.connect(gain);
-      gain.connect(audioState.context.destination);
-      oscillator.start(now);
-      oscillator.stop(now + 0.18);
+      if (kind === "history") {
+        scheduleTone(context, 560, now, 0.07, "sine", 0.012);
+        scheduleTone(context, 480, now + 0.05, 0.06, "sine", 0.01);
+        return;
+      }
+
+      if (kind === "theme") {
+        scheduleTone(context, 720, now, 0.07, "sine", 0.013);
+        scheduleTone(context, 940, now + 0.05, 0.1, "triangle", 0.013);
+        return;
+      }
+
+      if (kind === "share") {
+        scheduleTone(context, 680, now, 0.05, "triangle", 0.012);
+        scheduleTone(context, 860, now + 0.04, 0.08, "triangle", 0.012);
+        return;
+      }
+
+      if (kind === "delete") {
+        scheduleTone(context, 360, now, 0.08, "sawtooth", 0.013);
+        scheduleTone(context, 240, now + 0.08, 0.1, "sawtooth", 0.012);
+        return;
+      }
+
+      if (kind === "error") {
+        scheduleTone(context, 320, now, 0.12, "sawtooth", 0.014);
+        scheduleTone(context, 220, now + 0.1, 0.12, "sawtooth", 0.012);
+      }
     } catch (error) {
       return;
     }
   }
 
-  function askQuestion(question) {
+  function newConversationId() {
+    return "conv-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function createWelcomeMessage() {
+    return {
+      role: "assistant",
+      text: WELCOME_MESSAGE,
+      sources: [],
+      interactionId: null,
+      status: "greeting",
+    };
+  }
+
+  function createConversation() {
+    var timestamp = Date.now();
+    return {
+      id: newConversationId(),
+      title: "Yeni Sohbet",
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      messages: [createWelcomeMessage()],
+    };
+  }
+
+  function normalizeStoredMessage(message) {
+    return {
+      role: message && message.role === "user" ? "user" : "assistant",
+      text: String((message && message.text) || ""),
+      sources: dedupeSources((message && message.sources) || []),
+      interactionId: message && message.interactionId ? String(message.interactionId) : null,
+      status: message && message.status ? String(message.status) : "",
+    };
+  }
+
+  function normalizeConversation(conversation) {
+    var normalizedMessages = Array.isArray(conversation && conversation.messages)
+      ? conversation.messages.map(normalizeStoredMessage).filter(function (message) {
+          return !!message.text;
+        })
+      : [];
+
+    if (!normalizedMessages.length) {
+      normalizedMessages = [createWelcomeMessage()];
+    }
+
+    return {
+      id: conversation && conversation.id ? String(conversation.id) : newConversationId(),
+      title: conversation && conversation.title ? String(conversation.title) : "Yeni Sohbet",
+      createdAt: conversation && conversation.createdAt ? Number(conversation.createdAt) : Date.now(),
+      updatedAt: conversation && conversation.updatedAt ? Number(conversation.updatedAt) : Date.now(),
+      messages: normalizedMessages,
+    };
+  }
+
+  function persistState() {
+    try {
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          activeConversationId: state.activeConversationId,
+          conversations: state.conversations,
+        })
+      );
+    } catch (error) {
+      return;
+    }
+  }
+
+  function ensureConversationState() {
+    var payload;
+    var parsed;
+
+    try {
+      payload = window.localStorage.getItem(STORAGE_KEY);
+      parsed = payload ? JSON.parse(payload) : null;
+    } catch (error) {
+      parsed = null;
+    }
+
+    if (parsed && Array.isArray(parsed.conversations) && parsed.conversations.length) {
+      state.conversations = parsed.conversations.map(normalizeConversation);
+      state.activeConversationId = parsed.activeConversationId || state.conversations[0].id;
+    } else {
+      state.conversations = [createConversation()];
+      state.activeConversationId = state.conversations[0].id;
+      persistState();
+    }
+
+    if (!findConversation(state.activeConversationId)) {
+      state.activeConversationId = state.conversations[0].id;
+    }
+  }
+
+  function findConversation(conversationId) {
+    var index;
+    for (index = 0; index < state.conversations.length; index += 1) {
+      if (state.conversations[index].id === conversationId) {
+        return state.conversations[index];
+      }
+    }
+    return null;
+  }
+
+  function getActiveConversation() {
+    var conversation = findConversation(state.activeConversationId);
+    if (conversation) {
+      return conversation;
+    }
+
+    if (!state.conversations.length) {
+      state.conversations.push(createConversation());
+    }
+
+    state.activeConversationId = state.conversations[0].id;
+    persistState();
+    return state.conversations[0];
+  }
+
+  function toTitle(text) {
+    var cleaned = String(text || "")
+      .replace(/\s+/g, " ")
+      .replace(/```[\s\S]*?```/g, "")
+      .trim();
+
+    if (!cleaned) {
+      return "Yeni Sohbet";
+    }
+
+    if (cleaned.length <= 48) {
+      return cleaned;
+    }
+
+    return cleaned.slice(0, 45).trim() + "...";
+  }
+
+  function matchesHistoryFilter(conversation, filterText) {
+    var normalizedFilter = String(filterText || "").toLowerCase().trim();
+    if (!normalizedFilter) {
+      return true;
+    }
+    return String(conversation.title || "").toLowerCase().indexOf(normalizedFilter) !== -1;
+  }
+
+  function openHistory() {
+    document.body.classList.add("history-open");
+    historyBackdrop.hidden = false;
+    playTone("history");
+  }
+
+  function closeHistory() {
+    document.body.classList.remove("history-open");
+    historyBackdrop.hidden = true;
+  }
+
+  function selectConversation(conversationId) {
+    if (state.activeConversationId === conversationId) {
+      closeHistory();
+      return;
+    }
+    state.activeConversationId = conversationId;
+    persistState();
+    renderHistoryList();
+    renderConversation();
+    closeHistory();
+    playTone("history");
+  }
+
+  function conversationToShareText(conversation) {
+    var lines = [conversation.title || "KAÜCAN Sohbeti", ""];
+    conversation.messages.forEach(function (message) {
+      var label = message.role === "user" ? "Kullanıcı" : "KAÜCAN";
+      lines.push(label + ": " + String(message.text || "").trim());
+    });
+    return lines.join("\n");
+  }
+
+  function shareConversation(conversation) {
+    var text = conversationToShareText(conversation);
+    if (navigator.share) {
+      navigator
+        .share({
+          title: conversation.title || "KAÜCAN Sohbeti",
+          text: text,
+        })
+        .then(function () {
+          playTone("share");
+        })
+        .catch(function () {
+          return;
+        });
+      return;
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(text)
+        .then(function () {
+          playTone("share");
+        })
+        .catch(function () {
+          return;
+        });
+    }
+  }
+
+  function editConversationTitle(conversation) {
+    var nextTitle = window.prompt("Sohbet başlığını düzenleyin:", conversation.title || "Yeni Sohbet");
+    if (nextTitle === null) {
+      return;
+    }
+
+    nextTitle = toTitle(nextTitle);
+    conversation.title = nextTitle || "Yeni Sohbet";
+    conversation.updatedAt = Date.now();
+    persistState();
+    renderHistoryList();
+    playTone("history");
+  }
+
+  function deleteConversation(conversationId) {
+    var nextConversations = state.conversations.filter(function (conversation) {
+      return conversation.id !== conversationId;
+    });
+
+    if (!nextConversations.length) {
+      nextConversations = [createConversation()];
+    }
+
+    state.conversations = nextConversations;
+    if (!findConversation(state.activeConversationId)) {
+      state.activeConversationId = state.conversations[0].id;
+    }
+    persistState();
+    renderHistoryList();
+    renderConversation();
+    playTone("delete");
+  }
+
+  function renderHistoryList() {
+    var filterText = historySearchInput ? historySearchInput.value : "";
+    var hasItem = false;
+
+    historyList.innerHTML = "";
+    state.conversations
+      .slice()
+      .sort(function (left, right) {
+        return right.updatedAt - left.updatedAt;
+      })
+      .forEach(function (conversation) {
+        var row;
+        var mainButton;
+        var title;
+        var actions;
+        var shareButton;
+        var editButton;
+        var deleteButton;
+
+        if (!matchesHistoryFilter(conversation, filterText)) {
+          return;
+        }
+
+        hasItem = true;
+        row = document.createElement("div");
+        row.className = "history-item" + (conversation.id === state.activeConversationId ? " active" : "");
+
+        mainButton = document.createElement("button");
+        mainButton.type = "button";
+        mainButton.className = "history-main";
+        mainButton.addEventListener("click", function () {
+          selectConversation(conversation.id);
+        });
+
+        title = document.createElement("div");
+        title.className = "history-title";
+        title.textContent = conversation.title || "Yeni Sohbet";
+        mainButton.appendChild(title);
+
+        actions = document.createElement("div");
+        actions.className = "history-actions";
+
+        shareButton = document.createElement("button");
+        shareButton.type = "button";
+        shareButton.className = "history-action";
+        shareButton.title = "Paylaş";
+        shareButton.setAttribute("aria-label", "Paylaş");
+        shareButton.innerHTML = '<span aria-hidden="true">⤴</span>';
+        shareButton.addEventListener("click", function (event) {
+          event.stopPropagation();
+          shareConversation(conversation);
+        });
+
+        editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "history-action";
+        editButton.title = "Başlığı düzenle";
+        editButton.setAttribute("aria-label", "Başlığı düzenle");
+        editButton.innerHTML = '<span aria-hidden="true">✎</span>';
+        editButton.addEventListener("click", function (event) {
+          event.stopPropagation();
+          editConversationTitle(conversation);
+        });
+
+        deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "history-action";
+        deleteButton.title = "Sil";
+        deleteButton.setAttribute("aria-label", "Sil");
+        deleteButton.innerHTML = '<span aria-hidden="true">🗑</span>';
+        deleteButton.addEventListener("click", function (event) {
+          event.stopPropagation();
+          deleteConversation(conversation.id);
+        });
+
+        actions.appendChild(shareButton);
+        actions.appendChild(editButton);
+        actions.appendChild(deleteButton);
+        row.appendChild(mainButton);
+        row.appendChild(actions);
+        historyList.appendChild(row);
+      });
+
+    if (!hasItem) {
+      var empty = document.createElement("div");
+      empty.className = "history-empty";
+      empty.textContent = "Aranan başlıkla eşleşen sohbet bulunamadı.";
+      historyList.appendChild(empty);
+    }
+  }
+
+  function renderConversation() {
+    var conversation = getActiveConversation();
+    var index;
+
+    messages.innerHTML = "";
+    for (index = 0; index < conversation.messages.length; index += 1) {
+      var message = conversation.messages[index];
+      var element = buildMessageElement(message.role, message.text, message);
+      element.classList.remove("message-enter");
+      messages.appendChild(element);
+    }
+    syncTyping();
+    scrollMessagesToBottom();
+  }
+
+  function rememberMessage(conversationId, role, text, meta, renderNow) {
+    var conversation = findConversation(conversationId);
+    var message;
+
+    if (!conversation) {
+      conversation = getActiveConversation();
+    }
+
+    message = {
+      role: role,
+      text: String(text || ""),
+      sources: dedupeSources((meta && meta.sources) || []),
+      interactionId: meta && meta.interactionId ? String(meta.interactionId) : null,
+      status: meta && meta.status ? String(meta.status) : "",
+    };
+
+    if (!message.text) {
+      return;
+    }
+
+    conversation.messages.push(message);
+    conversation.updatedAt = Date.now();
+    if (role === "user" && (conversation.title === "Yeni Sohbet" || conversation.messages.length <= 2)) {
+      conversation.title = toTitle(text);
+    }
+
+    persistState();
+    renderHistoryList();
+
+    if (renderNow && state.activeConversationId === conversation.id) {
+      appendMessage(role, text, message);
+    }
+  }
+
+  function createNewConversation() {
+    var conversation = createConversation();
+    state.conversations.unshift(conversation);
+    state.activeConversationId = conversation.id;
+    state.pendingConversationId = null;
+    persistState();
+    renderHistoryList();
+    renderConversation();
+    setStatus("Hazır");
+    input.value = "";
+    autoResize();
+    input.focus();
+    closeHistory();
+    playTone("new-chat");
+  }
+
+  function resetActiveConversation() {
+    var conversation = getActiveConversation();
+    conversation.title = "Yeni Sohbet";
+    conversation.updatedAt = Date.now();
+    conversation.messages = [createWelcomeMessage()];
+    persistState();
+    renderHistoryList();
+    renderConversation();
+    input.value = "";
+    autoResize();
+    input.focus();
+    playTone("history");
+  }
+
+  function askQuestion(question, conversationId) {
     setStatus("Yanıt hazırlanıyor", "busy");
     submitButton.disabled = true;
-    showTyping();
+    state.pendingConversationId = conversationId;
+    syncTyping();
 
     function finishRequest() {
       submitButton.disabled = false;
+      state.pendingConversationId = null;
+      syncTyping();
       input.focus();
     }
 
@@ -385,34 +941,43 @@
         return response.json();
       })
       .then(function (data) {
-        hideTyping();
-        addMessage("assistant", data.answer || FALLBACK_MESSAGE, {
-          interactionId: data.interaction_id,
-          sources: data.sources || [],
-        });
+        rememberMessage(
+          conversationId,
+          "assistant",
+          data.answer || FALLBACK_MESSAGE,
+          {
+            interactionId: data.interaction_id,
+            sources: data.sources || [],
+            status: data.status || "",
+          },
+          state.activeConversationId === conversationId
+        );
         setStatus("Hazır");
         playTone("receive");
         finishRequest();
       })
       .catch(function () {
-        hideTyping();
-        addMessage("assistant", FALLBACK_MESSAGE, {});
+        rememberMessage(conversationId, "assistant", FALLBACK_MESSAGE, {}, state.activeConversationId === conversationId);
         setStatus("Hata", "error");
+        playTone("error");
         finishRequest();
       });
   }
 
-  function submitCurrentQuestion() {
-    var question = input.value.replace(/^\s+|\s+$/g, "");
-    if (!question) {
+  function submitQuestion(questionText) {
+    var question = String(questionText || input.value).replace(/^\s+|\s+$/g, "");
+    var conversation;
+
+    if (!question || submitButton.disabled) {
       return;
     }
 
-    addMessage("user", question, {});
+    conversation = getActiveConversation();
+    rememberMessage(conversation.id, "user", question, {}, state.activeConversationId === conversation.id);
     input.value = "";
     autoResize();
     playTone("send");
-    askQuestion(question);
+    askQuestion(question, conversation.id);
   }
 
   function applyLogo(url) {
@@ -450,6 +1015,125 @@
     updateImage(typingChatLogo);
   }
 
+  function applyTheme(theme) {
+    state.theme = theme === "dark" ? "dark" : "light";
+    document.body.setAttribute("data-theme", state.theme);
+    if (themeToggleIcon) {
+      themeToggleIcon.textContent = state.theme === "dark" ? "☀" : "☾";
+    }
+    try {
+      window.localStorage.setItem(THEME_KEY, state.theme);
+    } catch (error) {
+      return;
+    }
+  }
+
+  function loadTheme() {
+    var storedTheme;
+    try {
+      storedTheme = window.localStorage.getItem(THEME_KEY);
+    } catch (error) {
+      storedTheme = null;
+    }
+    applyTheme(storedTheme || "light");
+  }
+
+  function toggleTheme() {
+    applyTheme(state.theme === "dark" ? "light" : "dark");
+    playTone("theme");
+  }
+
+  function renderHighlightCard(topic, item) {
+    var fallback = HIGHLIGHT_FALLBACKS[topic];
+    var data = item || fallback;
+    var imageUrl = data.image_url || runtimeBranding.chatLogoUrl || "/static/assets/iibf_logo.png?v=20260426a";
+    var title = escapeHtml(data.title || fallback.title);
+    var meta = [data.date || "", data.category || ""]
+      .filter(function (value) {
+        return !!value;
+      })
+      .join(" • ");
+    var summary = escapeHtml(data.summary || fallback.summary || "");
+
+    return (
+      '<a class="highlight-link" href="' +
+      escapeHtml(data.url || fallback.url) +
+      '" target="_blank" rel="noopener noreferrer">' +
+      '<div class="highlight-image"><img src="' +
+      escapeHtml(imageUrl) +
+      '" alt="' +
+      title +
+      '" /></div>' +
+      '<div class="highlight-body">' +
+      (meta ? '<p class="highlight-meta">' + escapeHtml(meta) + "</p>" : "") +
+      "<h3>" +
+      title +
+      "</h3>" +
+      (summary ? '<p class="highlight-summary">' + summary + "</p>" : "") +
+      "</div>" +
+      "</a>"
+    );
+  }
+
+  function renderHighlights() {
+    Object.keys(highlightTracks).forEach(function (topic) {
+      var track = highlightTracks[topic];
+      var items = state.highlights[topic] || [];
+      var index = state.carouselIndex[topic] || 0;
+
+      if (!track) {
+        return;
+      }
+
+      if (!items.length) {
+        track.innerHTML = renderHighlightCard(topic, null);
+        return;
+      }
+
+      if (index >= items.length) {
+        index = 0;
+        state.carouselIndex[topic] = 0;
+      }
+
+      track.innerHTML = renderHighlightCard(topic, items[index]);
+    });
+  }
+
+  function changeHighlight(topic, direction) {
+    var items = state.highlights[topic] || [];
+    if (!items.length) {
+      window.open(HIGHLIGHT_FALLBACKS[topic].url, "_blank", "noopener");
+      return;
+    }
+
+    if (direction === "prev") {
+      state.carouselIndex[topic] = (state.carouselIndex[topic] - 1 + items.length) % items.length;
+    } else {
+      state.carouselIndex[topic] = (state.carouselIndex[topic] + 1) % items.length;
+    }
+    renderHighlights();
+    playTone("history");
+  }
+
+  function loadHighlights() {
+    fetch("/highlights")
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("highlights-failed");
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        state.highlights.announcements = Array.isArray(data.announcements) ? data.announcements : [];
+        state.highlights.news = Array.isArray(data.news) ? data.news : [];
+        state.highlights.events = Array.isArray(data.events) ? data.events : [];
+        renderHighlights();
+      })
+      .catch(function () {
+        renderHighlights();
+      });
+  }
+
   function loadHealth() {
     fetch("/health")
       .then(function (response) {
@@ -460,55 +1144,67 @@
         applyChatLogo(health.chat_logo_url);
 
         if (!health.index_ready) {
-          setStatus("İndeks Bekleniyor", "busy");
-          providerBox.textContent = "Arama indeksi henüz hazır değil.";
+          setStatus("İndeks bekleniyor", "busy");
           return;
         }
 
-        if (health.llm_provider === "ollama") {
-          if (health.ollama_running && health.ollama_model_available) {
-            setStatus("Ollama Aktif");
-            providerBox.textContent = "Yerel model aktif: " + health.ollama_model;
-          } else {
-            setStatus("Ollama Bekliyor", "busy");
-            providerBox.textContent = "Ollama ayarlı, model bekleniyor: " + health.ollama_model;
-          }
+        if (health.llm_provider === "ollama" && !health.ollama_running) {
+          setStatus("Servis hazır", "ready");
           return;
         }
 
-        if (health.llm_provider === "openai" && health.openai_configured) {
-          setStatus("OpenAI Aktif");
-          providerBox.textContent = "OpenAI yapılandırıldı: " + health.openai_model;
-          return;
-        }
-
-        setStatus("Yerel RAG");
-        providerBox.textContent = "Yerel RAG yanıtı kullanılıyor.";
+        setStatus("Hazır", "ready");
       })
       .catch(function () {
-        setStatus("Kontrol Hatası", "error");
-        providerBox.textContent = "Servis durumu okunamadı.";
+        setStatus("Bağlantı hatası", "error");
       });
   }
 
   function bindEvents() {
     form.addEventListener("submit", function (event) {
       event.preventDefault();
-      submitCurrentQuestion();
+      submitQuestion();
     });
 
     clearButton.addEventListener("click", function () {
-      input.value = "";
-      autoResize();
-      input.focus();
+      resetActiveConversation();
     });
+
+    historyToggleButton.addEventListener("click", openHistory);
+    historyCloseButton.addEventListener("click", closeHistory);
+    historyBackdrop.addEventListener("click", closeHistory);
+
+    if (newChatButton) {
+      newChatButton.addEventListener("click", createNewConversation);
+    }
+
+    if (historySearchInput) {
+      historySearchInput.addEventListener("input", renderHistoryList);
+    }
+
+    if (themeToggleButton) {
+      themeToggleButton.addEventListener("click", toggleTheme);
+    }
 
     Array.prototype.forEach.call(chips, function (chip) {
       chip.addEventListener("click", function () {
-        input.value = chip.textContent.replace(/^\s+|\s+$/g, "");
-        autoResize();
-        input.focus();
+        playTone("history");
+        submitQuestion(chip.textContent.replace(/^\s+|\s+$/g, ""));
       });
+    });
+
+    Array.prototype.forEach.call(highlightNavButtons, function (button) {
+      button.addEventListener("click", function () {
+        changeHighlight(button.dataset.topic, button.dataset.direction);
+      });
+    });
+
+    scrollUpButton.addEventListener("click", function () {
+      scrollMessagesBy(-280);
+    });
+
+    scrollDownButton.addEventListener("click", function () {
+      scrollMessagesBy(280);
     });
 
     input.addEventListener("input", autoResize);
@@ -516,17 +1212,29 @@
     input.addEventListener("keydown", function (event) {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
-        submitCurrentQuestion();
+        submitQuestion();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeHistory();
       }
     });
   }
 
   function init() {
     document.body.classList.add("js-ready");
+    loadTheme();
+    ensureConversationState();
     bindEvents();
     autoResize();
+    renderHistoryList();
+    renderConversation();
+    renderHighlights();
     loadHealth();
-    scrollMessages();
+    loadHighlights();
+    scrollMessagesToBottom();
   }
 
   if (document.readyState === "loading") {

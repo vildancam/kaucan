@@ -4,56 +4,130 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KAÜCAN | Kafkas Üniversitesi Dijital Asistanı</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260425g" />
+    <link rel="stylesheet" href="/static/styles.css?v=20260426a" />
   </head>
-  <body>
+  <body data-theme="light">
+    <div class="history-backdrop" id="historyBackdrop" hidden></div>
+
+    <aside class="history-panel" id="historyPanel" aria-label="Konuşma geçmişi">
+      <div class="history-header">
+        <div>
+          <p class="panel-eyebrow">Geçmiş</p>
+          <h2>Konuşma Geçmişi</h2>
+        </div>
+        <button class="icon-button" id="historyCloseButton" type="button" aria-label="Geçmişi kapat" title="Geçmişi kapat">
+          <span aria-hidden="true">✕</span>
+        </button>
+      </div>
+
+      <button class="primary-button new-chat-button" type="button" id="newChatButton">Yeni Sohbet</button>
+
+      <label class="sr-only" for="historySearchInput">Sohbetlerde ara</label>
+      <input
+        class="history-search"
+        id="historySearchInput"
+        type="search"
+        placeholder="Sohbetlerde ara"
+        autocomplete="off"
+      />
+
+      <div class="history-list" id="historyList" aria-live="polite"></div>
+    </aside>
+
     <div class="app-shell">
       <header class="topbar">
-        <div class="brand-lockup">
-          <div class="logo-frame">
-            <img
-              id="brandLogo"
-              class="brand-logo"
-              src="/static/assets/kau_logo.png?v=20260425g"
-              alt="Kafkas Üniversitesi logosu"
-              onerror="this.hidden=true;document.getElementById('brandFallback').hidden=false;"
-            />
-            <div class="brand-fallback" id="brandFallback" hidden>KAÜCAN</div>
-          </div>
-          <div class="brand-copy">
-            <p class="eyebrow">Kafkas Üniversitesi</p>
-            <h1>KAÜCAN</h1>
-          </div>
+        <div class="topbar-start">
+          <button class="icon-button" id="historyToggleButton" type="button" aria-label="Konuşma geçmişini aç" title="Konuşma geçmişi">
+            <span aria-hidden="true">☰</span>
+          </button>
+
+          <a
+            class="brand-home"
+            href="https://www.kafkas.edu.tr"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Kafkas Üniversitesi sitesini aç"
+          >
+            <div class="logo-frame">
+              <img
+                id="brandLogo"
+                class="brand-logo"
+                src="/static/assets/kau_logo.png?v=20260426a"
+                alt="Kafkas Üniversitesi logosu"
+                onerror="this.hidden=true;document.getElementById('brandFallback').hidden=false;"
+              />
+              <div class="brand-fallback" id="brandFallback" hidden>KAÜCAN</div>
+            </div>
+
+            <div class="brand-copy">
+              <p class="eyebrow">Kafkas Üniversitesi</p>
+              <h1>KAÜCAN</h1>
+            </div>
+          </a>
         </div>
 
-        <div class="status" id="statusBadge" aria-live="polite">
-          <span class="status-dot"></span>
-          Hazırlanıyor
+        <div class="topbar-actions">
+          <button class="icon-button" id="themeToggleButton" type="button" aria-label="Temayı değiştir" title="Temayı değiştir">
+            <span id="themeToggleIcon" aria-hidden="true">☾</span>
+          </button>
+
+          <div class="status" id="statusBadge" aria-live="polite">
+            <span class="status-dot"></span>
+            Hazırlanıyor
+          </div>
         </div>
       </header>
+
+      <section class="quick-strip" aria-label="Hızlı erişim">
+        <a class="quick-link" href="https://www.kafkas.edu.tr/skdb" target="_blank" rel="noopener noreferrer">🍽️ Yemekhane Menüsü</a>
+        <a class="quick-link" href="https://www.kafkas.edu.tr/oidb/tr/sayfaYeni6016" target="_blank" rel="noopener noreferrer">📅 Akademik Takvim</a>
+        <a class="quick-link" href="https://obsyeni.kafkas.edu.tr" target="_blank" rel="noopener noreferrer">✅ OBS</a>
+        <a class="quick-link" href="https://captive.kafkas.edu.tr:6082/php/uid.php?vsys=1&rule=4&url=https://www.yok.gov.tr" target="_blank" rel="noopener noreferrer">🌐 Okul İnterneti</a>
+      </section>
 
       <main class="workspace">
         <section class="chat-panel" aria-label="Sohbet alanı">
           <div class="panel-header">
-            <p class="panel-eyebrow">Sohbet</p>
-            <h2>KAÜCAN</h2>
+            <div>
+              <p class="panel-eyebrow">Sohbet</p>
+              <h2>KAÜCAN</h2>
+            </div>
+            <button class="secondary-button" id="clearButton" type="button">Temizle</button>
           </div>
 
-          <div class="messages" id="messages" aria-live="polite">
-            <article class="message assistant">
-              <div class="avatar assistant-avatar">
-              <img
-                class="avatar-logo"
-                id="initialChatLogo"
-                src="/static/assets/iibf_logo.png?v=20260425g"
-                  alt="İİBF logosu"
-                  onerror="this.hidden=true;this.parentNode.textContent='KAÜ';"
-                />
-              </div>
-              <div class="bubble">
-                <p>👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve diğer konularda yardımcı olabilirim.</p>
-              </div>
-            </article>
+          <section class="quick-prompts" aria-label="Hızlı başlıklar">
+            <button class="query-chip" type="button">Güncel duyurular nelerdir?</button>
+            <button class="query-chip" type="button">Sınav programı hakkında bilgi verir misiniz?</button>
+            <button class="query-chip" type="button">Akademik personel hakkında bilgi verir misiniz?</button>
+            <button class="query-chip" type="button">Fakültenin iletişim bilgileri nelerdir?</button>
+          </section>
+
+          <div class="messages-wrap">
+            <div class="messages" id="messages" aria-live="polite">
+              <article class="message assistant">
+                <div class="avatar assistant-avatar">
+                  <img
+                    class="avatar-logo"
+                    id="initialChatLogo"
+                    src="/static/assets/iibf_logo.png?v=20260426a"
+                    alt="İİBF logosu"
+                    onerror="this.hidden=true;this.parentNode.textContent='KAÜ';"
+                  />
+                </div>
+                <div class="bubble">
+                  <p>👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve diğer konularda yardımcı olabilirim.</p>
+                </div>
+              </article>
+            </div>
+
+            <div class="scroll-controls" aria-label="Mesaj gezinme kontrolleri">
+              <button class="icon-button scroll-button" id="scrollUpButton" type="button" aria-label="Yukarı git" title="Yukarı git">
+                <span aria-hidden="true">↑</span>
+              </button>
+              <button class="icon-button scroll-button" id="scrollDownButton" type="button" aria-label="Aşağı git" title="Aşağı git">
+                <span aria-hidden="true">↓</span>
+              </button>
+            </div>
           </div>
 
           <div class="typing-row" id="typingRow" hidden>
@@ -61,7 +135,7 @@
               <img
                 class="avatar-logo"
                 id="typingChatLogo"
-                src="/static/assets/iibf_logo.png?v=20260425g"
+                src="/static/assets/iibf_logo.png?v=20260426a"
                 alt="İİBF logosu"
                 onerror="this.hidden=true;this.parentNode.textContent='KAÜ';"
               />
@@ -85,38 +159,59 @@
               required
             ></textarea>
 
-            <div class="composer-actions">
-              <button type="button" class="secondary-button" id="clearButton">Temizle</button>
-              <button type="submit" class="primary-button" id="submitButton">Gönder</button>
-            </div>
+            <button
+              type="submit"
+              class="primary-button submit-icon-button"
+              id="submitButton"
+              aria-label="Mesaj gönder"
+              title="Mesaj gönder"
+            >
+              <span aria-hidden="true">➤</span>
+            </button>
           </form>
         </section>
 
-        <aside class="query-panel" aria-label="Yan panel">
-          <section class="aside-card" aria-label="Durum">
-            <h2>Yanıt Motoru</h2>
-            <div class="provider-box" id="providerBox">Kontrol ediliyor.</div>
+        <aside class="highlights-panel" aria-label="Fakülte içerikleri">
+          <section class="aside-card highlight-card" aria-labelledby="announcementsTitle">
+            <div class="card-header">
+              <h2 id="announcementsTitle">Duyurular</h2>
+              <div class="carousel-actions">
+                <button class="icon-button highlight-nav" data-topic="announcements" data-direction="prev" type="button" aria-label="Önceki duyuru" title="Önceki duyuru">‹</button>
+                <button class="icon-button highlight-nav" data-topic="announcements" data-direction="next" type="button" aria-label="Sonraki duyuru" title="Sonraki duyuru">›</button>
+              </div>
+            </div>
+            <div class="highlight-track" id="announcementsTrack"></div>
           </section>
 
-          <section class="aside-card" aria-label="Hızlı başlıklar">
-            <h2>Hızlı Başlıklar</h2>
-            <button class="query-chip" type="button">Güncel duyurular nelerdir?</button>
-            <button class="query-chip" type="button">Ara sınav programı hakkında bilgi verir misiniz?</button>
-            <button class="query-chip" type="button">Akademik personel hakkında bilgi verir misiniz?</button>
-            <button class="query-chip" type="button">Fakültenin iletişim bilgileri nelerdir?</button>
+          <section class="aside-card highlight-card" aria-labelledby="newsTitle">
+            <div class="card-header">
+              <h2 id="newsTitle">Haberler</h2>
+              <div class="carousel-actions">
+                <button class="icon-button highlight-nav" data-topic="news" data-direction="prev" type="button" aria-label="Önceki haber" title="Önceki haber">‹</button>
+                <button class="icon-button highlight-nav" data-topic="news" data-direction="next" type="button" aria-label="Sonraki haber" title="Sonraki haber">›</button>
+              </div>
+            </div>
+            <div class="highlight-track" id="newsTrack"></div>
           </section>
 
-          <section class="aside-card" aria-label="Hızlı erişim">
-            <h2>Hızlı Erişim</h2>
-            <a class="quick-link" href="https://www.kafkas.edu.tr/skdb" target="_blank" rel="noopener noreferrer">🍽️ Yemekhane Menüsü</a>
-            <a class="quick-link" href="https://www.kafkas.edu.tr/oidb/tr/sayfaYeni6016" target="_blank" rel="noopener noreferrer">📅 Akademik Takvim</a>
-            <a class="quick-link" href="https://obsyeni.kafkas.edu.tr" target="_blank" rel="noopener noreferrer">✅ OBS</a>
-            <a class="quick-link" href="https://captive.kafkas.edu.tr:6082/php/uid.php?vsys=1&rule=4&url=https://www.yok.gov.tr" target="_blank" rel="noopener noreferrer">🌐 Okul İnterneti</a>
+          <section class="aside-card highlight-card" aria-labelledby="eventsTitle">
+            <div class="card-header">
+              <h2 id="eventsTitle">Etkinlikler</h2>
+              <div class="carousel-actions">
+                <button class="icon-button highlight-nav" data-topic="events" data-direction="prev" type="button" aria-label="Önceki etkinlik" title="Önceki etkinlik">‹</button>
+                <button class="icon-button highlight-nav" data-topic="events" data-direction="next" type="button" aria-label="Sonraki etkinlik" title="Sonraki etkinlik">›</button>
+              </div>
+            </div>
+            <div class="highlight-track" id="eventsTrack"></div>
           </section>
         </aside>
       </main>
+
+      <footer class="footer">
+        © 2026 Vildan ÇAM. Tüm hakları saklıdır.
+      </footer>
     </div>
 
-    <script defer src="/static/app.js?v=20260425g"></script>
+    <script defer src="/static/app.js?v=20260426a"></script>
   </body>
 </html>

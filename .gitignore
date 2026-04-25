@@ -8,6 +8,7 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 data/*.joblib
+data/*.json
 data/*.jsonl
 logs/*.jsonl
 logs/*.log

@@ -4,6 +4,7 @@ import os
 
 from .config import FALLBACK_RESPONSE, POLITE_LANGUAGE_RESPONSE, Settings
 from .models import SearchResult
+from .query_normalizer import is_coding_query, is_english_query
 
 
 SYSTEM_PROMPT = f"""
@@ -17,10 +18,11 @@ Zorunlu kurallar:
 - Bir liste oluşturuyorsan yalnızca kaynak metinde görülen öğeleri yaz ve listedeki öğe sayısıyla çelişen bir toplam belirtme.
 - Kaynaklarda yalnızca bir bağlantı veya ek dosya duyurusu varsa, bağlantının içeriğini görmüş gibi davranma; sadece duyurunun ne söylediğini belirt.
 - "Kaynak 1'de detaylar vardır" gibi boş ifadeler kullanma; doğrudan kaynak metinde görülen bilgiyi yaz.
+- Kullanıcının kullandığı dilde yanıt ver. Türkçe soruya Türkçe, İngilizce soruya İngilizce yanıt ver.
 - Kullanıcıya "sen" diye hitap etme; kurum adına resmi ve üçüncü tekil/çoğul anlatım kullan.
 - Yetersiz veya güvenilir bilgi yoksa aynen şu metni döndür:
 {FALLBACK_RESPONSE}
-- Yanıt dili Türkçe, akademik, resmi ve okunabilir olmalıdır.
+- Yanıt akademik, resmi ve okunabilir olmalıdır.
 - Gerekli olduğunda yalnızca uygun olan şu emojilerden yararlan: 📌 📢 📅 👤 📞 ✅ ⚠️
 - Markdown kalınlık işaretleri, başlık etiketleri, "Açıklama:", "Detaylar:", "Kaynak:", "description", "metadata", "chunk açıklaması" gibi teknik alanlar yazma.
 - URL veya kaynak listesi üretme; kaynaklar arayüzde ayrıca gösterilecektir.
@@ -31,17 +33,34 @@ Zorunlu kurallar:
 """.strip()
 
 GENERAL_SYSTEM_PROMPT = f"""
-Bu sistem Türkçe konuşan, kurumsal ama samimi bir dijital asistandır.
+Bu sistem Türkçe ve İngilizce konuşabilen, kurumsal ama samimi bir dijital asistandır.
 
 Zorunlu kurallar:
-- Türkçe yanıt ver.
+- Kullanıcının mesaj diline göre Türkçe veya İngilizce yanıt ver.
 - Kullanıcı günlük sohbet etmek isterse kısa, sıcak ve doğal karşılık ver.
 - Kullanıcı matematik, tarih, yazılım veya genel bilgi sorarsa doğru ve anlaşılır biçimde yanıtla.
+- Kullanıcı kod veya yazılım sorusu sorarsa hatayı açıkla, mümkünse düzeltilmiş veya geliştirilmiş kısa bir çözüm öner.
+- Kod örneği gerekiyorsa kısa bir kod bloğu kullanılabilir.
 - Tarih, sayı veya teknik bilgi konusunda emin olunmayan ayrıntıları uydurma; gerekiyorsa belirsizlik açıkça belirtilsin.
-- Gereksiz uzatma yapma; gerektiğinde kısa maddeler kullan.
+- Gereksiz uzatma yapma; 2-5 cümle veya en fazla 4 kısa madde ile yanıt ver.
 - Uygunsuz dil kullanılırsa aynen şu metni döndür:
 {POLITE_LANGUAGE_RESPONSE}
 - Gerekirse uygun emojilerden ölçülü biçimde yararlan.
+- Teknik meta alanlar, markdown başlıkları ve kaynak etiketleri yazma.
+""".strip()
+
+CODING_SYSTEM_PROMPT = f"""
+Bu sistem Türkçe ve İngilizce konuşabilen teknik bir yardımcı asistandır.
+
+Zorunlu kurallar:
+- Kullanıcının mesaj diline göre Türkçe veya İngilizce yanıt ver.
+- Kod, hata ayıklama veya geliştirme sorularında net ve uygulanabilir destek sun.
+- Önce sorunu kısa biçimde açıkla, ardından düzeltilmiş yaklaşımı ver.
+- Gerektiğinde kısa ve çalıştırılabilir bir kod bloğu kullan.
+- Uzun teoriye girme; doğrudan çözüm odaklı ol.
+- Emin olunmayan ayrıntıları uydurma.
+- Uygunsuz dil kullanılırsa aynen şu metni döndür:
+{POLITE_LANGUAGE_RESPONSE}
 - Teknik meta alanlar, markdown başlıkları ve kaynak etiketleri yazma.
 """.strip()
 
@@ -65,13 +84,13 @@ class OpenAIAnswerGenerator:
 
         client = OpenAI(
             api_key=self.settings.openai_api_key,
-            timeout=self.settings.openai_timeout,
+            timeout=min(self.settings.openai_timeout, 10),
         )
         response = client.responses.create(
             model=self.settings.openai_model,
             instructions=SYSTEM_PROMPT,
             input=_build_user_input(query, results),
-            max_output_tokens=self.settings.openai_max_output_tokens,
+            max_output_tokens=min(self.settings.openai_max_output_tokens, 420),
         )
         answer = (response.output_text or "").strip()
         return answer or None
@@ -87,13 +106,13 @@ class OpenAIAnswerGenerator:
 
         client = OpenAI(
             api_key=self.settings.openai_api_key,
-            timeout=min(self.settings.openai_timeout, 8),
+            timeout=min(self.settings.openai_timeout, 6),
         )
         response = client.responses.create(
             model=self.settings.openai_model,
-            instructions=GENERAL_SYSTEM_PROMPT,
+            instructions=_general_prompt_for_query(query),
             input=query,
-            max_output_tokens=self.settings.openai_max_output_tokens,
+            max_output_tokens=min(self.settings.openai_max_output_tokens, 320),
         )
         answer = (response.output_text or "").strip()
         return answer or None
@@ -126,7 +145,7 @@ class OllamaAnswerGenerator:
             options={
                 "temperature": 0,
                 "top_p": 0.2,
-                "num_predict": self.settings.openai_max_output_tokens,
+                "num_predict": min(self.settings.openai_max_output_tokens, 380),
             },
         )
         answer = response.message.content.strip()
@@ -145,13 +164,13 @@ class OllamaAnswerGenerator:
         response = chat(
             model=self.settings.ollama_model,
             messages=[
-                {"role": "system", "content": GENERAL_SYSTEM_PROMPT},
+                {"role": "system", "content": _general_prompt_for_query(query)},
                 {"role": "user", "content": query},
             ],
             options={
-                "temperature": 0.3,
-                "top_p": 0.9,
-                "num_predict": self.settings.openai_max_output_tokens,
+                "temperature": 0.2,
+                "top_p": 0.8,
+                "num_predict": min(self.settings.openai_max_output_tokens, 260),
             },
         )
         answer = response.message.content.strip()
@@ -169,6 +188,14 @@ def _build_user_input(query: str, results: list[SearchResult]) -> str:
         f"{sources}\n\n"
         "Bu kaynaklar yeterli değilse yalnızca zorunlu fallback metnini döndür."
     )
+
+
+def _general_prompt_for_query(query: str) -> str:
+    if is_coding_query(query):
+        return CODING_SYSTEM_PROMPT
+    if is_english_query(query):
+        return GENERAL_SYSTEM_PROMPT + "\n- Keep the tone natural and concise in English."
+    return GENERAL_SYSTEM_PROMPT
 
 
 def _format_source(index: int, result: SearchResult) -> str:

@@ -27,6 +27,9 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "mrb",
         "slm",
         "selm",
+        "hello",
+        "hi",
+        "hey",
     ),
     "iktisadi ve idari bilimler fakültesi": (
         "iibf",
@@ -44,11 +47,23 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "duyurulari",
         "duyurulr",
         "duyurulair",
+        "announcements",
+        "announcement",
     ),
     "duyuru": (
         "duyru",
         "duyruu",
         "duyru",
+    ),
+    "haberler": (
+        "habrler",
+        "habrlar",
+        "news",
+    ),
+    "etkinlikler": (
+        "etknlikler",
+        "etkinlkler",
+        "events",
     ),
     "sınav": (
         "snav",
@@ -56,6 +71,9 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "sınv",
         "sinv",
         "snavv",
+        "exam",
+        "midterm",
+        "final exam",
     ),
     "akademik takvim": (
         "akademk takvim",
@@ -63,6 +81,7 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "akadmk takvim",
         "akademik takvmi",
         "akademik takvimi",
+        "academic calendar",
     ),
     "akademik": (
         "akademk",
@@ -76,12 +95,15 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "iletşim",
         "iltisim",
         "iletism",
+        "contact",
     ),
     "personel": (
         "personl",
         "persnel",
         "prsonel",
         "personle",
+        "staff",
+        "faculty members",
     ),
     "yemek menüsü": (
         "yemek menusu",
@@ -91,6 +113,9 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "yemk menu",
         "yemekhane menusu",
         "yemekhane menu",
+        "cafeteria menu",
+        "food menu",
+        "dining menu",
     ),
     "bölüm": (
         "bolum",
@@ -110,6 +135,7 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
     "takvim": (
         "takvm",
         "takvım",
+        "calendar",
     ),
     "iletişim bilgileri": (
         "iletisim bilgileri",
@@ -126,11 +152,14 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "nslsin",
         "nasılsn",
         "nasilsin",
+        "how are you",
     ),
     "ne haber": (
         "naber",
         "naaber",
         "ne haberler",
+        "whats up",
+        "what s up",
     ),
     "ne yapıyorsun": (
         "napıyorsun",
@@ -146,6 +175,8 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "tesekkurler",
         "tskler",
         "eyw",
+        "thank you",
+        "thanks",
     ),
     "rektör": (
         "rektor",
@@ -155,6 +186,8 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "rektor yardimcilari",
         "rektor yardimcilari kim",
         "rektör yardimcilari",
+        "vice rectors",
+        "vice rector",
     ),
     "senato": (
         "senatp",
@@ -167,9 +200,28 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
     "konum": (
         "konm",
         "lokasyon",
+        "location",
+        "map",
     ),
     "nerede": (
         "nrd",
+        "where",
+    ),
+    "obs": (
+        "student information system",
+    ),
+    "dekan": (
+        "dekn",
+        "dean",
+    ),
+    "bölüm başkanı": (
+        "bolum baskani",
+        "department chair",
+        "head of department",
+    ),
+    "akademik kadro": (
+        "academic staff",
+        "academic roster",
     ),
 }
 
@@ -194,6 +246,26 @@ TOKEN_CORRECTIONS: dict[str, str] = {
     "rektor": "rektör",
     "konum": "konum",
     "nerede": "nerede",
+    "contact": "iletişim",
+    "location": "konum",
+    "where": "nerede",
+    "calendar": "takvim",
+    "announcements": "duyurular",
+    "announcement": "duyuru",
+    "haberler": "haberler",
+    "news": "haberler",
+    "etkinlikler": "etkinlikler",
+    "events": "etkinlikler",
+    "exam": "sınav",
+    "dekan": "dekan",
+    "dean": "dekan",
+    "chair": "bölüm başkanı",
+    "staff": "personel",
+    "ybs": "yönetim bilişim sistemleri",
+    "thanks": "teşekkürler",
+    "hello": "merhaba",
+    "hi": "merhaba",
+    "hey": "merhaba",
 }
 
 GREETING_PATTERNS = {
@@ -203,6 +275,9 @@ GREETING_PATTERNS = {
     "iyi aksamlar",
     "gunaydin",
     "iyi sabahlar",
+    "hello",
+    "hi",
+    "hey",
 }
 
 SMALLTALK_PATTERNS = {
@@ -219,6 +294,11 @@ SMALLTALK_PATTERNS = {
     "nasil gidiyor",
     "iyi aksamlar nasilsin",
     "gunun nasil geciyor",
+    "how are you",
+    "what s up",
+    "whats up",
+    "thank you",
+    "thanks",
 }
 
 ACTIONABLE_KEYWORDS = {
@@ -245,6 +325,98 @@ ACTIONABLE_KEYWORDS = {
     "dekanliklar",
     "konum",
     "nerede",
+    "contact",
+    "location",
+    "where",
+    "announcements",
+    "haberler",
+    "etkinlikler",
+    "dekan",
+    "ybs",
+    "exam",
+    "staff",
+    "calendar",
+}
+
+ENGLISH_HINT_WORDS = {
+    "about",
+    "academic",
+    "announcement",
+    "announcements",
+    "dean",
+    "bug",
+    "calendar",
+    "department",
+    "departments",
+    "events",
+    "code",
+    "contact",
+    "debug",
+    "error",
+    "exam",
+    "fix",
+    "hello",
+    "help",
+    "hey",
+    "history",
+    "how",
+    "improve",
+    "location",
+    "menu",
+    "please",
+    "python",
+    "react",
+    "staff",
+    "news",
+    "thanks",
+    "what",
+    "where",
+    "who",
+    "why",
+}
+
+TURKISH_HINT_WORDS = {
+    "akademik",
+    "duyuru",
+    "duyurular",
+    "iletisim",
+    "kim",
+    "menu",
+    "merhaba",
+    "nasilsin",
+    "nedir",
+    "nerede",
+    "nasil",
+    "personel",
+    "sinav",
+    "takvim",
+    "tesekkurler",
+    "yemek",
+}
+
+CODING_KEYWORDS = {
+    "api",
+    "bug",
+    "code",
+    "coding",
+    "css",
+    "debug",
+    "error",
+    "exception",
+    "fastapi",
+    "fix",
+    "flask",
+    "function",
+    "html",
+    "javascript",
+    "js",
+    "json",
+    "kod",
+    "python",
+    "react",
+    "sql",
+    "stack trace",
+    "typescript",
 }
 
 
@@ -309,6 +481,32 @@ def is_smalltalk_query(text: str) -> bool:
     if not normalized:
         return False
     return any(pattern in normalized for pattern in SMALLTALK_PATTERNS)
+
+
+def is_english_query(text: str) -> bool:
+    normalized = normalize_for_matching(text)
+    if not normalized:
+        return False
+
+    tokens = normalized.split()
+    english_hits = sum(1 for token in tokens if token in ENGLISH_HINT_WORDS)
+    turkish_hits = sum(1 for token in tokens if token in TURKISH_HINT_WORDS)
+    has_turkish_chars = any(char in text for char in "çğıöşüÇĞİÖŞÜ")
+
+    if has_turkish_chars and english_hits == 0:
+        return False
+    if english_hits >= 1 and turkish_hits == 0:
+        return True
+    if english_hits >= 2:
+        return True
+    return False
+
+
+def is_coding_query(text: str) -> bool:
+    normalized = normalize_for_matching(text)
+    if not normalized:
+        return False
+    return any(keyword in normalized for keyword in CODING_KEYWORDS)
 
 
 def _correct_token(token: str) -> str:

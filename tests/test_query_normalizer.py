@@ -2,7 +2,13 @@ from __future__ import annotations
 
 import unittest
 
-from kau_can_bot.query_normalizer import is_greeting_query, looks_actionable, normalize_query
+from kau_can_bot.query_normalizer import (
+    is_coding_query,
+    is_english_query,
+    is_greeting_query,
+    looks_actionable,
+    normalize_query,
+)
 
 
 class QueryNormalizerTests(unittest.TestCase):
@@ -21,6 +27,7 @@ class QueryNormalizerTests(unittest.TestCase):
             "sinav": "sınav",
             "sınv": "sınav",
             "akademk takvim": "akademik takvim",
+            "ybs": "yönetim bilişim sistemleri",
         }
 
         for raw, expected in samples.items():
@@ -29,11 +36,17 @@ class QueryNormalizerTests(unittest.TestCase):
 
     def test_greeting_query_is_detected(self) -> None:
         self.assertTrue(is_greeting_query("mrbb"))
+        self.assertTrue(is_greeting_query("hello"))
         self.assertFalse(is_greeting_query("duyrular"))
 
     def test_actionable_topic_is_preserved(self) -> None:
         self.assertTrue(looks_actionable("duyrular"))
         self.assertTrue(looks_actionable("iibf iletişim"))
+
+    def test_english_and_coding_queries_are_detected(self) -> None:
+        self.assertTrue(is_english_query("iibf contact"))
+        self.assertTrue(is_coding_query("fix this python error"))
+        self.assertFalse(is_english_query("python nedir"))
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@ from .answer import WebsiteGroundedAssistant
 from .branding import prepare_branding_assets
 from .config import INDEX_PATH, ROOT_DIR, Settings
 from .learning import learning_summary, log_feedback
+from .official_data import ensure_faculty_content, get_official_snapshot
 
 
 api = FastAPI(title="KAÜ CAN Chat Bot", version="0.1.0")
@@ -52,6 +53,22 @@ class FeedbackRequest(BaseModel):
     interaction_id: str
     rating: str
     comment: str = ""
+
+
+class HighlightItem(BaseModel):
+    title: str
+    url: str
+    image_url: str = ""
+    date: str = ""
+    summary: str = ""
+    category: str = ""
+
+
+class HighlightsResponse(BaseModel):
+    announcements: list[HighlightItem] = Field(default_factory=list)
+    news: list[HighlightItem] = Field(default_factory=list)
+    events: list[HighlightItem] = Field(default_factory=list)
+    updated_at: str = ""
 
 
 @api.get("/", include_in_schema=False)
@@ -121,6 +138,22 @@ def feedback(request: FeedbackRequest) -> Dict[str, object]:
     return {"ok": True}
 
 
+@api.get("/highlights", response_model=HighlightsResponse)
+def highlights() -> HighlightsResponse:
+    try:
+        snapshot = ensure_faculty_content(get_official_snapshot())
+    except Exception:
+        snapshot = {"faculty_content": {}, "updated_at": ""}
+
+    faculty_content = snapshot.get("faculty_content", {})
+    return HighlightsResponse(
+        announcements=_serialize_highlights(faculty_content.get("announcements", [])),
+        news=_serialize_highlights(faculty_content.get("news", [])),
+        events=_serialize_highlights(faculty_content.get("events", [])),
+        updated_at=str(snapshot.get("updated_at", "")),
+    )
+
+
 def _ollama_status(settings: Settings) -> Dict[str, bool]:
     if settings.llm_provider != "ollama":
         return {"running": False, "model_available": False}
@@ -145,3 +178,18 @@ def _ollama_status(settings: Settings) -> Dict[str, bool]:
         "running": True,
         "model_available": expected in model_names or expected_latest in model_names,
     }
+
+
+def _serialize_highlights(items: list[dict]) -> list[HighlightItem]:
+    return [
+        HighlightItem(
+            title=str(item.get("title", "")),
+            url=str(item.get("url", "")),
+            image_url=str(item.get("image_url", "")),
+            date=str(item.get("date", "")),
+            summary=str(item.get("summary", "")),
+            category=str(item.get("type", "")),
+        )
+        for item in items
+        if item.get("title") and item.get("url")
+    ]

@@ -37,6 +37,81 @@ class AnswerBehaviorTests(unittest.TestCase):
     def setUp(self) -> None:
         self.settings = Settings(llm_provider="local", use_openai=False, top_k=3)
 
+    def build_official_snapshot(self) -> dict:
+        return {
+            "faculty_dean": {
+                "name": "Prof. Dr. Deniz ÖZYAKIŞIR",
+                "designation": "İktisadi ve İdari Bilimler Fakültesi Dekanı",
+                "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651",
+                "detail_url": "https://unis.kafkas.edu.tr/akademisyen/denizozyakisir",
+            },
+            "faculty_personnel": [
+                {
+                    "name": "GÖKHAN KERSE",
+                    "academic_title": "Doçent",
+                    "roles": ["BÖLÜM BAŞKANI"],
+                    "department": "Yönetim Bilişim Sistemleri",
+                },
+                {
+                    "name": "MUHAMMED AKİF YENİKAYA",
+                    "academic_title": "Doktor Öğretim Üyesi",
+                    "roles": ["BÖLÜM BAŞKAN YARDIMCISI"],
+                    "department": "Yönetim Bilişim Sistemleri",
+                },
+                {
+                    "name": "SEYHAN ÖZTÜRK",
+                    "academic_title": "Profesör",
+                    "roles": ["BÖLÜM BAŞKANI"],
+                    "department": "İşletme",
+                },
+            ],
+            "department_order": ["ybs", "isletme"],
+            "departments": {
+                "ybs": {
+                    "key": "ybs",
+                    "name_tr": "Yönetim Bilişim Sistemleri",
+                    "name_en": "Management Information Systems",
+                    "root_url": "https://www.kafkas.edu.tr/iibfybs",
+                    "important_links": {
+                        "academic_staff": "https://www.kafkas.edu.tr/iibfybs/tr/akademikpersonel",
+                        "announcements": "https://www.kafkas.edu.tr/iibfybs/tr/tumduyurular2",
+                        "news": "https://www.kafkas.edu.tr/iibfybs/tr/tumHaberler",
+                        "events": "https://www.kafkas.edu.tr/iibfybs/tr/tumEtkinlikler2",
+                    },
+                    "overview": "Yönetim Bilişim Sistemleri bölüm sayfasında akademik kadro, duyurular, haberler, etkinlikler bağlantıları yer almaktadır.",
+                    "personnel": [
+                        {
+                            "name": "GÖKHAN KERSE",
+                            "academic_title": "Doçent",
+                            "roles": ["BÖLÜM BAŞKANI"],
+                            "department": "Yönetim Bilişim Sistemleri",
+                        },
+                        {
+                            "name": "MUHAMMED AKİF YENİKAYA",
+                            "academic_title": "Doktor Öğretim Üyesi",
+                            "roles": ["BÖLÜM BAŞKAN YARDIMCISI"],
+                            "department": "Yönetim Bilişim Sistemleri",
+                        },
+                    ],
+                    "announcements": [],
+                    "news": [],
+                    "events": [],
+                },
+            },
+            "faculty_content": {
+                "announcements": [
+                    {
+                        "title": "Ara Sınav Duyurusu",
+                        "date": "22 Nisan 2026",
+                        "summary": "Vize mazeret sınavları ilan edilmiştir.",
+                        "url": "https://www.kafkas.edu.tr/iibf/tr/duyuru2/ara-sinav",
+                    }
+                ],
+                "news": [],
+                "events": [],
+            },
+        }
+
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
     def test_greeting_short_circuits_search(self, _log_query, _log_interaction) -> None:
@@ -87,6 +162,10 @@ class AnswerBehaviorTests(unittest.TestCase):
         self.assertEqual(obs_response.status, "direct_link")
         self.assertEqual(obs_response.sources[0].chunk.url, "https://obsyeni.kafkas.edu.tr")
 
+        english_contact = assistant.answer_with_context("iibf contact")
+        self.assertEqual(english_contact.status, "direct_link")
+        self.assertIn("contact", english_contact.answer.lower())
+
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
     def test_smalltalk_is_supported(self, _log_query, _log_interaction) -> None:
@@ -129,6 +208,65 @@ class AnswerBehaviorTests(unittest.TestCase):
         self.assertEqual(response.status, "general")
         self.assertIn("= 4", response.answer)
 
+    @patch("kau_can_bot.answer.ensure_faculty_content", side_effect=lambda snapshot, *_: snapshot)
+    @patch("kau_can_bot.answer.get_official_snapshot")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_dean_queries_use_official_sources(
+        self,
+        _log_query,
+        _log_interaction,
+        mock_snapshot,
+        _ensure_faculty_content,
+    ) -> None:
+        mock_snapshot.return_value = self.build_official_snapshot()
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("İİBF dekanı kim?")
+
+        self.assertEqual(response.status, "official")
+        self.assertIn("Deniz ÖZYAKIŞIR", response.answer)
+        self.assertTrue(any("sayfaYeni651" in source.chunk.url for source in response.sources))
+
+    @patch("kau_can_bot.answer.ensure_department_content", side_effect=lambda snapshot, *_: snapshot)
+    @patch("kau_can_bot.answer.get_official_snapshot")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_department_staff_queries_use_official_snapshot(
+        self,
+        _log_query,
+        _log_interaction,
+        mock_snapshot,
+        _ensure_department_content,
+    ) -> None:
+        mock_snapshot.return_value = self.build_official_snapshot()
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("YBS akademik kadro")
+
+        self.assertEqual(response.status, "official")
+        self.assertIn("Yönetim Bilişim Sistemleri", response.answer)
+        self.assertTrue(any("iibfybs/tr/akademikpersonel" in source.chunk.url for source in response.sources))
+
+    @patch("kau_can_bot.answer.ensure_faculty_content", side_effect=lambda snapshot, *_: snapshot)
+    @patch("kau_can_bot.answer.get_official_snapshot")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_english_dean_query_returns_english_answer(
+        self,
+        _log_query,
+        _log_interaction,
+        mock_snapshot,
+        _ensure_faculty_content,
+    ) -> None:
+        mock_snapshot.return_value = self.build_official_snapshot()
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("Who is the dean of FEAS?")
+
+        self.assertEqual(response.status, "official")
+        self.assertIn("According to the official senate page", response.answer)
+
     @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Python, genel amaçlı bir programlama dilidir.")
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
@@ -139,6 +277,18 @@ class AnswerBehaviorTests(unittest.TestCase):
 
         self.assertEqual(response.status, "general")
         self.assertIn("programlama dilidir", response.answer)
+        self.assertTrue(response.sources)
+
+    @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Use a loop and validate null values before returning the response.")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_coding_answers_expose_reference_sources(self, _log_query, _log_interaction, _general_answer) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("fix this python error")
+
+        self.assertEqual(response.status, "general")
+        self.assertTrue(any("docs.python.org" in source.chunk.url for source in response.sources))
 
     def test_generated_answer_is_sanitized(self) -> None:
         raw = (
