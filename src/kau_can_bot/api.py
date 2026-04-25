@@ -51,7 +51,10 @@ def home() -> FileResponse:
     index_path = Path(STATIC_DIR / "index.html")
     if not index_path.exists():
         raise HTTPException(status_code=404, detail="Arayüz dosyası bulunamadı.")
-    return FileResponse(index_path)
+    return FileResponse(
+        index_path,
+        headers={"Cache-Control": "no-store, no-cache, must-revalidate"},
+    )
 
 
 @api.get("/health")

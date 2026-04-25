@@ -34,6 +34,44 @@ NOISE_PATTERNS = (
     r"Duyuruyu Paylaş:?",
     r"DEVAMINI OKU",
 )
+DIRECT_SERVICE_LINKS = (
+    {
+        "key": "yemek-menusu",
+        "title": "Yemekhane Menüsü",
+        "url": "https://www.kafkas.edu.tr/skdb",
+        "message": "🍽️ Yemekhane menüsüne SKDB sayfası üzerinden erişilebilir.",
+        "terms": ("yemek", "yemekhane", "menü", "menu", "yemek menusu"),
+    },
+    {
+        "key": "akademik-takvim",
+        "title": "Akademik Takvim",
+        "url": "https://www.kafkas.edu.tr/oidb/tr/sayfaYeni6016",
+        "message": "📅 Akademik takvime Öğrenci İşleri sayfası üzerinden erişilebilir.",
+        "terms": ("akademik takvim", "egitim takvimi", "öğretim takvimi", "ders takvimi"),
+    },
+    {
+        "key": "obs",
+        "title": "OBS",
+        "url": "https://obsyeni.kafkas.edu.tr",
+        "message": "✅ OBS sistemine aşağıdaki bağlantı üzerinden erişilebilir.",
+        "terms": ("obs", "ogrenci bilgi sistemi", "öğrenci bilgi sistemi"),
+    },
+    {
+        "key": "wifi",
+        "title": "Okul İnternet Erişimi",
+        "url": "https://captive.kafkas.edu.tr:6082/php/uid.php?vsys=1&rule=4&url=https://www.yok.gov.tr",
+        "message": "🌐 Kampüs internet erişimi için aşağıdaki bağlantı kullanılabilir.",
+        "terms": (
+            "wifi",
+            "wi fi",
+            "kablosuz",
+            "okul interneti",
+            "kampus interneti",
+            "internete baglan",
+            "internet baglantisi",
+        ),
+    },
+)
 
 
 @dataclass(frozen=True)
@@ -74,6 +112,21 @@ class WebsiteGroundedAssistant:
                 answer=answer,
                 interaction_id=interaction.id,
                 status="greeting",
+            )
+
+        direct_link_response = _match_direct_service_link(normalized_query)
+        if direct_link_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                direct_link_response.text,
+                direct_link_response.sources,
+                "direct_link",
+            )
+            return AssistantResponse(
+                answer=direct_link_response.text,
+                sources=direct_link_response.sources,
+                interaction_id=interaction.id,
+                status="direct_link",
             )
 
         if is_ambiguous(normalized_query) and not looks_actionable(normalized_query):
@@ -410,6 +463,17 @@ def _build_link_sources(entries: list[tuple[str, str]]) -> list[SearchResult]:
             )
         )
     return sources
+
+
+def _match_direct_service_link(query: str) -> ComposedAnswer | None:
+    normalized = _query_key(query)
+    for item in DIRECT_SERVICE_LINKS:
+        if any(normalize_for_matching(term) in normalized for term in item["terms"]):
+            return ComposedAnswer(
+                text=item["message"],
+                sources=_build_link_sources([(item["title"], item["url"])]),
+            )
+    return None
 
 
 def _extract_link_pairs(text: str) -> list[tuple[str, str]]:

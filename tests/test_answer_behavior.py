@@ -74,6 +74,19 @@ class AnswerBehaviorTests(unittest.TestCase):
             ],
         )
 
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_direct_service_links_are_returned(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        menu_response = assistant.answer_with_context("yemekhane menüsü")
+        self.assertEqual(menu_response.status, "direct_link")
+        self.assertEqual(menu_response.sources[0].chunk.url, "https://www.kafkas.edu.tr/skdb")
+
+        obs_response = assistant.answer_with_context("OBS")
+        self.assertEqual(obs_response.status, "direct_link")
+        self.assertEqual(obs_response.sources[0].chunk.url, "https://obsyeni.kafkas.edu.tr")
+
     def test_generated_answer_is_sanitized(self) -> None:
         raw = (
             "📖 Açıklama: Fakülte duyuruları günceldir.\n\n"

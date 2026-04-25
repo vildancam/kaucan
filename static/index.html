@@ -4,43 +4,49 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KAÜCAN | Kafkas Üniversitesi Dijital Asistanı</title>
-    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/styles.css?v=20260425c" />
   </head>
   <body>
-    <div class="app-shell" id="appShell">
+    <div class="app-shell">
       <header class="topbar">
         <div class="brand-lockup">
           <div class="logo-frame">
-            <img id="brandLogo" class="brand-logo" alt="Kafkas Üniversitesi logosu" hidden />
-            <div class="brand-fallback" id="brandFallback">KAÜCAN</div>
+            <img
+              id="brandLogo"
+              class="brand-logo"
+              src="/static/assets/kau_logo.png?v=20260425c"
+              alt="Kafkas Üniversitesi logosu"
+              onerror="this.hidden=true;document.getElementById('brandFallback').hidden=false;"
+            />
+            <div class="brand-fallback" id="brandFallback" hidden>KAÜCAN</div>
           </div>
           <div class="brand-copy">
-            <p class="eyebrow">Kafkas Üniversitesi Dijital Asistanı</p>
+            <p class="eyebrow">Kafkas Üniversitesi</p>
             <h1>KAÜCAN</h1>
-            <p class="subhead">İİBF için kurumsal, kaynak odaklı ve Türkçe danışma ekranı</p>
           </div>
         </div>
 
-        <div class="status-card">
-          <div class="status" id="statusBadge" aria-live="polite">
-            <span class="status-dot"></span>
-            Kontrol ediliyor
-          </div>
-          <p class="status-note">Yanıtlar yalnızca indekslenmiş fakülte içeriklerinden üretilir.</p>
+        <div class="status" id="statusBadge" aria-live="polite">
+          <span class="status-dot"></span>
+          Hazırlanıyor
         </div>
       </header>
 
       <main class="workspace">
         <section class="chat-panel" aria-label="Sohbet alanı">
           <div class="panel-header">
-            <div>
-              <p class="panel-eyebrow">Sohbet</p>
-              <h2>KAÜCAN ile danışma</h2>
-            </div>
-            <p class="panel-meta">Duyuru, iletişim, personel, sınav ve akademik başlıklarda yardımcı olur.</p>
+            <p class="panel-eyebrow">Sohbet</p>
+            <h2>KAÜCAN</h2>
           </div>
 
-          <div class="messages" id="messages" aria-live="polite"></div>
+          <div class="messages" id="messages" aria-live="polite">
+            <article class="message assistant">
+              <div class="avatar">KAÜ</div>
+              <div class="bubble">
+                <p>👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve diğer konularda yardımcı olabilirim.</p>
+              </div>
+            </article>
+          </div>
 
           <div class="typing-row" id="typingRow" hidden>
             <div class="typing-avatar">KAÜ</div>
@@ -63,36 +69,38 @@
               required
             ></textarea>
 
-            <div class="composer-footer">
-              <p class="composer-hint">Enter gönderir, Shift + Enter yeni satır açar.</p>
-              <div class="composer-actions">
-                <button type="button" class="secondary-button" id="clearButton">Temizle</button>
-                <button type="submit" class="primary-button" id="submitButton">Gönder</button>
-              </div>
+            <div class="composer-actions">
+              <button type="button" class="secondary-button" id="clearButton">Temizle</button>
+              <button type="submit" class="primary-button" id="submitButton">Gönder</button>
             </div>
           </form>
         </section>
 
         <aside class="query-panel" aria-label="Yan panel">
           <section class="aside-card" aria-label="Durum">
-            <p class="panel-eyebrow">Durum</p>
-            <h2>Yanıt motoru</h2>
-            <div class="provider-box" id="providerBox">Yanıt motoru kontrol ediliyor.</div>
+            <h2>Yanıt Motoru</h2>
+            <div class="provider-box" id="providerBox">Kontrol ediliyor.</div>
           </section>
 
           <section class="aside-card" aria-label="Hızlı başlıklar">
-            <p class="panel-eyebrow">Hızlı Başlıklar</p>
+            <h2>Hızlı Başlıklar</h2>
             <button class="query-chip" type="button">Güncel duyurular nelerdir?</button>
             <button class="query-chip" type="button">Ara sınav programı hakkında bilgi verir misiniz?</button>
-            <button class="query-chip" type="button">Akademik takvim hakkında bilgi verir misiniz?</button>
-            <button class="query-chip" type="button">Fakültenin iletişim bilgileri nelerdir?</button>
             <button class="query-chip" type="button">Akademik personel hakkında bilgi verir misiniz?</button>
-            <button class="query-chip" type="button">Yemek menüsü hakkında bilgi verir misiniz?</button>
+            <button class="query-chip" type="button">Fakültenin iletişim bilgileri nelerdir?</button>
+          </section>
+
+          <section class="aside-card" aria-label="Hızlı erişim">
+            <h2>Hızlı Erişim</h2>
+            <a class="quick-link" href="https://www.kafkas.edu.tr/skdb" target="_blank" rel="noopener noreferrer">🍽️ Yemekhane Menüsü</a>
+            <a class="quick-link" href="https://www.kafkas.edu.tr/oidb/tr/sayfaYeni6016" target="_blank" rel="noopener noreferrer">📅 Akademik Takvim</a>
+            <a class="quick-link" href="https://obsyeni.kafkas.edu.tr" target="_blank" rel="noopener noreferrer">✅ OBS</a>
+            <a class="quick-link" href="https://captive.kafkas.edu.tr:6082/php/uid.php?vsys=1&rule=4&url=https://www.yok.gov.tr" target="_blank" rel="noopener noreferrer">🌐 Okul İnterneti</a>
           </section>
         </aside>
       </main>
     </div>
 
-    <script src="/static/app.js"></script>
+    <script defer src="/static/app.js?v=20260425c"></script>
   </body>
 </html>

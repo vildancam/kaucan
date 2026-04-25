@@ -1,437 +1,488 @@
-const form = document.querySelector("#askForm");
-const input = document.querySelector("#questionInput");
-const messages = document.querySelector("#messages");
-const submitButton = document.querySelector("#submitButton");
-const clearButton = document.querySelector("#clearButton");
-const statusBadge = document.querySelector("#statusBadge");
-const providerBox = document.querySelector("#providerBox");
-const chips = document.querySelectorAll(".query-chip");
-const typingRow = document.querySelector("#typingRow");
-const brandLogo = document.querySelector("#brandLogo");
-const brandFallback = document.querySelector("#brandFallback");
+(function () {
+  var form = document.getElementById("askForm");
+  var input = document.getElementById("questionInput");
+  var messages = document.getElementById("messages");
+  var submitButton = document.getElementById("submitButton");
+  var clearButton = document.getElementById("clearButton");
+  var statusBadge = document.getElementById("statusBadge");
+  var providerBox = document.getElementById("providerBox");
+  var typingRow = document.getElementById("typingRow");
+  var chips = document.querySelectorAll(".query-chip");
+  var brandLogo = document.getElementById("brandLogo");
+  var brandFallback = document.getElementById("brandFallback");
 
-const WELCOME_MESSAGE =
-  "👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve diğer konularda yardımcı olabilirim.";
-const FALLBACK_MESSAGE =
-  "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm.";
+  var FALLBACK_MESSAGE =
+    "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm.";
 
-const audioState = {
-  context: null,
-};
+  var audioState = {
+    context: null,
+  };
 
-const setStatus = (text, state = "ready") => {
-  statusBadge.textContent = "";
-  const dot = document.createElement("span");
-  dot.className = "status-dot";
-  statusBadge.append(dot, document.createTextNode(text));
-  statusBadge.className = `status ${state === "ready" ? "" : state}`.trim();
-};
+  function setStatus(text, state) {
+    state = state || "ready";
+    statusBadge.innerHTML = "";
 
-const escapeHtml = (value) =>
-  value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-
-const linkify = (value) =>
-  value.replace(
-    /(https?:\/\/[^\s<]+)/g,
-    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
-  );
-
-const dedupeSources = (sources = []) => {
-  const unique = [];
-  const seen = new Set();
-  for (const source of sources) {
-    if (!source?.url || seen.has(source.url)) {
-      continue;
-    }
-    unique.push(source);
-    seen.add(source.url);
-  }
-  return unique;
-};
-
-const normalizeAssistantLine = (line) => {
-  let cleaned = line.replace(/\*\*/g, "").replace(/__/g, "").trim();
-  if (!cleaned) {
-    return "";
+    var dot = document.createElement("span");
+    dot.className = "status-dot";
+    statusBadge.appendChild(dot);
+    statusBadge.appendChild(document.createTextNode(text));
+    statusBadge.className = state === "ready" ? "status" : "status " + state;
   }
 
-  const labelPatterns = [
-    /^(?:📖|📎)?\s*(açıklama|description|detaylar?)\s*:\s*/i,
-    /^(?:✅)?\s*(sonuç|sonuc)\s*:\s*/i,
-  ];
-
-  labelPatterns.forEach((pattern) => {
-    cleaned = cleaned.replace(pattern, "");
-  });
-
-  if (/^(?:🔗)?\s*(kaynak|source|sources)\s*:?.*$/i.test(cleaned)) {
-    return "";
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
-  if (/^(metadata|chunk açıklaması|chunk aciklamasi)\s*:?.*$/i.test(cleaned)) {
-    return "";
+  function linkify(value) {
+    return String(value || "").replace(
+      /(https?:\/\/[^\s<]+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
   }
 
-  cleaned = cleaned.replace(/https?:\/\/[^\s]+/g, "").trim();
-  return cleaned;
-};
+  function dedupeSources(sources) {
+    var unique = [];
+    var seen = {};
+    var index;
 
-const sanitizeAssistantText = (text) => {
-  const lines = (text || "")
-    .split("\n")
-    .map(normalizeAssistantLine)
-    .filter((line, index, array) => line || array[index - 1]);
-
-  return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
-};
-
-const renderBlock = (block) => {
-  const lines = block
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-  if (!lines.length) {
-    return "";
-  }
-
-  const bulletLines = lines.filter((line) => /^[•-]\s+/.test(line));
-  if (bulletLines.length === lines.length) {
-    const items = bulletLines
-      .map((line) => `<li>${linkify(escapeHtml(line.replace(/^[•-]\s+/, "")))}</li>`)
-      .join("");
-    return `<ul>${items}</ul>`;
-  }
-
-  if (
-    lines.length > 1 &&
-    !/^[•-]\s+/.test(lines[0]) &&
-    lines.slice(1).every((line) => /^[•-]\s+/.test(line))
-  ) {
-    const intro = `<p>${linkify(escapeHtml(lines[0]))}</p>`;
-    const items = lines
-      .slice(1)
-      .map((line) => `<li>${linkify(escapeHtml(line.replace(/^[•-]\s+/, "")))}</li>`)
-      .join("");
-    return `${intro}<ul>${items}</ul>`;
-  }
-
-  return `<p>${linkify(escapeHtml(lines.join("\n"))).replace(/\n/g, "<br />")}</p>`;
-};
-
-const renderAssistantText = (text) => {
-  const sanitized = sanitizeAssistantText(text);
-  if (!sanitized) {
-    return `<p>${escapeHtml(FALLBACK_MESSAGE)}</p>`;
-  }
-
-  return sanitized
-    .split(/\n{2,}/)
-    .map((block) => renderBlock(block))
-    .join("");
-};
-
-const renderUserText = (text) => `<p>${escapeHtml(text)}</p>`;
-
-const renderSources = (sources = []) => {
-  const uniqueSources = dedupeSources(sources);
-  if (!uniqueSources.length) {
-    return null;
-  }
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "source-links";
-
-  uniqueSources.forEach((source, index) => {
-    const link = document.createElement("a");
-    link.className = "source-link";
-    link.href = source.url;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.textContent = uniqueSources.length === 1 ? "🔗 Kaynağı Aç" : `🔗 Kaynağı Aç ${index + 1}`;
-    wrapper.append(link);
-  });
-
-  return wrapper;
-};
-
-const sendFeedback = async (interactionId, rating, buttons) => {
-  buttons.forEach((button) => {
-    button.disabled = true;
-  });
-
-  try {
-    await fetch("/feedback", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ interaction_id: interactionId, rating }),
-    });
-
-    buttons.forEach((button) => {
-      button.classList.toggle("selected", button.dataset.rating === rating);
-    });
-  } catch (error) {
-    buttons.forEach((button) => {
-      button.disabled = false;
-    });
-  }
-};
-
-const addMessage = (role, text, meta = {}) => {
-  const article = document.createElement("article");
-  article.className = `message ${role}`;
-
-  const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = role === "user" ? "SİZ" : "KAÜ";
-
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  bubble.innerHTML = role === "assistant" ? renderAssistantText(text) : renderUserText(text);
-
-  if (role === "assistant") {
-    const sourceLinks = renderSources(meta.sources);
-    if (sourceLinks) {
-      bubble.append(sourceLinks);
+    sources = sources || [];
+    for (index = 0; index < sources.length; index += 1) {
+      if (!sources[index] || !sources[index].url || seen[sources[index].url]) {
+        continue;
+      }
+      seen[sources[index].url] = true;
+      unique.push(sources[index]);
     }
 
-    if (meta.interactionId) {
-      const feedback = document.createElement("div");
-      feedback.className = "feedback-actions";
-      feedback.setAttribute("aria-label", "Yanıt geri bildirimi");
+    return unique;
+  }
 
-      const positive = document.createElement("button");
-      positive.type = "button";
-      positive.textContent = "Yararlı";
-      positive.dataset.rating = "up";
+  function normalizeAssistantLine(line) {
+    var cleaned = String(line || "").replace(/\*\*/g, "").replace(/__/g, "").trim();
+    if (!cleaned) {
+      return "";
+    }
 
-      const negative = document.createElement("button");
-      negative.type = "button";
-      negative.textContent = "Geliştirilmeli";
-      negative.dataset.rating = "down";
+    cleaned = cleaned.replace(/^(?:📖|📎)?\s*(açıklama|description|detaylar?)\s*:\s*/i, "");
+    cleaned = cleaned.replace(/^(?:✅)?\s*(sonuç|sonuc)\s*:\s*/i, "");
 
-      const buttons = [positive, negative];
-      buttons.forEach((button) => {
-        button.addEventListener("click", () => {
-          sendFeedback(meta.interactionId, button.dataset.rating, buttons);
-        });
+    if (/^(?:🔗)?\s*(kaynak|source|sources)\s*:?.*$/i.test(cleaned)) {
+      return "";
+    }
+
+    if (/^(metadata|chunk açıklaması|chunk aciklamasi)\s*:?.*$/i.test(cleaned)) {
+      return "";
+    }
+
+    cleaned = cleaned.replace(/https?:\/\/[^\s]+/g, "").trim();
+    if (/^\d+[.)]?$/.test(cleaned)) {
+      return "";
+    }
+    return cleaned;
+  }
+
+  function sanitizeAssistantText(text) {
+    var lines = String(text || "").split("\n");
+    var cleaned = [];
+    var index;
+
+    for (index = 0; index < lines.length; index += 1) {
+      var normalized = normalizeAssistantLine(lines[index]);
+      if (!normalized && (!cleaned.length || cleaned[cleaned.length - 1] === "")) {
+        continue;
+      }
+      cleaned.push(normalized);
+    }
+
+    return cleaned.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  }
+
+  function renderBlock(block) {
+    var lines = String(block || "")
+      .split("\n")
+      .map(function (line) {
+        return line.trim();
+      })
+      .filter(function (line) {
+        return !!line;
       });
 
-      feedback.append(positive, negative);
-      bubble.append(feedback);
-    }
-  }
-
-  article.append(avatar, bubble);
-  messages.append(article);
-
-  requestAnimationFrame(() => {
-    article.classList.add("is-visible");
-  });
-
-  scrollMessages();
-};
-
-const scrollMessages = () => {
-  messages.scrollTop = messages.scrollHeight;
-};
-
-const showTyping = () => {
-  typingRow.hidden = false;
-  scrollMessages();
-};
-
-const hideTyping = () => {
-  typingRow.hidden = true;
-};
-
-const autoResize = () => {
-  input.style.height = "auto";
-  input.style.height = `${Math.min(input.scrollHeight, 220)}px`;
-};
-
-const playTone = async (kind) => {
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextClass) {
-    return;
-  }
-
-  try {
-    if (!audioState.context) {
-      audioState.context = new AudioContextClass();
+    if (!lines.length) {
+      return "";
     }
 
-    if (audioState.context.state === "suspended") {
-      await audioState.context.resume();
+    var allBullets = lines.every(function (line) {
+      return /^[•-]\s+/.test(line);
+    });
+
+    if (allBullets) {
+      return (
+        "<ul>" +
+        lines
+          .map(function (line) {
+            return "<li>" + linkify(escapeHtml(line.replace(/^[•-]\s+/, ""))) + "</li>";
+          })
+          .join("") +
+        "</ul>"
+      );
     }
 
-    const oscillator = audioState.context.createOscillator();
-    const gain = audioState.context.createGain();
-    const now = audioState.context.currentTime;
+    if (
+      lines.length > 1 &&
+      !/^[•-]\s+/.test(lines[0]) &&
+      lines.slice(1).every(function (line) {
+        return /^[•-]\s+/.test(line);
+      })
+    ) {
+      return (
+        "<p>" +
+        linkify(escapeHtml(lines[0])) +
+        "</p><ul>" +
+        lines
+          .slice(1)
+          .map(function (line) {
+            return "<li>" + linkify(escapeHtml(line.replace(/^[•-]\s+/, ""))) + "</li>";
+          })
+          .join("") +
+        "</ul>"
+      );
+    }
 
-    oscillator.type = kind === "receive" ? "sine" : "triangle";
-    oscillator.frequency.setValueAtTime(kind === "receive" ? 540 : 660, now);
-    oscillator.frequency.exponentialRampToValueAtTime(
-      kind === "receive" ? 760 : 880,
-      now + 0.12
-    );
-
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.025, now + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
-
-    oscillator.connect(gain);
-    gain.connect(audioState.context.destination);
-    oscillator.start(now);
-    oscillator.stop(now + 0.18);
-  } catch (error) {
-    // Tarayıcı sesi engellerse akış sessizce devam etsin.
+    return "<p>" + linkify(escapeHtml(lines.join("\n"))).replace(/\n/g, "<br />") + "</p>";
   }
-};
 
-const askQuestion = async (question) => {
-  setStatus("Yanıt hazırlanıyor", "busy");
-  submitButton.disabled = true;
-  showTyping();
+  function renderAssistantText(text) {
+    var sanitized = sanitizeAssistantText(text);
+    if (!sanitized) {
+      return "<p>" + escapeHtml(FALLBACK_MESSAGE) + "</p>";
+    }
 
-  try {
-    const response = await fetch("/ask", {
+    return sanitized
+      .split(/\n{2,}/)
+      .map(function (block) {
+        return renderBlock(block);
+      })
+      .join("");
+  }
+
+  function renderUserText(text) {
+    return "<p>" + escapeHtml(text) + "</p>";
+  }
+
+  function renderSources(sources) {
+    var uniqueSources = dedupeSources(sources);
+    var wrapper;
+    var index;
+
+    if (!uniqueSources.length) {
+      return null;
+    }
+
+    wrapper = document.createElement("div");
+    wrapper.className = "source-links";
+
+    for (index = 0; index < uniqueSources.length; index += 1) {
+      var link = document.createElement("a");
+      link.className = "source-link";
+      link.href = uniqueSources[index].url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = uniqueSources.length === 1 ? "🔗 Kaynağı Aç" : "🔗 Kaynağı Aç " + (index + 1);
+      wrapper.appendChild(link);
+    }
+
+    return wrapper;
+  }
+
+  function sendFeedback(interactionId, rating, buttons) {
+    buttons.forEach(function (button) {
+      button.disabled = true;
+    });
+
+    fetch("/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
-    });
+      body: JSON.stringify({ interaction_id: interactionId, rating: rating }),
+    })
+      .then(function () {
+        buttons.forEach(function (button) {
+          button.classList.toggle("selected", button.dataset.rating === rating);
+        });
+      })
+      .catch(function () {
+        buttons.forEach(function (button) {
+          button.disabled = false;
+        });
+      });
+  }
 
-    if (!response.ok) {
-      throw new Error("İstek başarısız oldu.");
+  function addMessage(role, text, meta) {
+    meta = meta || {};
+
+    var article = document.createElement("article");
+    article.className = "message " + role + " message-enter";
+
+    var avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = role === "user" ? "SİZ" : "KAÜ";
+
+    var bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerHTML = role === "assistant" ? renderAssistantText(text) : renderUserText(text);
+
+    if (role === "assistant") {
+      var sourceLinks = renderSources(meta.sources || []);
+      if (sourceLinks) {
+        bubble.appendChild(sourceLinks);
+      }
+
+      if (meta.interactionId) {
+        var feedback = document.createElement("div");
+        var positive = document.createElement("button");
+        var negative = document.createElement("button");
+        var buttons;
+
+        feedback.className = "feedback-actions";
+        positive.type = "button";
+        negative.type = "button";
+        positive.textContent = "Yararlı";
+        negative.textContent = "Geliştirilmeli";
+        positive.dataset.rating = "up";
+        negative.dataset.rating = "down";
+        buttons = [positive, negative];
+
+        buttons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            sendFeedback(meta.interactionId, button.dataset.rating, buttons);
+          });
+          feedback.appendChild(button);
+        });
+
+        bubble.appendChild(feedback);
+      }
     }
 
-    const data = await response.json();
-    hideTyping();
-    addMessage("assistant", data.answer || FALLBACK_MESSAGE, {
-      interactionId: data.interaction_id,
-      sources: data.sources || [],
-    });
-    setStatus("Hazır");
-    void playTone("receive");
-  } catch (error) {
-    hideTyping();
-    addMessage("assistant", FALLBACK_MESSAGE);
-    setStatus("Hata", "error");
-  } finally {
-    submitButton.disabled = false;
-    input.focus();
-  }
-};
+    article.appendChild(avatar);
+    article.appendChild(bubble);
+    messages.appendChild(article);
+    scrollMessages();
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const question = input.value.trim();
-  if (!question) {
-    return;
+    window.setTimeout(function () {
+      article.classList.remove("message-enter");
+    }, 500);
   }
 
-  addMessage("user", question);
-  input.value = "";
-  autoResize();
-  void playTone("send");
-  await askQuestion(question);
-});
-
-clearButton.addEventListener("click", () => {
-  input.value = "";
-  autoResize();
-  input.focus();
-});
-
-chips.forEach((chip) => {
-  chip.addEventListener("click", () => {
-    input.value = chip.textContent.trim();
-    autoResize();
-    input.focus();
-  });
-});
-
-input.addEventListener("input", autoResize);
-
-input.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault();
-    if (input.value.trim()) {
-      form.requestSubmit();
-    }
-  }
-});
-
-const applyLogo = (logoUrl) => {
-  if (!logoUrl) {
-    brandLogo.hidden = true;
-    brandFallback.hidden = false;
-    return;
+  function scrollMessages() {
+    messages.scrollTop = messages.scrollHeight;
   }
 
-  brandLogo.src = logoUrl;
-  brandLogo.hidden = false;
-  brandFallback.hidden = true;
+  function showTyping() {
+    typingRow.hidden = false;
+    scrollMessages();
+  }
 
-  brandLogo.addEventListener(
-    "error",
-    () => {
-      brandLogo.hidden = true;
-      brandFallback.hidden = false;
-    },
-    { once: true }
-  );
-};
+  function hideTyping() {
+    typingRow.hidden = true;
+  }
 
-const loadHealth = async () => {
-  try {
-    const response = await fetch("/health");
-    const health = await response.json();
+  function autoResize() {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 200) + "px";
+  }
 
-    applyLogo(health.logo_url);
-
-    if (!health.index_ready) {
-      setStatus("İndeks Bekleniyor", "busy");
-      providerBox.textContent = "Arama indeksi henüz hazır değil.";
+  function playTone(kind) {
+    var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) {
       return;
     }
 
-    if (health.llm_provider === "ollama") {
-      if (health.ollama_running && health.ollama_model_available) {
-        setStatus("Ollama Aktif");
-        providerBox.textContent = `Yerel model aktif: ${health.ollama_model}`;
-      } else {
-        setStatus("Ollama Bekliyor", "busy");
-        providerBox.textContent = `Ollama ayarlı, model bekleniyor: ${health.ollama_model}`;
+    try {
+      if (!audioState.context) {
+        audioState.context = new AudioContextClass();
+      }
+
+      if (audioState.context.state === "suspended") {
+        audioState.context.resume();
+      }
+
+      var oscillator = audioState.context.createOscillator();
+      var gain = audioState.context.createGain();
+      var now = audioState.context.currentTime;
+
+      oscillator.type = kind === "receive" ? "sine" : "triangle";
+      oscillator.frequency.setValueAtTime(kind === "receive" ? 540 : 660, now);
+      oscillator.frequency.exponentialRampToValueAtTime(kind === "receive" ? 760 : 880, now + 0.12);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.025, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+
+      oscillator.connect(gain);
+      gain.connect(audioState.context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.18);
+    } catch (error) {
+      return;
+    }
+  }
+
+  function askQuestion(question) {
+    setStatus("Yanıt hazırlanıyor", "busy");
+    submitButton.disabled = true;
+    showTyping();
+
+    function finishRequest() {
+      submitButton.disabled = false;
+      input.focus();
+    }
+
+    fetch("/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: question }),
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("request-failed");
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        hideTyping();
+        addMessage("assistant", data.answer || FALLBACK_MESSAGE, {
+          interactionId: data.interaction_id,
+          sources: data.sources || [],
+        });
+        setStatus("Hazır");
+        playTone("receive");
+        finishRequest();
+      })
+      .catch(function () {
+        hideTyping();
+        addMessage("assistant", FALLBACK_MESSAGE, {});
+        setStatus("Hata", "error");
+        finishRequest();
+      });
+  }
+
+  function submitCurrentQuestion() {
+    var question = input.value.replace(/^\s+|\s+$/g, "");
+    if (!question) {
+      return;
+    }
+
+    addMessage("user", question, {});
+    input.value = "";
+    autoResize();
+    playTone("send");
+    askQuestion(question);
+  }
+
+  function applyLogo(url) {
+    if (!brandLogo) {
+      return;
+    }
+
+    if (!url) {
+      brandLogo.hidden = true;
+      if (brandFallback) {
+        brandFallback.hidden = false;
       }
       return;
     }
 
-    if (health.llm_provider === "openai" && health.openai_configured) {
-      setStatus("OpenAI Aktif");
-      providerBox.textContent = `OpenAI yapılandırıldı: ${health.openai_model}`;
-      return;
+    brandLogo.src = url;
+    brandLogo.hidden = false;
+    if (brandFallback) {
+      brandFallback.hidden = true;
     }
-
-    setStatus("Yerel RAG");
-    providerBox.textContent = "OpenAI veya Ollama etkin değil; yerel RAG yanıtı kullanılacak.";
-  } catch (error) {
-    setStatus("Kontrol Hatası", "error");
-    providerBox.textContent = "Servis durumu okunamadı.";
-    applyLogo(null);
   }
-};
 
-const bootstrapConversation = () => {
-  addMessage("assistant", WELCOME_MESSAGE);
-  autoResize();
-  document.body.classList.add("is-ready");
-  loadHealth();
-};
+  function loadHealth() {
+    fetch("/health")
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (health) {
+        applyLogo(health.logo_url);
 
-bootstrapConversation();
+        if (!health.index_ready) {
+          setStatus("İndeks Bekleniyor", "busy");
+          providerBox.textContent = "Arama indeksi henüz hazır değil.";
+          return;
+        }
+
+        if (health.llm_provider === "ollama") {
+          if (health.ollama_running && health.ollama_model_available) {
+            setStatus("Ollama Aktif");
+            providerBox.textContent = "Yerel model aktif: " + health.ollama_model;
+          } else {
+            setStatus("Ollama Bekliyor", "busy");
+            providerBox.textContent = "Ollama ayarlı, model bekleniyor: " + health.ollama_model;
+          }
+          return;
+        }
+
+        if (health.llm_provider === "openai" && health.openai_configured) {
+          setStatus("OpenAI Aktif");
+          providerBox.textContent = "OpenAI yapılandırıldı: " + health.openai_model;
+          return;
+        }
+
+        setStatus("Yerel RAG");
+        providerBox.textContent = "Yerel RAG yanıtı kullanılıyor.";
+      })
+      .catch(function () {
+        setStatus("Kontrol Hatası", "error");
+        providerBox.textContent = "Servis durumu okunamadı.";
+      });
+  }
+
+  function bindEvents() {
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      submitCurrentQuestion();
+    });
+
+    clearButton.addEventListener("click", function () {
+      input.value = "";
+      autoResize();
+      input.focus();
+    });
+
+    Array.prototype.forEach.call(chips, function (chip) {
+      chip.addEventListener("click", function () {
+        input.value = chip.textContent.replace(/^\s+|\s+$/g, "");
+        autoResize();
+        input.focus();
+      });
+    });
+
+    input.addEventListener("input", autoResize);
+
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        submitCurrentQuestion();
+      }
+    });
+  }
+
+  function init() {
+    document.body.classList.add("js-ready");
+    bindEvents();
+    autoResize();
+    loadHealth();
+    scrollMessages();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
