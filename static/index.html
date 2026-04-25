@@ -3,32 +3,52 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KAÜ CAN Chat Bot</title>
+    <title>KAÜCAN | Kafkas Üniversitesi Dijital Asistanı</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <div class="app-shell" id="appShell">
       <header class="topbar">
-        <div>
-          <p class="eyebrow">Kafkas Üniversitesi</p>
-          <h1>KAÜ CAN</h1>
+        <div class="brand-lockup">
+          <div class="logo-frame">
+            <img id="brandLogo" class="brand-logo" alt="Kafkas Üniversitesi logosu" hidden />
+            <div class="brand-fallback" id="brandFallback">KAÜCAN</div>
+          </div>
+          <div class="brand-copy">
+            <p class="eyebrow">Kafkas Üniversitesi Dijital Asistanı</p>
+            <h1>KAÜCAN</h1>
+            <p class="subhead">İİBF için kurumsal, kaynak odaklı ve Türkçe danışma ekranı</p>
+          </div>
         </div>
-        <div class="status" id="statusBadge" aria-live="polite">
-          <span class="status-dot"></span>
-          Kontrol ediliyor
+
+        <div class="status-card">
+          <div class="status" id="statusBadge" aria-live="polite">
+            <span class="status-dot"></span>
+            Kontrol ediliyor
+          </div>
+          <p class="status-note">Yanıtlar yalnızca indekslenmiş fakülte içeriklerinden üretilir.</p>
         </div>
       </header>
 
       <main class="workspace">
-        <section class="chat-panel" aria-label="Sohbet">
-          <div class="messages" id="messages">
-            <article class="message assistant">
-              <div class="avatar">KAÜ</div>
-              <div class="bubble">
-                <p class="message-title">📌 **KAÜ CAN**</p>
-                <p>📖 Açıklama:<br />Kafkas Üniversitesi İktisadi ve İdari Bilimler Fakültesi danışma ekranı hazırdır.</p>
-              </div>
-            </article>
+        <section class="chat-panel" aria-label="Sohbet alanı">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Sohbet</p>
+              <h2>KAÜCAN ile danışma</h2>
+            </div>
+            <p class="panel-meta">Duyuru, iletişim, personel, sınav ve akademik başlıklarda yardımcı olur.</p>
+          </div>
+
+          <div class="messages" id="messages" aria-live="polite"></div>
+
+          <div class="typing-row" id="typingRow" hidden>
+            <div class="typing-avatar">KAÜ</div>
+            <div class="typing-bubble" aria-label="KAÜCAN yazıyor">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
           </div>
 
           <form class="composer" id="askForm">
@@ -36,26 +56,39 @@
             <textarea
               id="questionInput"
               name="question"
-              rows="3"
+              rows="1"
               maxlength="700"
               placeholder="Sorunuzu yazınız..."
               autocomplete="off"
               required
             ></textarea>
-            <div class="composer-actions">
-              <button type="button" class="secondary-button" id="clearButton">Temizle</button>
-              <button type="submit" class="primary-button" id="submitButton">Gönder</button>
+
+            <div class="composer-footer">
+              <p class="composer-hint">Enter gönderir, Shift + Enter yeni satır açar.</p>
+              <div class="composer-actions">
+                <button type="button" class="secondary-button" id="clearButton">Temizle</button>
+                <button type="submit" class="primary-button" id="submitButton">Gönder</button>
+              </div>
             </div>
           </form>
         </section>
 
-        <aside class="query-panel" aria-label="Hızlı sorgular">
-          <h2>Başlıklar</h2>
-          <div class="provider-box" id="providerBox">Yanıt motoru kontrol ediliyor.</div>
-          <button class="query-chip" type="button">Güncel duyurular nelerdir?</button>
-          <button class="query-chip" type="button">Ara sınav programı hakkında bilgi verir misiniz?</button>
-          <button class="query-chip" type="button">Fakültenin bölümleri nelerdir?</button>
-          <button class="query-chip" type="button">Akademik personel hakkında bilgi verir misiniz?</button>
+        <aside class="query-panel" aria-label="Yan panel">
+          <section class="aside-card" aria-label="Durum">
+            <p class="panel-eyebrow">Durum</p>
+            <h2>Yanıt motoru</h2>
+            <div class="provider-box" id="providerBox">Yanıt motoru kontrol ediliyor.</div>
+          </section>
+
+          <section class="aside-card" aria-label="Hızlı başlıklar">
+            <p class="panel-eyebrow">Hızlı Başlıklar</p>
+            <button class="query-chip" type="button">Güncel duyurular nelerdir?</button>
+            <button class="query-chip" type="button">Ara sınav programı hakkında bilgi verir misiniz?</button>
+            <button class="query-chip" type="button">Akademik takvim hakkında bilgi verir misiniz?</button>
+            <button class="query-chip" type="button">Fakültenin iletişim bilgileri nelerdir?</button>
+            <button class="query-chip" type="button">Akademik personel hakkında bilgi verir misiniz?</button>
+            <button class="query-chip" type="button">Yemek menüsü hakkında bilgi verir misiniz?</button>
+          </section>
         </aside>
       </main>
     </div>

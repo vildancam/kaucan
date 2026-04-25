@@ -20,8 +20,19 @@ INTERACTION_LOG_PATH = LOG_DIR / "interactions.jsonl"
 FEEDBACK_LOG_PATH = LOG_DIR / "feedback.jsonl"
 
 FALLBACK_RESPONSE = (
-    "Bu konuda kesin bir bilgiye ulaşılamadı. Detaylı bilgi için ilgili fakülte "
-    "ile iletişime geçmeniz önerilir."
+    "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte "
+    "ile iletişime geçmenizi öneririm."
+)
+
+POLITE_LANGUAGE_RESPONSE = (
+    "⚠️ Lütfen akademik ve uygun bir dil kullanınız. Size yardımcı olmaktan "
+    "memnuniyet duyarım."
+)
+
+WELCOME_MESSAGE = (
+    "👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında "
+    "duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve "
+    "diğer konularda yardımcı olabilirim."
 )
 
 

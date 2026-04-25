@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 
-from .config import FALLBACK_RESPONSE, Settings
+from .config import FALLBACK_RESPONSE, POLITE_LANGUAGE_RESPONSE, Settings
 from .models import SearchResult
 
 
@@ -21,22 +21,13 @@ Zorunlu kurallar:
 - Yetersiz veya güvenilir bilgi yoksa aynen şu metni döndür:
 {FALLBACK_RESPONSE}
 - Yanıt dili Türkçe, akademik, resmi ve okunabilir olmalıdır.
-- Hafif emoji kullan; abartılı kullanım yapma.
-- Her kaynak bağlantısını sadece verilen URL listesinden seç.
-- Kullanıcı uygunsuz dil kullandıysa yalnızca "Lütfen daha uygun bir dil kullanınız." döndür.
-
-Yanıt formatı:
-
-📌 **[Başlık]**
-
-📖 Açıklama:
-...
-
-📎 Detaylar:
-...
-
-🔗 Kaynak:
-1. 🔗 Kaynağı Aç: [URL]
+- Gerekli olduğunda yalnızca uygun olan şu emojilerden yararlan: 📌 📢 📅 👤 📞 ✅ ⚠️
+- Markdown kalınlık işaretleri, başlık etiketleri, "Açıklama:", "Detaylar:", "Kaynak:", "description", "metadata", "chunk açıklaması" gibi teknik alanlar yazma.
+- URL veya kaynak listesi üretme; kaynaklar arayüzde ayrıca gösterilecektir.
+- Gereksiz uzunluk, argo veya dağınık cümle kullanma.
+- Gerekirse en fazla 3 kısa madde kullan.
+- Kullanıcı uygunsuz dil kullandıysa aynen şu metni döndür:
+{POLITE_LANGUAGE_RESPONSE}
 """.strip()
 
 

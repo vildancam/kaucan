@@ -7,15 +7,17 @@ import requests
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .answer import WebsiteGroundedAssistant
+from .branding import prepare_branding_assets
 from .config import INDEX_PATH, ROOT_DIR, Settings
 from .learning import learning_summary, log_feedback
 
 
 api = FastAPI(title="KAÜ CAN Chat Bot", version="0.1.0")
 STATIC_DIR = ROOT_DIR / "static"
+BRANDING = prepare_branding_assets(ROOT_DIR)
 
 if STATIC_DIR.exists():
     api.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -33,7 +35,7 @@ class SourceItem(BaseModel):
 
 class AskResponse(BaseModel):
     answer: str
-    sources: list[SourceItem] = []
+    sources: list[SourceItem] = Field(default_factory=list)
     interaction_id: Optional[str] = None
     status: str = "ok"
 
@@ -69,6 +71,7 @@ def health() -> Dict[str, object]:
         "ollama_host": settings.ollama_host,
         "ollama_running": ollama_status["running"],
         "ollama_model_available": ollama_status["model_available"],
+        "logo_url": BRANDING.logo_url,
     }
 
 
