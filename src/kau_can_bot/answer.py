@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+import ast
+import operator
 import re
 from dataclasses import dataclass
+from functools import lru_cache
+from html import unescape
+
+import requests
 
 from .config import (
     FALLBACK_RESPONSE,
@@ -77,11 +83,23 @@ FACULTY_CONTACT_LINKS = (
     ("Dekana Sor", "https://kafkas.edu.tr/iibf/tr/sayfaYeni18817"),
     ("Telefon Rehberi", "https://kafkas.edu.tr/kau/rehber2"),
 )
+MAPS_LINK = ("Maps'te Aç", "https://maps.app.goo.gl/HMYYaxbZBcZVisbN7")
+RECTOR_PAGE = ("Rektör", "https://www.kafkas.edu.tr/rektorluk/tr/sayfaYeni655")
+RECTOR_ASSISTANTS_PAGE = ("Rektör Yardımcıları", "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni652")
+SENATE_PAGE = ("Senato ve Dekanlıklar", "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651")
 SMALLTALK_RESPONSES = {
     "naber": "😊 İyiyim, teşekkür ederim. Akademik ya da genel bir konuda yardımcı olmam istenirse memnuniyetle destek sunabilirim.",
     "ne haber": "😊 Her şey yolunda görünüyor. İİBF, genel bilgi ya da günlük bir konuda yardımcı olabilirim.",
     "nasilsin": "😊 Teşekkür ederim, gayet iyiyim. İstenirse sohbet edebilir ya da herhangi bir konuda bilgi paylaşabilirim.",
     "iyi misin": "😊 Teşekkür ederim, iyiyim. İstenirse hemen bir soruya geçilebilir.",
+    "ne yapiyorsun": "😊 Sorulara yanıt vermek ve birlikte çözüm üretmek için hazır durumdayım. İstenirse kampüs, dersler ya da genel bilgi konularında devam edilebilir.",
+    "tesekkurler": "😊 Rica ederim. Yeni bir soru olduğunda yardımcı olmaktan memnuniyet duyarım.",
+}
+MATH_BINARY_OPERATORS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
 }
 
 
@@ -106,6 +124,7 @@ class WebsiteGroundedAssistant:
     def answer_with_context(self, query: str) -> AssistantResponse:
         original_query = clean_text(query)
         normalized_query = normalize_query(original_query) or original_query
+        general_query = original_query or normalized_query
 
         if has_inappropriate_language(normalized_query):
             return AssistantResponse(
@@ -125,6 +144,21 @@ class WebsiteGroundedAssistant:
                 status="greeting",
             )
 
+        management_response = _management_shortcut(normalized_query)
+        if management_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                management_response.text,
+                management_response.sources,
+                "direct_link",
+            )
+            return AssistantResponse(
+                answer=management_response.text,
+                sources=management_response.sources,
+                interaction_id=interaction.id,
+                status="direct_link",
+            )
+
         faculty_contact_response = _faculty_contact_shortcut(normalized_query)
         if faculty_contact_response is not None:
             interaction = log_interaction(
@@ -136,6 +170,21 @@ class WebsiteGroundedAssistant:
             return AssistantResponse(
                 answer=faculty_contact_response.text,
                 sources=faculty_contact_response.sources,
+                interaction_id=interaction.id,
+                status="direct_link",
+            )
+
+        location_response = _location_shortcut(normalized_query)
+        if location_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                location_response.text,
+                location_response.sources,
+                "direct_link",
+            )
+            return AssistantResponse(
+                answer=location_response.text,
+                sources=location_response.sources,
                 interaction_id=interaction.id,
                 status="direct_link",
             )
@@ -164,7 +213,7 @@ class WebsiteGroundedAssistant:
                 status="smalltalk",
             )
 
-        math_answer = _solve_basic_math(original_query or normalized_query)
+        math_answer = _solve_basic_math(general_query)
         if math_answer:
             interaction = log_interaction(original_query or normalized_query, math_answer, [], "general")
             return AssistantResponse(
@@ -173,8 +222,8 @@ class WebsiteGroundedAssistant:
                 status="general",
             )
 
-        if _should_answer_with_general_knowledge(normalized_query):
-            general_answer = self._generate_general_with_llm(normalized_query)
+        if _should_answer_with_general_knowledge(general_query):
+            general_answer = self._generate_general_with_llm(general_query)
             if general_answer:
                 answer = _sanitize_answer_text(general_answer)
                 if answer:
@@ -545,6 +594,45 @@ def _match_direct_service_link(query: str) -> ComposedAnswer | None:
     return None
 
 
+def _management_shortcut(query: str) -> ComposedAnswer | None:
+    normalized = _query_key(query)
+    if not normalized:
+        return None
+
+    if "rektor yardimci" in normalized or (
+        "rektor" in normalized and any(term in normalized for term in ("yardimci", "yardimcilari"))
+    ):
+        names = _fetch_rector_assistant_names()
+        if names:
+            joined_names = ", ".join(names[:3])
+            text = f"👤 Güncel rektör yardımcıları resmi sayfada {joined_names} olarak yayımlanmaktadır."
+        else:
+            text = "👤 Güncel rektör yardımcıları bilgisi resmi sayfada yayımlanmaktadır."
+        return ComposedAnswer(
+            text=text,
+            sources=_build_link_sources([RECTOR_ASSISTANTS_PAGE]),
+        )
+
+    if any(term in normalized for term in ("senato", "dekanlik", "dekanliklar", "dekanlar")):
+        return ComposedAnswer(
+            text="👤 Üniversite senatosu ve dekanlık bilgileri resmi yönetim sayfasında yayımlanmaktadır.",
+            sources=_build_link_sources([SENATE_PAGE]),
+        )
+
+    if "rektor" in normalized:
+        rector_name = _fetch_rector_name()
+        if rector_name:
+            text = f"👤 Kafkas Üniversitesi Rektörü resmi sayfada {rector_name} olarak yayımlanmaktadır."
+        else:
+            text = "👤 Güncel rektör bilgisi resmi rektörlük sayfasında yayımlanmaktadır."
+        return ComposedAnswer(
+            text=text,
+            sources=_build_link_sources([RECTOR_PAGE]),
+        )
+
+    return None
+
+
 def _faculty_contact_shortcut(query: str) -> ComposedAnswer | None:
     if not (_is_contact_query(query) and _is_faculty_query(query)):
         return None
@@ -552,6 +640,26 @@ def _faculty_contact_shortcut(query: str) -> ComposedAnswer | None:
     return ComposedAnswer(
         text="📞 İİBF iletişim bağlantıları aşağıda sunulmuştur.",
         sources=_build_link_sources(list(FACULTY_CONTACT_LINKS)),
+    )
+
+
+def _location_shortcut(query: str) -> ComposedAnswer | None:
+    normalized = _query_key(query)
+    if not normalized:
+        return None
+    if not _is_location_query(query):
+        return None
+    if not (
+        _is_faculty_query(query)
+        or "kafkas universitesi" in normalized
+        or "kau" in normalized
+        or "universite" in normalized
+    ):
+        return None
+
+    return ComposedAnswer(
+        text="📌 Konum bilgisi için aşağıdaki harita bağlantısı kullanılabilir. Bağlantı Maps uygulamasında açılabilir.",
+        sources=_build_link_sources([MAPS_LINK]),
     )
 
 
@@ -580,6 +688,8 @@ def _should_answer_with_general_knowledge(query: str) -> bool:
             _is_exam_query,
             _is_academic_calendar_query,
             _is_menu_query,
+            _is_location_query,
+            _is_management_query,
         )
     ):
         return False
@@ -601,27 +711,146 @@ def _should_answer_with_general_knowledge(query: str) -> bool:
         )
     )
     has_math_signal = any(char in query for char in "+-*/=")
-    return len(tokens) >= 2 or has_general_signal or has_math_signal
+    return bool(tokens) and (len(tokens) >= 2 or has_general_signal or has_math_signal or len(tokens[0]) >= 3)
 
 
 def _solve_basic_math(query: str) -> str | None:
-    expression = re.sub(r"[^0-9+\-*/(). ]", " ", query.lower())
-    expression = re.sub(r"\s+", "", expression)
+    expression = _math_expression_from_query(query)
     if not expression:
         return None
-    if not re.fullmatch(r"[0-9+\-*/().]+", expression):
-        return None
-    if not any(operator in expression for operator in "+-*/"):
-        return None
-
     try:
-        result = eval(expression, {"__builtins__": {}}, {})
+        result = _evaluate_math_expression(expression)
     except Exception:
         return None
 
     if isinstance(result, float) and result.is_integer():
         result = int(result)
+    if isinstance(result, float):
+        result = round(result, 4)
     return f"✅ Sonuç: {expression} = {result}"
+
+
+def _math_expression_from_query(query: str) -> str:
+    raw_expression = re.sub(r"[^0-9+\-*/(). ]", " ", query)
+    raw_expression = re.sub(r"\s+", "", raw_expression)
+    if raw_expression and any(symbol in raw_expression for symbol in "+-*/"):
+        if re.fullmatch(r"[0-9+\-*/().]+", raw_expression):
+            return raw_expression
+
+    normalized = _query_key(query)
+    if not normalized:
+        return ""
+
+    working = f" {normalized} "
+    replacements = (
+        ("kac eder", " "),
+        ("kac yapar", " "),
+        ("sonuc", " "),
+        ("nedir", " "),
+        ("hesapla", " "),
+        ("toplam", " + "),
+        ("arti", " + "),
+        ("topla", " + "),
+        ("eksi", " - "),
+        ("cikar", " - "),
+        ("farki", " - "),
+        ("carpi", " * "),
+        ("carp", " * "),
+        ("bolu", " / "),
+        ("bol", " / "),
+    )
+    for old, new in replacements:
+        working = working.replace(old, new)
+
+    working = re.sub(r"(\d+)\s+ile\s+(\d+)\s+\+", r"\1 + \2", working)
+    working = re.sub(r"(\d+)\s+ve\s+(\d+)\s+\+", r"\1 + \2", working)
+    working = re.sub(r"(\d+)\s+ile\s+(\d+)\s+\-", r"\1 - \2", working)
+    working = re.sub(r"(\d+)\s+ve\s+(\d+)\s+\-", r"\1 - \2", working)
+    working = re.sub(r"(\d+)\s+ile\s+(\d+)\s+\*", r"\1 * \2", working)
+    working = re.sub(r"(\d+)\s+ve\s+(\d+)\s+\*", r"\1 * \2", working)
+    working = re.sub(r"(\d+)\s+ile\s+(\d+)\s+/", r"\1 / \2", working)
+    working = re.sub(r"(\d+)\s+ve\s+(\d+)\s+/", r"\1 / \2", working)
+
+    expression = re.sub(r"[^0-9+\-*/(). ]", " ", working)
+    expression = re.sub(r"\s+", "", expression)
+    if not expression or not any(symbol in expression for symbol in "+-*/"):
+        return ""
+    if not re.fullmatch(r"[0-9+\-*/().]+", expression):
+        return ""
+    return expression
+
+
+def _evaluate_math_expression(expression: str) -> int | float:
+    tree = ast.parse(expression, mode="eval")
+    return _evaluate_math_node(tree.body)
+
+
+def _evaluate_math_node(node: ast.AST) -> int | float:
+    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+        return node.value
+    if isinstance(node, ast.Num):
+        return node.n
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
+        return -_evaluate_math_node(node.operand)
+    if isinstance(node, ast.BinOp) and type(node.op) in MATH_BINARY_OPERATORS:
+        left = _evaluate_math_node(node.left)
+        right = _evaluate_math_node(node.right)
+        return MATH_BINARY_OPERATORS[type(node.op)](left, right)
+    raise ValueError("Unsupported expression")
+
+
+@lru_cache(maxsize=6)
+def _fetch_remote_page(url: str) -> str:
+    response = requests.get(
+        url,
+        timeout=6,
+        headers={
+            "User-Agent": "KAUCAN/1.0 (+https://www.kafkas.edu.tr)",
+        },
+    )
+    response.raise_for_status()
+    return response.text
+
+
+def _fetch_rector_name() -> str:
+    try:
+        html = _fetch_remote_page(RECTOR_PAGE[1])
+    except requests.RequestException:
+        return ""
+
+    match = re.search(
+        r"<strong>\s*(Prof\.?\s*Dr\.?\s*[^<]+?)\s*</strong>",
+        html,
+        flags=re.IGNORECASE,
+    )
+    if not match:
+        return ""
+    return _normalize_person_name(match.group(1))
+
+
+def _fetch_rector_assistant_names() -> list[str]:
+    try:
+        html = _fetch_remote_page(RECTOR_ASSISTANTS_PAGE[1])
+    except requests.RequestException:
+        return []
+
+    names = re.findall(
+        r"/rektorluk/tr/sayfaYeni\d+'>\s*(Prof\.?\s*Dr\.?\s*[^<]+?)\s*</a>",
+        html,
+        flags=re.IGNORECASE,
+    )
+    normalized_names: list[str] = []
+    for name in names:
+        cleaned = _normalize_person_name(name)
+        if cleaned and cleaned not in normalized_names:
+            normalized_names.append(cleaned)
+    return normalized_names[:5]
+
+
+def _normalize_person_name(value: str) -> str:
+    cleaned = unescape(clean_text(value))
+    cleaned = re.sub(r"\s+", " ", cleaned).strip(" -")
+    return cleaned
 
 
 def _extract_link_pairs(text: str) -> list[tuple[str, str]]:
@@ -891,7 +1120,14 @@ def _is_faculty_query(query: str) -> bool:
     normalized = _query_key(query)
     return any(
         term in normalized
-        for term in ("iibf", "iktisadi ve idari bilimler", "fakulte")
+        for term in (
+            "iibf",
+            "iktisadi ve idari bilimler",
+            "iktisadi",
+            "idari bilimler",
+            "bilimler fakultesi",
+            "fakulte",
+        )
     )
 
 
@@ -899,7 +1135,7 @@ def _is_contact_query(query: str) -> bool:
     normalized = _query_key(query)
     return any(
         term in normalized
-        for term in ("adres", "e posta", "email", "iletisim", "mail", "telefon", "rehber")
+        for term in ("adres", "e posta", "email", "iletisim", "mail", "telefon", "rehber", "numara")
     )
 
 
@@ -941,6 +1177,16 @@ def _is_academic_calendar_query(query: str) -> bool:
 def _is_menu_query(query: str) -> bool:
     normalized = _query_key(query)
     return any(term in normalized for term in ("yemek", "menu", "menusu", "yemekhane"))
+
+
+def _is_location_query(query: str) -> bool:
+    normalized = _query_key(query)
+    return any(term in normalized for term in ("nerede", "konum", "adres", "harita", "maps"))
+
+
+def _is_management_query(query: str) -> bool:
+    normalized = _query_key(query)
+    return any(term in normalized for term in ("rektor", "senato", "dekanlik", "dekanliklar", "rektor yardimci"))
 
 
 def _is_faculty_related(result: SearchResult) -> bool:

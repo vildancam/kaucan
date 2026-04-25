@@ -92,10 +92,42 @@ class AnswerBehaviorTests(unittest.TestCase):
     def test_smalltalk_is_supported(self, _log_query, _log_interaction) -> None:
         assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
 
-        response = assistant.answer_with_context("naber")
+        response = assistant.answer_with_context("merhaba nasılsın")
 
         self.assertEqual(response.status, "smalltalk")
         self.assertTrue("yardımcı" in response.answer or "iyiyim" in response.answer.lower())
+
+    @patch("kau_can_bot.answer._fetch_rector_name", return_value="Prof. Dr. Hüsnü KAPU")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_management_shortcuts_are_returned(self, _log_query, _log_interaction, _fetch_rector_name) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("rektör kim")
+
+        self.assertEqual(response.status, "direct_link")
+        self.assertIn("Hüsnü KAPU", response.answer)
+        self.assertEqual(response.sources[0].chunk.url, "https://www.kafkas.edu.tr/rektorluk/tr/sayfaYeni655")
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_location_shortcut_is_returned(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("iibf nerede")
+
+        self.assertEqual(response.status, "direct_link")
+        self.assertEqual(response.sources[0].chunk.url, "https://maps.app.goo.gl/HMYYaxbZBcZVisbN7")
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_basic_math_is_solved(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("2 artı 2 kaç eder")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("= 4", response.answer)
 
     @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Python, genel amaçlı bir programlama dilidir.")
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))

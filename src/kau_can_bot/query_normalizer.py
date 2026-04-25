@@ -125,11 +125,51 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "nasilsin",
         "nslsin",
         "nasılsn",
+        "nasilsin",
     ),
     "ne haber": (
         "naber",
         "naaber",
         "ne haberler",
+    ),
+    "ne yapıyorsun": (
+        "napıyorsun",
+        "napiyorsun",
+        "ne yapiyorsun",
+        "napion",
+    ),
+    "iyi misin": (
+        "iyimisn",
+        "iyi misn",
+    ),
+    "teşekkürler": (
+        "tesekkurler",
+        "tskler",
+        "eyw",
+    ),
+    "rektör": (
+        "rektor",
+        "rktor",
+    ),
+    "rektör yardımcıları": (
+        "rektor yardimcilari",
+        "rektor yardimcilari kim",
+        "rektör yardimcilari",
+    ),
+    "senato": (
+        "senatp",
+    ),
+    "dekanlıklar": (
+        "dekanliklar",
+        "dekanlklar",
+        "dekanlar",
+    ),
+    "konum": (
+        "konm",
+        "lokasyon",
+    ),
+    "nerede": (
+        "nrd",
     ),
 }
 
@@ -151,6 +191,9 @@ TOKEN_CORRECTIONS: dict[str, str] = {
     "bolumler": "bölümler",
     "menu": "menü",
     "yemekhane": "yemekhane",
+    "rektor": "rektör",
+    "konum": "konum",
+    "nerede": "nerede",
 }
 
 GREETING_PATTERNS = {
@@ -171,6 +214,11 @@ SMALLTALK_PATTERNS = {
     "ne yapiyorsun",
     "tesekkurler",
     "tesekkur ederim",
+    "selam nasilsin",
+    "merhaba nasilsin",
+    "nasil gidiyor",
+    "iyi aksamlar nasilsin",
+    "gunun nasil geciyor",
 }
 
 ACTIONABLE_KEYWORDS = {
@@ -191,6 +239,12 @@ ACTIONABLE_KEYWORDS = {
     "telefon",
     "yemek",
     "yemekhane",
+    "rektor",
+    "senato",
+    "dekanlik",
+    "dekanliklar",
+    "konum",
+    "nerede",
 }
 
 
@@ -254,7 +308,7 @@ def is_smalltalk_query(text: str) -> bool:
     normalized = normalize_for_matching(normalize_query(text) or text)
     if not normalized:
         return False
-    return normalized in SMALLTALK_PATTERNS
+    return any(pattern in normalized for pattern in SMALLTALK_PATTERNS)
 
 
 def _correct_token(token: str) -> str:

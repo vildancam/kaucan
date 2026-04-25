@@ -34,6 +34,17 @@
     statusBadge.className = state === "ready" ? "status" : "status " + state;
   }
 
+  function createUserAvatarIcon() {
+    var wrapper = document.createElement("span");
+    wrapper.className = "avatar-icon";
+    wrapper.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0a3.75 3.75 0 0 1 7.5 0Z" />' +
+      '<path d="M4.5 20.118a7.5 7.5 0 0 1 15 0A17.933 17.933 0 0 1 12 21.75a17.933 17.933 0 0 1-7.5-1.632Z" />' +
+      "</svg>";
+    return wrapper;
+  }
+
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -239,7 +250,7 @@
     var avatar = document.createElement("div");
     avatar.className = role === "user" ? "avatar user-avatar" : "avatar assistant-avatar";
     if (role === "user") {
-      avatar.textContent = "👤";
+      avatar.appendChild(createUserAvatarIcon());
     } else if (runtimeBranding.chatLogoUrl) {
       var avatarLogo = document.createElement("img");
       avatarLogo.className = "avatar-logo";

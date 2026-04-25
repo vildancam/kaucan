@@ -23,6 +23,14 @@ if STATIC_DIR.exists():
     api.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
+@api.middleware("http")
+async def disable_cache_for_ui(request, call_next):
+    response = await call_next(request)
+    if request.url.path == "/" or request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+    return response
+
+
 class AskRequest(BaseModel):
     question: str
 
