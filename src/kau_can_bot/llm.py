@@ -30,6 +30,21 @@ Zorunlu kurallar:
 {POLITE_LANGUAGE_RESPONSE}
 """.strip()
 
+GENERAL_SYSTEM_PROMPT = f"""
+Bu sistem Türkçe konuşan, kurumsal ama samimi bir dijital asistandır.
+
+Zorunlu kurallar:
+- Türkçe yanıt ver.
+- Kullanıcı günlük sohbet etmek isterse kısa, sıcak ve doğal karşılık ver.
+- Kullanıcı matematik, tarih, yazılım veya genel bilgi sorarsa doğru ve anlaşılır biçimde yanıtla.
+- Tarih, sayı veya teknik bilgi konusunda emin olunmayan ayrıntıları uydurma; gerekiyorsa belirsizlik açıkça belirtilsin.
+- Gereksiz uzatma yapma; gerektiğinde kısa maddeler kullan.
+- Uygunsuz dil kullanılırsa aynen şu metni döndür:
+{POLITE_LANGUAGE_RESPONSE}
+- Gerekirse uygun emojilerden ölçülü biçimde yararlan.
+- Teknik meta alanlar, markdown başlıkları ve kaynak etiketleri yazma.
+""".strip()
+
 
 class OpenAIAnswerGenerator:
     def __init__(self, settings: Settings) -> None:
@@ -56,6 +71,28 @@ class OpenAIAnswerGenerator:
             model=self.settings.openai_model,
             instructions=SYSTEM_PROMPT,
             input=_build_user_input(query, results),
+            max_output_tokens=self.settings.openai_max_output_tokens,
+        )
+        answer = (response.output_text or "").strip()
+        return answer or None
+
+    def generate_general(self, query: str) -> str | None:
+        if not self.is_configured:
+            return None
+
+        try:
+            from openai import OpenAI
+        except ImportError:
+            return None
+
+        client = OpenAI(
+            api_key=self.settings.openai_api_key,
+            timeout=min(self.settings.openai_timeout, 8),
+        )
+        response = client.responses.create(
+            model=self.settings.openai_model,
+            instructions=GENERAL_SYSTEM_PROMPT,
+            input=query,
             max_output_tokens=self.settings.openai_max_output_tokens,
         )
         answer = (response.output_text or "").strip()
@@ -89,6 +126,31 @@ class OllamaAnswerGenerator:
             options={
                 "temperature": 0,
                 "top_p": 0.2,
+                "num_predict": self.settings.openai_max_output_tokens,
+            },
+        )
+        answer = response.message.content.strip()
+        return answer or None
+
+    def generate_general(self, query: str) -> str | None:
+        if not self.is_configured:
+            return None
+
+        try:
+            from ollama import chat
+        except ImportError:
+            return None
+
+        os.environ["OLLAMA_HOST"] = self.settings.ollama_host
+        response = chat(
+            model=self.settings.ollama_model,
+            messages=[
+                {"role": "system", "content": GENERAL_SYSTEM_PROMPT},
+                {"role": "user", "content": query},
+            ],
+            options={
+                "temperature": 0.3,
+                "top_p": 0.9,
                 "num_predict": self.settings.openai_max_output_tokens,
             },
         )

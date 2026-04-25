@@ -10,12 +10,17 @@
   var chips = document.querySelectorAll(".query-chip");
   var brandLogo = document.getElementById("brandLogo");
   var brandFallback = document.getElementById("brandFallback");
+  var initialChatLogo = document.getElementById("initialChatLogo");
+  var typingChatLogo = document.getElementById("typingChatLogo");
 
   var FALLBACK_MESSAGE =
     "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm.";
 
   var audioState = {
     context: null,
+  };
+  var runtimeBranding = {
+    chatLogoUrl: initialChatLogo ? initialChatLogo.getAttribute("src") : null,
   };
 
   function setStatus(text, state) {
@@ -192,7 +197,11 @@
       link.href = uniqueSources[index].url;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = uniqueSources.length === 1 ? "🔗 Kaynağı Aç" : "🔗 Kaynağı Aç " + (index + 1);
+      if (uniqueSources.length === 1 && uniqueSources[index].title) {
+        link.textContent = "🔗 " + uniqueSources[index].title;
+      } else {
+        link.textContent = "🔗 Kaynağı Aç " + (index + 1);
+      }
       wrapper.appendChild(link);
     }
 
@@ -228,8 +237,21 @@
     article.className = "message " + role + " message-enter";
 
     var avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.textContent = role === "user" ? "SİZ" : "KAÜ";
+    avatar.className = role === "user" ? "avatar user-avatar" : "avatar assistant-avatar";
+    if (role === "user") {
+      avatar.textContent = "👤";
+    } else if (runtimeBranding.chatLogoUrl) {
+      var avatarLogo = document.createElement("img");
+      avatarLogo.className = "avatar-logo";
+      avatarLogo.alt = "İİBF logosu";
+      avatarLogo.src = runtimeBranding.chatLogoUrl;
+      avatarLogo.addEventListener("error", function () {
+        avatar.textContent = "KAÜ";
+      });
+      avatar.appendChild(avatarLogo);
+    } else {
+      avatar.textContent = "KAÜ";
+    }
 
     var bubble = document.createElement("div");
     bubble.className = "bubble";
@@ -402,6 +424,21 @@
     }
   }
 
+  function applyChatLogo(url) {
+    runtimeBranding.chatLogoUrl = url || runtimeBranding.chatLogoUrl;
+
+    function updateImage(target) {
+      if (!target || !runtimeBranding.chatLogoUrl) {
+        return;
+      }
+      target.hidden = false;
+      target.src = runtimeBranding.chatLogoUrl;
+    }
+
+    updateImage(initialChatLogo);
+    updateImage(typingChatLogo);
+  }
+
   function loadHealth() {
     fetch("/health")
       .then(function (response) {
@@ -409,6 +446,7 @@
       })
       .then(function (health) {
         applyLogo(health.logo_url);
+        applyChatLogo(health.chat_logo_url);
 
         if (!health.index_ready) {
           setStatus("İndeks Bekleniyor", "busy");

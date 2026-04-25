@@ -121,6 +121,16 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "akdemik personel",
         "akadamik personel",
     ),
+    "nasılsın": (
+        "nasilsin",
+        "nslsin",
+        "nasılsn",
+    ),
+    "ne haber": (
+        "naber",
+        "naaber",
+        "ne haberler",
+    ),
 }
 
 TOKEN_CORRECTIONS: dict[str, str] = {
@@ -150,6 +160,17 @@ GREETING_PATTERNS = {
     "iyi aksamlar",
     "gunaydin",
     "iyi sabahlar",
+}
+
+SMALLTALK_PATTERNS = {
+    "nasilsin",
+    "ne haber",
+    "naber",
+    "iyi misin",
+    "napiyorsun",
+    "ne yapiyorsun",
+    "tesekkurler",
+    "tesekkur ederim",
 }
 
 ACTIONABLE_KEYWORDS = {
@@ -227,6 +248,13 @@ def looks_actionable(text: str) -> bool:
     if not normalized:
         return False
     return any(keyword in normalized for keyword in ACTIONABLE_KEYWORDS)
+
+
+def is_smalltalk_query(text: str) -> bool:
+    normalized = normalize_for_matching(normalize_query(text) or text)
+    if not normalized:
+        return False
+    return normalized in SMALLTALK_PATTERNS
 
 
 def _correct_token(token: str) -> str:

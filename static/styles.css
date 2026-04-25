@@ -17,6 +17,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -93,6 +97,14 @@ body.js-ready .app-shell {
   height: 100%;
   object-fit: contain;
   padding: 10px;
+}
+
+.avatar-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
 }
 
 .brand-fallback {
@@ -249,6 +261,17 @@ h2 {
   box-shadow: var(--shadow-soft);
 }
 
+.assistant-avatar {
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff 0%, #eef6ff 100%);
+  border: 1px solid rgba(0, 91, 170, 0.14);
+  color: var(--blue-dark);
+}
+
+.user-avatar {
+  font-size: 1.1rem;
+}
+
 .bubble,
 .typing-bubble {
   max-width: 820px;
@@ -338,6 +361,10 @@ h2 {
   gap: 12px;
   padding: 0 20px 18px;
   animation: message-in 0.32s ease;
+}
+
+.typing-row[hidden] {
+  display: none !important;
 }
 
 .typing-bubble {

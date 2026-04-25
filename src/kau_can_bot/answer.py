@@ -16,6 +16,7 @@ from .llm import OllamaAnswerGenerator, OpenAIAnswerGenerator
 from .models import AssistantResponse, Chunk, SearchResult
 from .query_normalizer import (
     is_greeting_query,
+    is_smalltalk_query,
     looks_actionable,
     normalize_for_matching,
     normalize_query,
@@ -72,6 +73,16 @@ DIRECT_SERVICE_LINKS = (
         ),
     },
 )
+FACULTY_CONTACT_LINKS = (
+    ("Dekana Sor", "https://kafkas.edu.tr/iibf/tr/sayfaYeni18817"),
+    ("Telefon Rehberi", "https://kafkas.edu.tr/kau/rehber2"),
+)
+SMALLTALK_RESPONSES = {
+    "naber": "😊 İyiyim, teşekkür ederim. Akademik ya da genel bir konuda yardımcı olmam istenirse memnuniyetle destek sunabilirim.",
+    "ne haber": "😊 Her şey yolunda görünüyor. İİBF, genel bilgi ya da günlük bir konuda yardımcı olabilirim.",
+    "nasilsin": "😊 Teşekkür ederim, gayet iyiyim. İstenirse sohbet edebilir ya da herhangi bir konuda bilgi paylaşabilirim.",
+    "iyi misin": "😊 Teşekkür ederim, iyiyim. İstenirse hemen bir soruya geçilebilir.",
+}
 
 
 @dataclass(frozen=True)
@@ -114,6 +125,21 @@ class WebsiteGroundedAssistant:
                 status="greeting",
             )
 
+        faculty_contact_response = _faculty_contact_shortcut(normalized_query)
+        if faculty_contact_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                faculty_contact_response.text,
+                faculty_contact_response.sources,
+                "direct_link",
+            )
+            return AssistantResponse(
+                answer=faculty_contact_response.text,
+                sources=faculty_contact_response.sources,
+                interaction_id=interaction.id,
+                status="direct_link",
+            )
+
         direct_link_response = _match_direct_service_link(normalized_query)
         if direct_link_response is not None:
             interaction = log_interaction(
@@ -128,6 +154,36 @@ class WebsiteGroundedAssistant:
                 interaction_id=interaction.id,
                 status="direct_link",
             )
+
+        if is_smalltalk_query(normalized_query):
+            answer = _smalltalk_response(normalized_query)
+            interaction = log_interaction(original_query or normalized_query, answer, [], "smalltalk")
+            return AssistantResponse(
+                answer=answer,
+                interaction_id=interaction.id,
+                status="smalltalk",
+            )
+
+        math_answer = _solve_basic_math(original_query or normalized_query)
+        if math_answer:
+            interaction = log_interaction(original_query or normalized_query, math_answer, [], "general")
+            return AssistantResponse(
+                answer=math_answer,
+                interaction_id=interaction.id,
+                status="general",
+            )
+
+        if _should_answer_with_general_knowledge(normalized_query):
+            general_answer = self._generate_general_with_llm(normalized_query)
+            if general_answer:
+                answer = _sanitize_answer_text(general_answer)
+                if answer:
+                    interaction = log_interaction(original_query or normalized_query, answer, [], "general")
+                    return AssistantResponse(
+                        answer=answer,
+                        interaction_id=interaction.id,
+                        status="general",
+                    )
 
         if is_ambiguous(normalized_query) and not looks_actionable(normalized_query):
             answer = (
@@ -216,6 +272,19 @@ class WebsiteGroundedAssistant:
             return generator.generate(query, results)
         except Exception:
             return None
+
+    def _generate_general_with_llm(self, query: str) -> str | None:
+        generators = _general_generators_for_settings(self.settings)
+        for generator in generators:
+            if not generator.is_configured:
+                continue
+            try:
+                answer = generator.generate_general(query)
+            except Exception:
+                answer = None
+            if answer:
+                return answer
+        return None
 
 
 def _build_local_answer(query: str, results: list[SearchResult]) -> ComposedAnswer:
@@ -476,6 +545,85 @@ def _match_direct_service_link(query: str) -> ComposedAnswer | None:
     return None
 
 
+def _faculty_contact_shortcut(query: str) -> ComposedAnswer | None:
+    if not (_is_contact_query(query) and _is_faculty_query(query)):
+        return None
+
+    return ComposedAnswer(
+        text="📞 İİBF iletişim bağlantıları aşağıda sunulmuştur.",
+        sources=_build_link_sources(list(FACULTY_CONTACT_LINKS)),
+    )
+
+
+def _smalltalk_response(query: str) -> str:
+    normalized = _query_key(query)
+    for pattern, response in SMALLTALK_RESPONSES.items():
+        if pattern in normalized:
+            return response
+    return "😊 Elbette, sohbet edilebilir. İstenirse günlük bir konuya ya da bilgi sorusuna birlikte devam edilebilir."
+
+
+def _should_answer_with_general_knowledge(query: str) -> bool:
+    normalized = _query_key(query)
+    if not normalized:
+        return False
+    if looks_actionable(normalized):
+        return False
+    if any(
+        checker(query)
+        for checker in (
+            _is_faculty_query,
+            _is_contact_query,
+            _is_personnel_query,
+            _is_department_query,
+            _is_announcement_query,
+            _is_exam_query,
+            _is_academic_calendar_query,
+            _is_menu_query,
+        )
+    ):
+        return False
+
+    tokens = re.findall(r"[a-z0-9]+", normalized)
+    has_general_signal = any(
+        term in normalized
+        for term in (
+            "nedir",
+            "nasil",
+            "neden",
+            "kimdir",
+            "kac",
+            "matematik",
+            "tarih",
+            "yazilim",
+            "python",
+            "kod",
+        )
+    )
+    has_math_signal = any(char in query for char in "+-*/=")
+    return len(tokens) >= 2 or has_general_signal or has_math_signal
+
+
+def _solve_basic_math(query: str) -> str | None:
+    expression = re.sub(r"[^0-9+\-*/(). ]", " ", query.lower())
+    expression = re.sub(r"\s+", "", expression)
+    if not expression:
+        return None
+    if not re.fullmatch(r"[0-9+\-*/().]+", expression):
+        return None
+    if not any(operator in expression for operator in "+-*/"):
+        return None
+
+    try:
+        result = eval(expression, {"__builtins__": {}}, {})
+    except Exception:
+        return None
+
+    if isinstance(result, float) and result.is_integer():
+        result = int(result)
+    return f"✅ Sonuç: {expression} = {result}"
+
+
 def _extract_link_pairs(text: str) -> list[tuple[str, str]]:
     entries: list[tuple[str, str]] = []
     for match in LINK_PATTERN.finditer(text):
@@ -518,12 +666,37 @@ def _generator_for_settings(settings: Settings):
     return LocalOnlyGenerator()
 
 
+def _general_generator_for_settings(settings: Settings):
+    openai_generator = OpenAIAnswerGenerator(settings)
+    if openai_generator.is_configured:
+        return openai_generator
+    return _generator_for_settings(settings)
+
+
+def _general_generators_for_settings(settings: Settings):
+    generators = []
+    openai_generator = OpenAIAnswerGenerator(settings)
+    if openai_generator.is_configured:
+        generators.append(openai_generator)
+
+    primary_generator = _generator_for_settings(settings)
+    if not any(type(generator) is type(primary_generator) for generator in generators):
+        generators.append(primary_generator)
+
+    if not generators:
+        generators.append(LocalOnlyGenerator())
+    return generators
+
+
 class LocalOnlyGenerator:
     @property
     def is_configured(self) -> bool:
         return False
 
     def generate(self, query: str, results: list[SearchResult]) -> str | None:
+        return None
+
+    def generate_general(self, query: str) -> str | None:
         return None
 
 

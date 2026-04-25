@@ -75,6 +75,7 @@ def health() -> Dict[str, object]:
         "ollama_running": ollama_status["running"],
         "ollama_model_available": ollama_status["model_available"],
         "logo_url": BRANDING.logo_url,
+        "chat_logo_url": BRANDING.chat_logo_url,
     }
 
 

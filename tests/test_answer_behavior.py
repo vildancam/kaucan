@@ -64,7 +64,7 @@ class AnswerBehaviorTests(unittest.TestCase):
 
         response = assistant.answer_with_context("ııbf iletişim")
 
-        self.assertEqual(response.status, "local")
+        self.assertEqual(response.status, "direct_link")
         self.assertIn("📞", response.answer)
         self.assertEqual(
             [source.chunk.url for source in response.sources],
@@ -86,6 +86,27 @@ class AnswerBehaviorTests(unittest.TestCase):
         obs_response = assistant.answer_with_context("OBS")
         self.assertEqual(obs_response.status, "direct_link")
         self.assertEqual(obs_response.sources[0].chunk.url, "https://obsyeni.kafkas.edu.tr")
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_smalltalk_is_supported(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("naber")
+
+        self.assertEqual(response.status, "smalltalk")
+        self.assertTrue("yardımcı" in response.answer or "iyiyim" in response.answer.lower())
+
+    @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Python, genel amaçlı bir programlama dilidir.")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_general_knowledge_uses_llm(self, _log_query, _log_interaction, _general_answer) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("python nedir")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("programlama dilidir", response.answer)
 
     def test_generated_answer_is_sanitized(self) -> None:
         raw = (
