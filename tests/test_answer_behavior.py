@@ -100,7 +100,22 @@ class AnswerBehaviorTests(unittest.TestCase):
                     "title": "Misyon & Vizyon",
                     "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17979",
                     "normalized_title": "misyon vizyon",
-                }
+                },
+                {
+                    "title": "Formlar",
+                    "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17988",
+                    "normalized_title": "formlar",
+                },
+                {
+                    "title": "Kurumsal İletişim Komisyonu",
+                    "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18049",
+                    "normalized_title": "kurumsal iletisim komisyonu",
+                },
+                {
+                    "title": "Dijital Dönüşüm Komisyonu",
+                    "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18050",
+                    "normalized_title": "dijital donusum komisyonu",
+                },
             ],
             "faculty_pages": {
                 "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17979": {
@@ -282,12 +297,21 @@ class AnswerBehaviorTests(unittest.TestCase):
 
         response = assistant.answer_with_context("201 nolu derslik nerede?")
         hall_response = assistant.answer_with_context("Hüseyin Aytemiz Konferans Salonu nerede?")
+        ybs_response = assistant.answer_with_context("YBS bölümü nerede?")
+        deanery_response = assistant.answer_with_context("dekanlık nerede nasıl giderim")
+        prayer_response = assistant.answer_with_context("mescid nerede")
 
         self.assertEqual(response.status, "direct_answer")
         self.assertIn("2. katta", response.answer)
         self.assertIn("Yönetim Bilişim Sistemleri", response.answer)
         self.assertEqual(hall_response.status, "direct_answer")
         self.assertIn("3. katta", hall_response.answer)
+        self.assertEqual(ybs_response.status, "direct_answer")
+        self.assertIn("2. kattadır", ybs_response.answer)
+        self.assertEqual(deanery_response.status, "direct_answer")
+        self.assertIn("3. kattadır", deanery_response.answer)
+        self.assertEqual(prayer_response.status, "direct_answer")
+        self.assertIn("bodrum", prayer_response.answer.lower())
 
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
@@ -395,6 +419,25 @@ class AnswerBehaviorTests(unittest.TestCase):
         self.assertEqual(response.status, "official")
         self.assertIn("bilimsel", response.answer.lower())
         self.assertTrue(any("sayfaYeni17979" in source.chunk.url for source in response.sources))
+
+    @patch("kau_can_bot.answer.get_official_snapshot")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_generic_commission_query_does_not_fall_back_to_forms(
+        self,
+        _log_query,
+        _log_interaction,
+        mock_snapshot,
+    ) -> None:
+        mock_snapshot.return_value = self.build_official_snapshot()
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("komisyonlar")
+
+        self.assertEqual(response.status, "official")
+        self.assertIn("komisyon", response.answer.lower())
+        self.assertFalse(any("sayfaYeni17988" in source.chunk.url for source in response.sources))
+        self.assertTrue(any("sayfaYeni18049" in source.chunk.url or "sayfaYeni18050" in source.chunk.url for source in response.sources))
 
     @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Python, genel amaçlı bir programlama dilidir.")
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))

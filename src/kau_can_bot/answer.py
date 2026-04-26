@@ -324,6 +324,87 @@ NAMED_CLASSROOM_LOCATIONS = (
         "en": "📌 The Huseyin Aytemiz Conference Hall is on the 3rd floor, opposite the Department of Political Science and Public Administration.",
         "ar": "📌 تقع قاعة حسين أيتميز للمؤتمرات في الطابق الثالث مقابل قسم العلوم السياسية والإدارة العامة.",
     },
+    {
+        "terms": (
+            "ybs bolumu",
+            "ybs bölümü",
+            "yonetim bilisim sistemleri bolumu",
+            "yönetim bilişim sistemleri bölümü",
+            "yonetim bilisim sistemleri",
+            "yönetim bilişim sistemleri",
+        ),
+        "tr": "📌 Yönetim Bilişim Sistemleri Bölümü 2. kattadır.",
+        "en": "📌 The Management Information Systems Department is on the 2nd floor.",
+        "ar": "📌 يقع قسم نظم المعلومات الإدارية في الطابق الثاني.",
+    },
+    {
+        "terms": ("isletme bolumu", "işletme bölümü", "isletme"),
+        "tr": "📌 İşletme Bölümü 2. kattadır.",
+        "en": "📌 The Business Administration Department is on the 2nd floor.",
+        "ar": "📌 يقع قسم إدارة الأعمال في الطابق الثاني.",
+    },
+    {
+        "terms": ("dekanlik", "dekanlık", "sekanlik", "sekanlık"),
+        "tr": "📌 Dekanlık 3. kattadır.",
+        "en": "📌 The dean's office is on the 3rd floor.",
+        "ar": "📌 تقع العمادة في الطابق الثالث.",
+    },
+    {
+        "terms": ("mescid", "mescit"),
+        "tr": "📌 Mescid bodrum kattadır.",
+        "en": "📌 The prayer room is on the basement floor.",
+        "ar": "📌 تقع المصلى في الطابق السفلي.",
+    },
+    {
+        "terms": ("kirtasiye", "kırtasiye"),
+        "tr": "📌 Kırtasiye bodrum kattadır.",
+        "en": "📌 The stationery shop is on the basement floor.",
+        "ar": "📌 تقع القرطاسية في الطابق السفلي.",
+    },
+    {
+        "terms": (
+            "eletronik ticaret ve yonetimi bolumu",
+            "elektronik ticaret ve yonetimi bolumu",
+            "elektronik ticaret ve yönetimi bölümü",
+            "eletronik ticaret ve yönetimi bölümü",
+            "ety bolumu",
+            "ety bölümü",
+            "ety",
+        ),
+        "tr": "📌 ETY Bölümü 3. katta, dekanlığın karşısındadır.",
+        "en": "📌 The E-Commerce and Management Department is on the 3rd floor, opposite the dean's office.",
+        "ar": "📌 يقع قسم التجارة الإلكترونية والإدارة في الطابق الثالث مقابل العمادة.",
+    },
+    {
+        "terms": (
+            "siyaset bilimi ve kamu yonetimi bolumu",
+            "siyaset bilimi ve kamu yönetimi bölümü",
+            "sbky bolumu",
+            "sbky bölümü",
+            "sbky",
+        ),
+        "tr": "📌 SBKY Bölümü 3. katta, dekanlığın karşısındadır.",
+        "en": "📌 The Political Science and Public Administration Department is on the 3rd floor, opposite the dean's office.",
+        "ar": "📌 يقع قسم العلوم السياسية والإدارة العامة في الطابق الثالث مقابل العمادة.",
+    },
+    {
+        "terms": (
+            "uluslararasi ticaret ve lojistik bolumu",
+            "uluslararası ticaret ve lojistik bölümü",
+            "utl bolumu",
+            "utl bölümü",
+            "utl",
+        ),
+        "tr": "📌 UTL Bölümü 1. kattadır.",
+        "en": "📌 The International Trade and Logistics Department is on the 1st floor.",
+        "ar": "📌 يقع قسم التجارة الدولية واللوجستيات في الطابق الأول.",
+    },
+    {
+        "terms": ("iktisat bolumu", "iktisat bölümü", "iktisat"),
+        "tr": "📌 İktisat Bölümü 1. kattadır.",
+        "en": "📌 The Economics Department is on the 1st floor.",
+        "ar": "📌 يقع قسم الاقتصاد في الطابق الأول.",
+    },
 )
 FACULTY_CONTACT_PAGE = "https://kafkas.edu.tr/iibf/tr/sayfaYeni18034"
 MAPS_LINK = ("Maps'te Aç", "https://maps.app.goo.gl/HMYYaxbZBcZVisbN7")
@@ -1598,6 +1679,8 @@ def _management_shortcut(query: str, language: str) -> ComposedAnswer | None:
     normalized = _query_key(query)
     if not normalized:
         return None
+    if _is_location_query(query):
+        return None
 
     if "rektor yardimci" in normalized or "vice rector" in normalized or (
         any(term in normalized for term in ("rektor", "rector"))
@@ -1783,6 +1866,7 @@ def _faculty_form_shortcut(query: str, language: str) -> ComposedAnswer | None:
     normalized = _query_key(query)
     if not normalized:
         return None
+    query_tokens = {token for token in re.split(r"\s+", normalized) if token}
 
     matched_titles = [
         title
@@ -1801,7 +1885,7 @@ def _faculty_form_shortcut(query: str, language: str) -> ComposedAnswer | None:
             sources=_build_link_sources([(title, FACULTY_FORMS_URL)]),
         )
 
-    if _query_targets_iibf(query) and ("formlar" in normalized or "form" in normalized):
+    if _query_targets_iibf(query) and ({"form", "formlar"} & query_tokens):
         rows = [f"• {title}" for title, _ in FACULTY_FORM_ENTRIES]
         return ComposedAnswer(
             text=_text_for_language(
@@ -2384,6 +2468,10 @@ def _official_navigation_answer(snapshot: dict, query: str, language: str) -> Co
     if not _query_targets_iibf(query) and not _looks_like_iibf_menu_query(query):
         return None
 
+    commission_response = _official_commission_navigation_answer(snapshot, query, language)
+    if commission_response is not None:
+        return commission_response
+
     matches = find_faculty_navigation_matches(snapshot, query, limit=3)
     if not matches:
         return None
@@ -2419,6 +2507,59 @@ def _official_navigation_answer(snapshot: dict, query: str, language: str) -> Co
     return ComposedAnswer(
         text=text,
         sources=_build_link_sources([(title, clean_text(best.get("url", "")))]),
+    )
+
+
+def _official_commission_navigation_answer(snapshot: dict, query: str, language: str) -> ComposedAnswer | None:
+    normalized = _query_key(query)
+    if "komisyon" not in normalized:
+        return None
+
+    navigation = snapshot.get("faculty_navigation", [])
+    commission_entries = [
+        entry
+        for entry in navigation
+        if "komisyon" in normalize_for_matching(entry.get("title", ""))
+    ]
+    if not commission_entries:
+        return None
+
+    specific_matches = find_faculty_navigation_matches(snapshot, query, limit=5)
+    specific_matches = [
+        entry
+        for entry in specific_matches
+        if "komisyon" in normalize_for_matching(entry.get("title", ""))
+    ]
+    if specific_matches and normalize_for_matching(specific_matches[0].get("title", "")) in normalized:
+        best = specific_matches[0]
+        title = clean_text(best.get("title", ""))
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"📌 İİBF {title} bilgisi resmi fakülte sayfasında yer almaktadır.",
+                f"📌 The FEAS information for {title} is available on the official faculty page.",
+                f"📌 تتوفر معلومات {title} في صفحة الكلية الرسمية.",
+            ),
+            sources=_build_link_sources([(title, clean_text(best.get("url", "")))]),
+        )
+
+    rows = [f"• {clean_text(entry.get('title', ''))}" for entry in commission_entries[:6] if clean_text(entry.get("title", ""))]
+    if not rows:
+        return None
+    return ComposedAnswer(
+        text=_text_for_language(
+            language,
+            "📌 İİBF bünyesindeki komisyonlardan bazıları şunlardır:\n" + "\n".join(rows),
+            "📌 Some of the commissions within FEAS are:\n" + "\n".join(rows),
+            "📌 بعض اللجان داخل الكلية هي:\n" + "\n".join(rows),
+        ),
+        sources=_build_link_sources(
+            [
+                (clean_text(entry.get("title", "")), clean_text(entry.get("url", "")))
+                for entry in commission_entries[:3]
+                if clean_text(entry.get("title", "")) and clean_text(entry.get("url", ""))
+            ]
+        ),
     )
 
 
