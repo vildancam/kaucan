@@ -2,10 +2,22 @@
   var STORAGE_KEY = "kaucan-conversations-v3";
   var THEME_KEY = "kaucan-theme";
   var CLIENT_ID_KEY = "kaucan-client-id";
-  var WELCOME_MESSAGE =
-    "👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve diğer konularda yardımcı olabilirim.";
-  var FALLBACK_MESSAGE =
-    "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm.";
+  var LANGUAGE_KEY = "kaucan-language";
+  var WELCOME_MESSAGES = {
+    tr: "👋 Merhaba, ben KAÜCAN Beta - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü, yazım desteği ve genel konularda yardımcı olabilirim.",
+    en: "👋 Hello, I am KAUCAN Beta - the Digital Assistant of Kafkas University. I can help with announcements, academic information, staff, contact, exams, cafeteria menu, writing, and general questions.",
+    ar: "👋 مرحبًا، أنا KAÜCAN Beta، المساعد الرقمي لجامعة قفقاس. يمكنني المساعدة في الإعلانات والمعلومات الأكاديمية والكوادر والاتصال والامتحانات وقائمة الطعام والكتابة والأسئلة العامة.",
+  };
+  var FALLBACK_MESSAGES = {
+    tr: "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm.",
+    en: "⚠️ I could not reach reliable information on this topic. For the most accurate information, please contact the faculty directly.",
+    ar: "⚠️ لم أتمكن من الوصول إلى معلومة موثوقة حول هذا الموضوع. للحصول على أدق معلومة، يُنصح بالتواصل مع الكلية مباشرة.",
+  };
+  var INPUT_PLACEHOLDERS = {
+    tr: "Sorunuzu yazınız veya sesli yazmayı kullanınız...",
+    en: "Type your question or use voice dictation...",
+    ar: "اكتب سؤالك أو استخدم الإملاء الصوتي...",
+  };
   var HIGHLIGHT_FALLBACKS = {
     announcements: {
       title: "İİBF Duyuruları",
@@ -34,6 +46,7 @@
   var typingRow = document.getElementById("typingRow");
   var chips = document.querySelectorAll(".query-chip");
   var brandLogo = document.getElementById("brandLogo");
+  var brandFacultyLogo = document.getElementById("brandFacultyLogo");
   var brandFallback = document.getElementById("brandFallback");
   var initialChatLogo = document.getElementById("initialChatLogo");
   var typingChatLogo = document.getElementById("typingChatLogo");
@@ -47,8 +60,7 @@
   var historyList = document.getElementById("historyList");
   var themeToggleButton = document.getElementById("themeToggleButton");
   var themeToggleIcon = document.getElementById("themeToggleIcon");
-  var scrollUpButton = document.getElementById("scrollUpButton");
-  var scrollDownButton = document.getElementById("scrollDownButton");
+  var languageSelect = document.getElementById("languageSelect");
   var highlightNavButtons = document.querySelectorAll(".highlight-nav");
   var highlightTracks = {
     announcements: document.getElementById("announcementsTrack"),
@@ -86,7 +98,24 @@
       denied: false,
     },
     clientId: "",
+    preferredLanguage: "tr",
   };
+
+  function getUiLanguage() {
+    return state.preferredLanguage || "tr";
+  }
+
+  function getWelcomeMessage(language) {
+    return WELCOME_MESSAGES[language] || WELCOME_MESSAGES.tr;
+  }
+
+  function getFallbackMessage(language) {
+    return FALLBACK_MESSAGES[language] || FALLBACK_MESSAGES.tr;
+  }
+
+  function updateComposerCopy() {
+    input.placeholder = INPUT_PLACEHOLDERS[getUiLanguage()] || INPUT_PLACEHOLDERS.tr;
+  }
 
   function setStatus(text, stateName) {
     stateName = stateName || "ready";
@@ -249,7 +278,7 @@
   function renderAssistantText(text) {
     var sourceText = String(text || "");
     if (!sourceText.trim()) {
-      return "<p>" + escapeHtml(FALLBACK_MESSAGE) + "</p>";
+      return "<p>" + escapeHtml(getFallbackMessage(getUiLanguage())) + "</p>";
     }
 
     var parts = sourceText.split("```");
@@ -270,7 +299,7 @@
       }
     }
 
-    return html.length ? html.join("") : "<p>" + escapeHtml(FALLBACK_MESSAGE) + "</p>";
+    return html.length ? html.join("") : "<p>" + escapeHtml(getFallbackMessage(getUiLanguage())) + "</p>";
   }
 
   function renderUserText(text) {
@@ -291,14 +320,14 @@
 
     for (index = 0; index < uniqueSources.length; index += 1) {
       var link = document.createElement("a");
+      var href = uniqueSources[index].url || "";
       link.className = "source-link";
-      link.href = uniqueSources[index].url;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent =
-        uniqueSources.length === 1 && uniqueSources[index].title
-          ? "🔗 " + uniqueSources[index].title
-          : "🔗 Kaynağı Aç " + (index + 1);
+      link.href = href;
+      if (!/^tel:|^mailto:/i.test(href)) {
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+      }
+      link.textContent = uniqueSources[index].title || "🔗 Kaynağı Aç " + (index + 1);
       wrapper.appendChild(link);
     }
 
@@ -542,6 +571,24 @@
         return;
       }
 
+      if (kind === "voice-start") {
+        scheduleTone(context, 520, now, 0.06, "sine", 0.014);
+        scheduleTone(context, 720, now + 0.05, 0.08, "triangle", 0.014);
+        return;
+      }
+
+      if (kind === "voice-stop") {
+        scheduleTone(context, 640, now, 0.05, "triangle", 0.012);
+        scheduleTone(context, 420, now + 0.05, 0.08, "sine", 0.012);
+        return;
+      }
+
+      if (kind === "clear") {
+        scheduleTone(context, 540, now, 0.06, "triangle", 0.013);
+        scheduleTone(context, 680, now + 0.05, 0.08, "triangle", 0.013);
+        return;
+      }
+
       if (kind === "delete") {
         scheduleTone(context, 360, now, 0.08, "sawtooth", 0.013);
         scheduleTone(context, 240, now + 0.08, 0.1, "sawtooth", 0.012);
@@ -564,7 +611,7 @@
   function createWelcomeMessage() {
     return {
       role: "assistant",
-      text: WELCOME_MESSAGE,
+      text: getWelcomeMessage(getUiLanguage()),
       sources: [],
       interactionId: null,
       status: "greeting",
@@ -812,6 +859,12 @@
   }
 
   function resolveRecognitionLanguage() {
+    if (state.preferredLanguage === "ar") {
+      return "ar-SA";
+    }
+    if (state.preferredLanguage === "en") {
+      return "en-US";
+    }
     var text = String(input.value || "").toLowerCase();
     if (/\b(hello|who|what|where|when|why|how|dean|department|news|events)\b/.test(text)) {
       return "en-US";
@@ -841,6 +894,7 @@
       }
     }
     setVoiceButtonState(false);
+    playTone("voice-stop");
     if (updateStatus && !state.pendingConversationId) {
       setStatus("Hazır", "ready");
     }
@@ -860,6 +914,7 @@
       state.voice.listening = true;
       setVoiceButtonState(true);
       setStatus("Dinleniyor", "busy");
+      playTone("voice-start");
     };
 
     state.voice.recognition.onresult = function (event) {
@@ -927,7 +982,6 @@
 
     try {
       recognition.start();
-      playTone("history");
     } catch (error) {
       setStatus("Mikrofon başlatılamadı", "error");
     }
@@ -1116,7 +1170,7 @@
     input.value = "";
     autoResize();
     input.focus();
-    playTone("history");
+    playTone("clear");
   }
 
   function askQuestion(question, conversationId) {
@@ -1135,7 +1189,11 @@
     fetch("/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: question, client_id: state.clientId || "" }),
+      body: JSON.stringify({
+        question: question,
+        client_id: state.clientId || "",
+        preferred_language: state.preferredLanguage || "tr",
+      }),
     })
       .then(function (response) {
         if (!response.ok) {
@@ -1147,7 +1205,7 @@
         rememberMessage(
           conversationId,
           "assistant",
-          data.answer || FALLBACK_MESSAGE,
+          data.answer || getFallbackMessage(getUiLanguage()),
           {
             interactionId: data.interaction_id,
             sources: data.sources || [],
@@ -1160,7 +1218,13 @@
         finishRequest();
       })
       .catch(function () {
-        rememberMessage(conversationId, "assistant", FALLBACK_MESSAGE, {}, state.activeConversationId === conversationId);
+        rememberMessage(
+          conversationId,
+          "assistant",
+          getFallbackMessage(getUiLanguage()),
+          {},
+          state.activeConversationId === conversationId
+        );
         setStatus("Hata", "error");
         playTone("error");
         finishRequest();
@@ -1217,6 +1281,7 @@
 
     updateImage(initialChatLogo);
     updateImage(typingChatLogo);
+    updateImage(brandFacultyLogo);
   }
 
   function applyTheme(theme) {
@@ -1240,6 +1305,29 @@
       storedTheme = null;
     }
     applyTheme(storedTheme || "light");
+  }
+
+  function applyPreferredLanguage(language) {
+    state.preferredLanguage = language === "en" || language === "ar" ? language : "tr";
+    if (languageSelect) {
+      languageSelect.value = state.preferredLanguage;
+    }
+    try {
+      window.localStorage.setItem(LANGUAGE_KEY, state.preferredLanguage);
+    } catch (error) {
+      return;
+    }
+    updateComposerCopy();
+  }
+
+  function loadPreferredLanguage() {
+    var storedLanguage;
+    try {
+      storedLanguage = window.localStorage.getItem(LANGUAGE_KEY);
+    } catch (error) {
+      storedLanguage = null;
+    }
+    applyPreferredLanguage(storedLanguage || "tr");
   }
 
   function toggleTheme() {
@@ -1402,6 +1490,12 @@
       themeToggleButton.addEventListener("click", toggleTheme);
     }
 
+    if (languageSelect) {
+      languageSelect.addEventListener("change", function () {
+        applyPreferredLanguage(languageSelect.value);
+      });
+    }
+
     Array.prototype.forEach.call(chips, function (chip) {
       chip.addEventListener("click", function () {
         playTone("history");
@@ -1413,14 +1507,6 @@
       button.addEventListener("click", function () {
         changeHighlight(button.dataset.topic, button.dataset.direction);
       });
-    });
-
-    scrollUpButton.addEventListener("click", function () {
-      scrollMessagesBy(-280);
-    });
-
-    scrollDownButton.addEventListener("click", function () {
-      scrollMessagesBy(280);
     });
 
     input.addEventListener("input", autoResize);
@@ -1442,11 +1528,13 @@
   function init() {
     document.body.classList.add("js-ready");
     loadTheme();
+    loadPreferredLanguage();
     state.clientId = ensureClientId();
     ensureConversationState();
     initializeVoiceButton();
     bindEvents();
     autoResize();
+    updateComposerCopy();
     renderHistoryList();
     renderConversation();
     renderHighlights();

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KAÜCAN | Kafkas Üniversitesi Dijital Asistanı</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260426b" />
+    <link rel="stylesheet" href="/static/styles.css?v=20260426c" />
   </head>
   <body data-theme="light">
     <div class="history-backdrop" id="historyBackdrop" hidden></div>
@@ -59,25 +59,49 @@
             rel="noopener noreferrer"
             title="Kafkas Üniversitesi sitesini aç"
           >
-            <div class="logo-frame">
-              <img
-                id="brandLogo"
-                class="brand-logo"
-                src="/static/assets/kau_logo.png?v=20260426a"
-                alt="Kafkas Üniversitesi logosu"
-                onerror="this.hidden=true;document.getElementById('brandFallback').hidden=false;"
-              />
-              <div class="brand-fallback" id="brandFallback" hidden>KAÜCAN</div>
+            <div class="brand-logos">
+              <div class="logo-frame">
+                <img
+                  id="brandLogo"
+                  class="brand-logo"
+                  src="/static/assets/kau_logo.png?v=20260426a"
+                  alt="Kafkas Üniversitesi logosu"
+                  onerror="this.hidden=true;document.getElementById('brandFallback').hidden=false;"
+                />
+                <div class="brand-fallback" id="brandFallback" hidden>KAÜCAN</div>
+              </div>
+
+              <div class="logo-frame logo-frame-secondary">
+                <img
+                  id="brandFacultyLogo"
+                  class="brand-logo"
+                  src="/static/assets/iibf_logo.png?v=20260426a"
+                  alt="İİBF logosu"
+                  onerror="this.hidden=true;"
+                />
+              </div>
             </div>
 
             <div class="brand-copy">
-              <p class="eyebrow">Kafkas Üniversitesi</p>
-              <h1>KAÜCAN</h1>
+              <div class="brand-title-row">
+                <p class="eyebrow brand-mark">KAÜCAN</p>
+                <span class="beta-pill">Beta</span>
+              </div>
+              <h1>Kafkas Üniversitesi İktisadi ve İdari Bilimler Fakültesi</h1>
             </div>
           </a>
         </div>
 
         <div class="topbar-actions">
+          <label class="language-control" for="languageSelect" title="Sohbet dili">
+            <span class="language-icon" aria-hidden="true">🌐</span>
+            <select id="languageSelect" class="language-select" aria-label="Sohbet dili seçin">
+              <option value="tr">Türkçe</option>
+              <option value="en">English</option>
+              <option value="ar">العربية</option>
+            </select>
+          </label>
+
           <button class="icon-button" id="themeToggleButton" type="button" aria-label="Temayı değiştir" title="Temayı değiştir">
             <span id="themeToggleIcon" aria-hidden="true">☾</span>
           </button>
@@ -94,6 +118,9 @@
         <a class="quick-link" href="https://www.kafkas.edu.tr/oidb/tr/sayfaYeni6016" target="_blank" rel="noopener noreferrer">📅 Akademik Takvim</a>
         <a class="quick-link" href="https://obsyeni.kafkas.edu.tr" target="_blank" rel="noopener noreferrer">✅ OBS</a>
         <a class="quick-link" href="https://captive.kafkas.edu.tr:6082/php/uid.php?vsys=1&rule=4&url=https://www.yok.gov.tr" target="_blank" rel="noopener noreferrer">🌐 Okul İnterneti</a>
+        <a class="quick-link" href="https://www.kafkas.edu.tr/kddb/TR/default.aspx" target="_blank" rel="noopener noreferrer">📚 Kütüphane</a>
+        <a class="quick-link" href="https://ebys.kafkas.edu.tr/DYS/documentmanagement/" target="_blank" rel="noopener noreferrer">🗂️ EBYS</a>
+        <a class="quick-link" href="https://www.kafkas.edu.tr/kau/rehber2" target="_blank" rel="noopener noreferrer">📞 Telefon Rehberi</a>
       </section>
 
       <main class="workspace">
@@ -101,16 +128,19 @@
           <div class="panel-header">
             <div>
               <p class="panel-eyebrow">Sohbet</p>
-              <h2>KAÜCAN</h2>
+              <h2>KAÜCAN Beta</h2>
             </div>
-            <button class="secondary-button" id="clearButton" type="button">Temizle</button>
+            <button class="secondary-button clear-button" id="clearButton" type="button">Temizle</button>
           </div>
 
-          <section class="quick-prompts" aria-label="Hızlı başlıklar">
-            <button class="query-chip" type="button">Güncel duyurular nelerdir?</button>
-            <button class="query-chip" type="button">Sınav programı hakkında bilgi verir misiniz?</button>
-            <button class="query-chip" type="button">Akademik personel hakkında bilgi verir misiniz?</button>
-            <button class="query-chip" type="button">Fakültenin iletişim bilgileri nelerdir?</button>
+          <section class="quick-prompts-shell" aria-label="Hızlı başlıklar">
+            <p class="quick-prompts-title">Hızlı Sorular</p>
+            <div class="quick-prompts">
+              <button class="query-chip" type="button">📢 Güncel duyurular nelerdir?</button>
+              <button class="query-chip" type="button">📅 Sınav programı hakkında bilgi verir misiniz?</button>
+              <button class="query-chip" type="button">👤 Akademik personel hakkında bilgi verir misiniz?</button>
+              <button class="query-chip" type="button">📞 Fakültenin iletişim bilgileri nelerdir?</button>
+            </div>
           </section>
 
           <div class="messages-wrap">
@@ -126,18 +156,9 @@
                   />
                 </div>
                 <div class="bubble">
-                  <p>👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve diğer konularda yardımcı olabilirim.</p>
+                  <p>👋 Merhaba, ben KAÜCAN Beta - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü, yazım desteği ve genel konularda yardımcı olabilirim.</p>
                 </div>
               </article>
-            </div>
-
-            <div class="scroll-controls" aria-label="Mesaj gezinme kontrolleri">
-              <button class="icon-button scroll-button" id="scrollUpButton" type="button" aria-label="Yukarı git" title="Yukarı git">
-                <span aria-hidden="true">↑</span>
-              </button>
-              <button class="icon-button scroll-button" id="scrollDownButton" type="button" aria-label="Aşağı git" title="Aşağı git">
-                <span aria-hidden="true">↓</span>
-              </button>
             </div>
           </div>
 
@@ -235,6 +256,6 @@
       </footer>
     </div>
 
-    <script defer src="/static/app.js?v=20260426b"></script>
+    <script defer src="/static/app.js?v=20260426c"></script>
   </body>
 </html>

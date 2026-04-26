@@ -409,18 +409,22 @@ def _looks_like_question(message: str, normalized_message: str) -> bool:
 
 def _department_name_for_language(department_key: str, language: str) -> str:
     department = KNOWN_DEPARTMENTS.get(department_key, {})
-    if language == "en":
+    if language in {"en", "ar"}:
         return clean_text(department.get("name_en", ""))
     return clean_text(department.get("name_tr", ""))
 
 
 def _role_for_language(role_key: str, language: str) -> str:
     translations = {
-        "student": {"tr": "öğrenci", "en": "student"},
+        "student": {"tr": "öğrenci", "en": "student", "ar": "طالب"},
     }
-    values = translations.get(role_key, {"tr": role_key, "en": role_key})
+    values = translations.get(role_key, {"tr": role_key, "en": role_key, "ar": role_key})
+    if language == "ar":
+        return values["ar"]
     return values["en"] if language == "en" else values["tr"]
 
 
-def _text_for_language(language: str, tr_text: str, en_text: str) -> str:
+def _text_for_language(language: str, tr_text: str, en_text: str, ar_text: str | None = None) -> str:
+    if language == "ar":
+        return ar_text or en_text
     return en_text if language == "en" else tr_text

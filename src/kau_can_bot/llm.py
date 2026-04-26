@@ -4,7 +4,7 @@ import os
 
 from .config import FALLBACK_RESPONSE, POLITE_LANGUAGE_RESPONSE, Settings
 from .models import SearchResult
-from .query_normalizer import is_coding_query, is_english_query
+from .query_normalizer import is_arabic_query, is_coding_query, is_english_query
 
 
 SYSTEM_PROMPT = f"""
@@ -33,16 +33,17 @@ Zorunlu kurallar:
 """.strip()
 
 GENERAL_SYSTEM_PROMPT = f"""
-Bu sistem Türkçe ve İngilizce konuşabilen, kurumsal ama samimi bir dijital asistandır.
+Bu sistem Türkçe, İngilizce ve Arapça konuşabilen; kurumsal ama samimi bir dijital asistandır.
 
 Zorunlu kurallar:
-- Kullanıcının mesaj diline göre Türkçe veya İngilizce yanıt ver.
+- Kullanıcının mesaj diline göre Türkçe, İngilizce veya Arapça yanıt ver.
 - Kullanıcı günlük sohbet etmek isterse kısa, sıcak ve doğal karşılık ver.
 - Kullanıcı matematik, tarih, yazılım veya genel bilgi sorarsa doğru ve anlaşılır biçimde yanıtla.
 - Kullanıcı kod veya yazılım sorusu sorarsa hatayı açıkla, mümkünse düzeltilmiş veya geliştirilmiş kısa bir çözüm öner.
+- Kullanıcı emir kipinde yazsa da görevi yerine getir; araştırma, yazma, düzeltme, geliştirme, özetleme, dilekçe, e-posta veya mesaj oluşturma isteklerini doğrudan karşıla.
 - Kod örneği gerekiyorsa kısa bir kod bloğu kullanılabilir.
 - Tarih, sayı veya teknik bilgi konusunda emin olunmayan ayrıntıları uydurma; gerekiyorsa belirsizlik açıkça belirtilsin.
-- Gereksiz uzatma yapma; 2-5 cümle veya en fazla 4 kısa madde ile yanıt ver.
+- Yanıtlar kısa ve hızlı olsun; çoğu durumda 2-4 cümle veya en fazla 4 kısa madde kullan.
 - Uygunsuz dil kullanılırsa aynen şu metni döndür:
 {POLITE_LANGUAGE_RESPONSE}
 - Gerekirse uygun emojilerden ölçülü biçimde yararlan.
@@ -50,14 +51,15 @@ Zorunlu kurallar:
 """.strip()
 
 CODING_SYSTEM_PROMPT = f"""
-Bu sistem Türkçe ve İngilizce konuşabilen teknik bir yardımcı asistandır.
+Bu sistem Türkçe, İngilizce ve Arapça konuşabilen teknik bir yardımcı asistandır.
 
 Zorunlu kurallar:
-- Kullanıcının mesaj diline göre Türkçe veya İngilizce yanıt ver.
+- Kullanıcının mesaj diline göre Türkçe, İngilizce veya Arapça yanıt ver.
 - Kod, hata ayıklama veya geliştirme sorularında net ve uygulanabilir destek sun.
 - Önce sorunu kısa biçimde açıkla, ardından düzeltilmiş yaklaşımı ver.
 - Gerektiğinde kısa ve çalıştırılabilir bir kod bloğu kullan.
-- Uzun teoriye girme; doğrudan çözüm odaklı ol.
+- Kullanıcı isterse kodu düzelt, yeniden yaz, iyileştir veya sadeleştir.
+- Uzun teoriye girme; doğrudan çözüm odaklı ol ve kısa kal.
 - Emin olunmayan ayrıntıları uydurma.
 - Uygunsuz dil kullanılırsa aynen şu metni döndür:
 {POLITE_LANGUAGE_RESPONSE}
@@ -106,13 +108,13 @@ class OpenAIAnswerGenerator:
 
         client = OpenAI(
             api_key=self.settings.openai_api_key,
-            timeout=min(self.settings.openai_timeout, 6),
+            timeout=min(self.settings.openai_timeout, 4.5),
         )
         response = client.responses.create(
             model=self.settings.openai_model,
             instructions=_general_prompt_for_query(query),
             input=_general_input(query, memory_context),
-            max_output_tokens=min(self.settings.openai_max_output_tokens, 320),
+            max_output_tokens=min(self.settings.openai_max_output_tokens, 220),
         )
         answer = (response.output_text or "").strip()
         return answer or None
@@ -168,9 +170,9 @@ class OllamaAnswerGenerator:
                 {"role": "user", "content": _general_input(query, memory_context)},
             ],
             options={
-                "temperature": 0.2,
-                "top_p": 0.8,
-                "num_predict": min(self.settings.openai_max_output_tokens, 260),
+                "temperature": 0.15,
+                "top_p": 0.7,
+                "num_predict": min(self.settings.openai_max_output_tokens, 180),
             },
         )
         answer = response.message.content.strip()
@@ -193,6 +195,8 @@ def _build_user_input(query: str, results: list[SearchResult]) -> str:
 def _general_prompt_for_query(query: str) -> str:
     if is_coding_query(query):
         return CODING_SYSTEM_PROMPT
+    if is_arabic_query(query):
+        return GENERAL_SYSTEM_PROMPT + "\n- Give the final answer naturally and concisely in Arabic."
     if is_english_query(query):
         return GENERAL_SYSTEM_PROMPT + "\n- Keep the tone natural and concise in English."
     return GENERAL_SYSTEM_PROMPT

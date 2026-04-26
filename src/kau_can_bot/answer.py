@@ -38,6 +38,7 @@ from .official_data import (
     get_official_snapshot,
 )
 from .query_normalizer import (
+    is_arabic_query,
     is_coding_query,
     is_english_query,
     is_greeting_query,
@@ -67,6 +68,7 @@ DIRECT_SERVICE_LINKS = (
         "url": "https://www.kafkas.edu.tr/skdb",
         "message_tr": "🍽️ Yemekhane menüsüne SKDB sayfası üzerinden erişilebilir.",
         "message_en": "🍽️ The cafeteria menu can be accessed through the SKDB page.",
+        "message_ar": "🍽️ يمكن الوصول إلى قائمة الطعام عبر صفحة إدارة الخدمات الصحية والثقافية.",
         "terms": ("yemek", "yemekhane", "menü", "menu", "yemek menusu", "cafeteria", "food", "dining"),
     },
     {
@@ -75,6 +77,7 @@ DIRECT_SERVICE_LINKS = (
         "url": "https://www.kafkas.edu.tr/oidb/tr/sayfaYeni6016",
         "message_tr": "📅 Akademik takvime Öğrenci İşleri sayfası üzerinden erişilebilir.",
         "message_en": "📅 The academic calendar can be accessed through the Student Affairs page.",
+        "message_ar": "📅 يمكن الوصول إلى التقويم الأكاديمي عبر صفحة شؤون الطلاب.",
         "terms": ("akademik takvim", "egitim takvimi", "öğretim takvimi", "ders takvimi", "academic calendar"),
     },
     {
@@ -83,6 +86,7 @@ DIRECT_SERVICE_LINKS = (
         "url": "https://obsyeni.kafkas.edu.tr",
         "message_tr": "✅ OBS sistemine aşağıdaki bağlantı üzerinden erişilebilir.",
         "message_en": "✅ The OBS system can be accessed through the link below.",
+        "message_ar": "✅ يمكن الوصول إلى نظام معلومات الطلاب عبر الرابط التالي.",
         "terms": ("obs", "ogrenci bilgi sistemi", "öğrenci bilgi sistemi", "student information system"),
     },
     {
@@ -91,6 +95,7 @@ DIRECT_SERVICE_LINKS = (
         "url": "https://captive.kafkas.edu.tr:6082/php/uid.php?vsys=1&rule=4&url=https://www.yok.gov.tr",
         "message_tr": "🌐 Kampüs internet erişimi için aşağıdaki bağlantı kullanılabilir.",
         "message_en": "🌐 The campus internet access page can be opened from the link below.",
+        "message_ar": "🌐 يمكن فتح صفحة الوصول إلى إنترنت الحرم الجامعي من الرابط التالي.",
         "terms": (
             "wifi",
             "wi fi",
@@ -104,11 +109,35 @@ DIRECT_SERVICE_LINKS = (
             "wireless",
         ),
     },
+    {
+        "key": "kutuphane",
+        "title": "Kütüphane",
+        "url": "https://www.kafkas.edu.tr/kddb/TR/default.aspx",
+        "message_tr": "📚 Kütüphane hizmetlerine aşağıdaki bağlantı üzerinden erişilebilir.",
+        "message_en": "📚 Library services can be accessed through the link below.",
+        "message_ar": "📚 يمكن الوصول إلى خدمات المكتبة عبر الرابط التالي.",
+        "terms": ("kutuphane", "kütüphane", "library", "lib"),
+    },
+    {
+        "key": "ebys",
+        "title": "EBYS",
+        "url": "https://ebys.kafkas.edu.tr/DYS/documentmanagement/",
+        "message_tr": "🗂️ EBYS sistemine aşağıdaki bağlantı üzerinden erişilebilir.",
+        "message_en": "🗂️ The EBYS system can be accessed through the link below.",
+        "message_ar": "🗂️ يمكن الوصول إلى نظام إدارة المستندات EBYS عبر الرابط التالي.",
+        "terms": ("ebys", "evrak", "belge yonetim", "document management"),
+    },
+    {
+        "key": "telefon-rehberi",
+        "title": "Telefon Rehberi",
+        "url": "https://www.kafkas.edu.tr/kau/rehber2",
+        "message_tr": "📞 Telefon rehberine aşağıdaki bağlantı üzerinden erişilebilir.",
+        "message_en": "📞 The phone directory can be accessed through the link below.",
+        "message_ar": "📞 يمكن الوصول إلى دليل الهاتف عبر الرابط التالي.",
+        "terms": ("telefon rehberi", "rehber", "telefon listesi", "phone directory", "directory"),
+    },
 )
-FACULTY_CONTACT_LINKS = (
-    ("Dekana Sor", "https://kafkas.edu.tr/iibf/tr/sayfaYeni18817"),
-    ("Telefon Rehberi", "https://kafkas.edu.tr/kau/rehber2"),
-)
+FACULTY_CONTACT_PAGE = "https://kafkas.edu.tr/iibf/tr/sayfaYeni18034"
 MAPS_LINK = ("Maps'te Aç", "https://maps.app.goo.gl/HMYYaxbZBcZVisbN7")
 RECTOR_PAGE = ("Rektör", "https://www.kafkas.edu.tr/rektorluk/tr/sayfaYeni655")
 RECTOR_ASSISTANTS_PAGE = ("Rektör Yardımcıları", "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni652")
@@ -117,26 +146,57 @@ SMALLTALK_RESPONSES = {
     "naber": {
         "tr": "😊 İyiyim, teşekkür ederim. Akademik ya da genel bir konuda yardımcı olmam istenirse memnuniyetle destek sunabilirim.",
         "en": "😊 I'm doing well, thank you. I can gladly help with campus topics or general questions.",
+        "ar": "😊 أنا بخير، شكرًا لك. يمكن المساعدة في موضوع جامعي أو عام بكل سرور.",
     },
     "ne haber": {
         "tr": "😊 Her şey yolunda görünüyor. İİBF, genel bilgi ya da günlük bir konuda yardımcı olabilirim.",
         "en": "😊 Everything looks good. I can help with IIBF, general information, or casual conversation.",
+        "ar": "😊 كل شيء بخير. يمكن المساعدة في شؤون الكلية أو في الأسئلة العامة أو في دردشة يومية قصيرة.",
     },
     "nasilsin": {
         "tr": "😊 Teşekkür ederim, gayet iyiyim. İstenirse sohbet edebilir ya da herhangi bir konuda bilgi paylaşabilirim.",
         "en": "😊 I'm well, thank you. We can chat or continue with any question you'd like.",
+        "ar": "😊 أنا بخير، شكرًا لك. يمكننا الدردشة أو متابعة أي سؤال ترغب به.",
     },
     "iyi misin": {
         "tr": "😊 Teşekkür ederim, iyiyim. İstenirse hemen bir soruya geçilebilir.",
         "en": "😊 Thank you, I'm doing well. We can move straight to your next question.",
+        "ar": "😊 شكرًا لك، أنا بخير. يمكننا الانتقال مباشرة إلى سؤالك التالي.",
     },
     "ne yapiyorsun": {
         "tr": "😊 Sorulara yanıt vermek ve birlikte çözüm üretmek için hazır durumdayım. İstenirse kampüs, dersler ya da genel bilgi konularında devam edilebilir.",
         "en": "😊 I'm here to answer questions and help work through problems. We can continue with campus, coursework, or general topics.",
+        "ar": "😊 أنا جاهز للإجابة عن الأسئلة والمساعدة في إيجاد الحلول. يمكننا المتابعة في موضوع جامعي أو عام أو تقني.",
     },
     "tesekkurler": {
         "tr": "😊 Rica ederim. Yeni bir soru olduğunda yardımcı olmaktan memnuniyet duyarım.",
         "en": "😊 You're welcome. I'd be happy to help again whenever you have another question.",
+        "ar": "😊 على الرحب والسعة. يسعدني أن أساعد مرة أخرى متى احتجت.",
+    },
+    "merhaba": {
+        "tr": "👋 Merhaba. Hazır durumdayım; istenirse bilgi verilebilir, metin yazılabilir veya bir konu birlikte araştırılabilir.",
+        "en": "👋 Hello. I'm ready to help with information, writing, coding, or short research tasks.",
+        "ar": "👋 مرحبًا. أنا جاهز للمساعدة في المعلومات والكتابة والبرمجة والمهام البحثية القصيرة.",
+    },
+    "adın ne": {
+        "tr": "👋 Ben KAÜCAN Beta. Kafkas Üniversitesi İİBF için bilgi, yazım desteği ve genel yapay zeka yardımı sunabilirim.",
+        "en": "👋 I am KAUCAN Beta. I can help with FEAS information, writing support, and general AI assistance.",
+        "ar": "👋 أنا KAÜCAN Beta. يمكنني المساعدة في معلومات الكلية والكتابة والدعم الذكي العام.",
+    },
+    "ne yapabilirsin": {
+        "tr": "✅ İİBF bilgileri, duyurular, personel, iletişim, konum, kod soruları, metin düzeltme, mail ve dilekçe yazımı gibi konularda destek sunabilirim.",
+        "en": "✅ I can help with FEAS information, announcements, staff, contact, location, coding, text correction, emails, and petition drafting.",
+        "ar": "✅ يمكنني المساعدة في معلومات الكلية والإعلانات والكوادر والاتصال والموقع والبرمجة وتصحيح النصوص وكتابة الرسائل والطلبات.",
+    },
+    "كيف حالك": {
+        "tr": "😊 İyiyim, teşekkür ederim. İstenirse sohbete ya da bir soruya hemen geçilebilir.",
+        "en": "😊 I'm doing well, thank you. We can move straight to chatting or to your next question.",
+        "ar": "😊 أنا بخير، شكرًا لك. يمكننا الانتقال مباشرة إلى الدردشة أو إلى سؤالك التالي.",
+    },
+    "شكرا": {
+        "tr": "😊 Rica ederim. Yeni bir soru olduğunda yardımcı olmaktan memnuniyet duyarım.",
+        "en": "😊 You're welcome. I'd be happy to help again whenever you have another question.",
+        "ar": "😊 على الرحب والسعة. يسعدني أن أساعدك في أي وقت.",
     },
 }
 MATH_BINARY_OPERATORS = {
@@ -153,11 +213,18 @@ class ComposedAnswer:
     sources: list[SearchResult]
 
 
-def _response_language(query: str) -> str:
+def _response_language(query: str, preferred_language: str | None = None) -> str:
+    preferred = clean_text(preferred_language or "").lower()
+    if preferred in {"tr", "en", "ar"}:
+        return preferred
+    if is_arabic_query(query):
+        return "ar"
     return "en" if is_english_query(query) else "tr"
 
 
-def _text_for_language(language: str, tr_text: str, en_text: str) -> str:
+def _text_for_language(language: str, tr_text: str, en_text: str, ar_text: str | None = None) -> str:
+    if language == "ar":
+        return ar_text or en_text
     return en_text if language == "en" else tr_text
 
 
@@ -165,15 +232,17 @@ def _welcome_message(language: str, user_memory: dict[str, object] | None = None
     greeting = _text_for_language(
         language,
         WELCOME_MESSAGE,
-        "👋 Hello, I am KAUCAN - the Digital Assistant of Kafkas University. I can help with IIBF announcements, academic information, staff, contact, exams, cafeteria menu, and many other topics.",
+        "👋 Hello, I am KAUCAN Beta - the Digital Assistant of Kafkas University. I can help with IIBF announcements, academic information, staff, contact, exams, cafeteria menu, writing, coding, and many other topics.",
+        "👋 مرحبًا، أنا KAÜCAN Beta، المساعد الرقمي لجامعة قفقاس. يمكنني المساعدة في إعلانات الكلية والمعلومات الأكاديمية والكوادر والاتصال والامتحانات وقائمة الطعام والكتابة والبرمجة وغيرها.",
     )
     display_name = user_display_name(user_memory or {})
     if not display_name:
         return greeting
     return _text_for_language(
         language,
-        f"👋 Merhaba {display_name}, ben KAÜCAN. İİBF, genel bilgi ve günlük sorularda yardımcı olabilirim.",
-        f"👋 Hello {display_name}, I am KAUCAN. I can help with IIBF topics, general questions, and everyday conversation.",
+        f"👋 Merhaba {display_name}, ben KAÜCAN Beta. İİBF, genel bilgi, yazım ve günlük sorularda yardımcı olabilirim.",
+        f"👋 Hello {display_name}, I am KAUCAN Beta. I can help with IIBF topics, general questions, writing, and everyday conversation.",
+        f"👋 مرحبًا {display_name}، أنا KAÜCAN Beta. يمكنني المساعدة في موضوعات الكلية والأسئلة العامة والكتابة والمحادثة اليومية.",
     )
 
 
@@ -186,14 +255,19 @@ class WebsiteGroundedAssistant:
         self.settings = settings or Settings()
         self.index = index or SearchIndex.load(INDEX_PATH)
 
-    def answer(self, query: str, client_id: str | None = None) -> str:
-        return self.answer_with_context(query, client_id=client_id).answer
+    def answer(self, query: str, client_id: str | None = None, preferred_language: str | None = None) -> str:
+        return self.answer_with_context(query, client_id=client_id, preferred_language=preferred_language).answer
 
-    def answer_with_context(self, query: str, client_id: str | None = None) -> AssistantResponse:
+    def answer_with_context(
+        self,
+        query: str,
+        client_id: str | None = None,
+        preferred_language: str | None = None,
+    ) -> AssistantResponse:
         original_query = clean_text(query)
         normalized_query = normalize_query(original_query) or original_query
         general_query = original_query or normalized_query
-        language = _response_language(general_query)
+        language = _response_language(general_query, preferred_language)
         client_key = clean_text(client_id or "")
         if client_key:
             touch_user(client_key)
@@ -206,13 +280,19 @@ class WebsiteGroundedAssistant:
                     language,
                     POLITE_LANGUAGE_RESPONSE,
                     "⚠️ Please use academic and appropriate language. I would be glad to assist.",
+                    "⚠️ يُرجى استخدام لغة أكاديمية ومناسبة. يسعدني مساعدتك.",
                 ),
                 status="blocked_language",
             )
 
         if has_harmful_intent(normalized_query):
             return AssistantResponse(
-                answer=_text_for_language(language, "Bu talebe yardımcı olamam.", "I cannot help with that request."),
+                answer=_text_for_language(
+                    language,
+                    "Bu talebe yardımcı olamam.",
+                    "I cannot help with that request.",
+                    "لا يمكنني المساعدة في هذا الطلب.",
+                ),
                 status="blocked_safety",
             )
 
@@ -343,6 +423,21 @@ class WebsiteGroundedAssistant:
                 status="memory_fact",
             )
 
+        composition_response = _composition_shortcut(general_query, language)
+        if composition_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                composition_response.text,
+                composition_response.sources,
+                "general",
+            )
+            return AssistantResponse(
+                answer=composition_response.text,
+                sources=composition_response.sources,
+                interaction_id=interaction.id,
+                status="general",
+            )
+
         if is_smalltalk_query(normalized_query):
             answer = _smalltalk_response(normalized_query, language, user_memory)
             interaction = log_interaction(
@@ -370,7 +465,7 @@ class WebsiteGroundedAssistant:
             )
 
         if _should_answer_with_general_knowledge(general_query):
-            general_answer = self._generate_general_with_llm(general_query, user_memory)
+            general_answer = self._generate_general_with_llm(general_query, user_memory, preferred_language=language)
             if general_answer:
                 answer = _sanitize_answer_text(general_answer)
                 if answer:
@@ -388,6 +483,7 @@ class WebsiteGroundedAssistant:
                 language,
                 "📌 Sorunun daha doğru yanıtlanabilmesi için konu başlığının biraz daha netleştirilmesi rica olunur. Bölüm, duyuru, akademik personel, iletişim, sınav, akademik takvim veya yemek menüsü gibi bir başlık belirtilebilir.",
                 "📌 Please make the topic a little more specific so that I can answer more accurately. You may mention a department, announcement, academic staff, contact, exam, academic calendar, or cafeteria menu.",
+                "📌 يُرجى توضيح الموضوع قليلًا حتى أتمكن من الإجابة بدقة أكبر. يمكن ذكر قسم أو إعلان أو كادر أكاديمي أو تواصل أو امتحان أو تقويم أكاديمي أو قائمة طعام.",
             )
             interaction = log_interaction(original_query or normalized_query, answer, [], "ambiguous")
             return AssistantResponse(answer=answer, interaction_id=interaction.id, status="ambiguous")
@@ -415,6 +511,7 @@ class WebsiteGroundedAssistant:
                 language,
                 FALLBACK_RESPONSE,
                 "⚠️ I could not reach reliable information on this topic. For the most accurate information, please contact the faculty directly.",
+                "⚠️ لم أتمكن من الوصول إلى معلومات موثوقة حول هذا الموضوع. للحصول على أدق معلومة، يُنصح بالتواصل مع الكلية مباشرة.",
             )
             interaction = log_interaction(original_query or normalized_query, fallback_text, [], "fallback")
             return AssistantResponse(
@@ -476,13 +573,18 @@ class WebsiteGroundedAssistant:
         except Exception:
             return None
 
-    def _generate_general_with_llm(self, query: str, user_memory: dict[str, object] | None = None) -> str | None:
+    def _generate_general_with_llm(
+        self,
+        query: str,
+        user_memory: dict[str, object] | None = None,
+        preferred_language: str | None = None,
+    ) -> str | None:
         generator = _general_generator_for_settings(self.settings)
         if not generator.is_configured:
             return None
 
         try:
-            memory_context = _general_memory_context(user_memory or {}, _response_language(query))
+            memory_context = _general_memory_context(user_memory or {}, _response_language(query, preferred_language))
             return generator.generate_general(query, memory_context=memory_context)
         except Exception:
             return None
@@ -779,7 +881,7 @@ def _general_support_sources(query: str, language: str, include_google: bool = T
     if include_google:
         entries.append(
             (
-                _text_for_language(language, "Google'da Ara", "Search on Google"),
+                _text_for_language(language, "Google'da Ara", "Search on Google", "ابحث في Google"),
                 f"https://www.google.com/search?q={quote_plus(query)}",
             )
         )
@@ -799,7 +901,7 @@ def _match_direct_service_link(query: str, language: str) -> ComposedAnswer | No
     for item in DIRECT_SERVICE_LINKS:
         if any(normalize_for_matching(term) in normalized for term in item["terms"]):
             return ComposedAnswer(
-                text=_text_for_language(language, item["message_tr"], item["message_en"]),
+                text=_text_for_language(language, item["message_tr"], item["message_en"], item.get("message_ar")),
                 sources=_build_link_sources([(item["title"], item["url"])]),
             )
     return None
@@ -872,10 +974,31 @@ def _faculty_contact_shortcut(query: str, language: str) -> ComposedAnswer | Non
     return ComposedAnswer(
         text=_text_for_language(
             language,
-            "📞 İİBF iletişim bağlantıları aşağıda sunulmuştur.",
-            "📞 The IIBF contact links are provided below.",
+            "📞 İİBF iletişim bilgileri:\n"
+            "• E-posta: iibf@kafkas.edu.tr\n"
+            "• Telefon: 0474 225 12 50\n"
+            "• Fax: 0474 225 12 57\n"
+            "• Dekanımıza Ulaşmak İçin: dozyakisir@gmail.com",
+            "📞 IIBF contact information:\n"
+            "• Email: iibf@kafkas.edu.tr\n"
+            "• Phone: 0474 225 12 50\n"
+            "• Fax: 0474 225 12 57\n"
+            "• To Reach the Dean: dozyakisir@gmail.com",
+            "📞 معلومات التواصل لكلية الاقتصاد والعلوم الإدارية:\n"
+            "• البريد الإلكتروني: iibf@kafkas.edu.tr\n"
+            "• الهاتف: 0474 225 12 50\n"
+            "• الفاكس: 0474 225 12 57\n"
+            "• للتواصل مع العميد: dozyakisir@gmail.com",
         ),
-        sources=_build_link_sources(list(FACULTY_CONTACT_LINKS)),
+        sources=_build_link_sources(
+            [
+                ("İİBF İletişim Sayfası", FACULTY_CONTACT_PAGE),
+                ("Telefon: 0474 225 12 50", "tel:+904742251250"),
+                ("E-posta: iibf@kafkas.edu.tr", "mailto:iibf@kafkas.edu.tr"),
+                ("Dekana Ulaşın: dozyakisir@gmail.com", "mailto:dozyakisir@gmail.com"),
+                ("Telefon Rehberi", "https://www.kafkas.edu.tr/kau/rehber2"),
+            ]
+        ),
     )
 
 
@@ -898,6 +1021,7 @@ def _location_shortcut(query: str, language: str) -> ComposedAnswer | None:
             language,
             "📌 Konum bilgisi için aşağıdaki harita bağlantısı kullanılabilir. Bağlantı Maps uygulamasında açılabilir.",
             "📌 The map link below can be used for location information. It can be opened directly in the Maps application.",
+            "📌 يمكن استخدام رابط الخريطة التالي لمعرفة الموقع، ويمكن فتحه مباشرة في تطبيق الخرائط.",
         ),
         sources=_build_link_sources([MAPS_LINK]),
     )
@@ -1129,6 +1253,7 @@ def _official_dean_answer(snapshot: dict, language: str) -> ComposedAnswer | Non
             language,
             f"👤 İİBF dekanı resmi senato sayfasına göre {dean_name} olarak yer almaktadır. {designation}".strip(),
             f"👤 According to the official senate page, the dean of FEAS is {dean_name}. Dean of the Faculty of Economics and Administrative Sciences.",
+            f"👤 وفقًا لصفحة مجلس الجامعة الرسمية، فإن عميد الكلية هو {dean_name}.",
         ),
         sources=_build_link_sources(
             [
@@ -1537,12 +1662,12 @@ def _should_use_official_data(query: str) -> bool:
 
 def _is_dean_query(query: str) -> bool:
     normalized = _query_key(query)
-    return ("dekan" in normalized or "dean" in normalized) and (
+    return ("dekan" in normalized or "dean" in normalized or "عميد" in normalized) and (
         _is_faculty_query(query)
         or "fakulte" in normalized
         or "faculty" in normalized
         or "feas" in normalized
-        or normalized in {"dekan kim", "dekan kimdir", "dean", "who is the dean"}
+        or normalized in {"dekan kim", "dekan kimdir", "dean", "who is the dean", "من هو العميد"}
     )
 
 
@@ -1635,20 +1760,88 @@ def _smalltalk_response(query: str, language: str, user_memory: dict[str, object
     display_name = user_display_name(user_memory or {})
     for pattern, response in SMALLTALK_RESPONSES.items():
         if pattern in normalized:
-            base_response = response.get(language, response["tr"])
+            base_response = response.get(language, response.get("en", response["tr"]))
             return f"{display_name}, {base_response}" if display_name else base_response
     fallback_response = _text_for_language(
         language,
         "😊 Elbette, sohbet edilebilir. İstenirse günlük bir konuya ya da bilgi sorusuna birlikte devam edilebilir.",
         "😊 Of course, we can chat. If you'd like, we can continue with a casual topic or an information question.",
+        "😊 بالطبع، يمكننا الدردشة. وإذا رغبت، يمكننا المتابعة في موضوع يومي أو سؤال معلوماتي.",
     )
     return f"{display_name}, {fallback_response}" if display_name else fallback_response
+
+
+def _composition_shortcut(query: str, language: str) -> ComposedAnswer | None:
+    normalized = _query_key(query)
+    if not _is_composition_request(query):
+        return None
+
+    if "mail" in normalized or "e posta" in normalized or "email" in normalized:
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                "✅ Kısa resmi e-posta taslağı:\n"
+                "Konu: Bilgi Talebi\n"
+                "Sayın Yetkili,\n"
+                "İlgili konu hakkında bilgi paylaşılmasını rica ederim.\n"
+                "İyi çalışmalar dilerim.",
+                "✅ Short formal email draft:\n"
+                "Subject: Information Request\n"
+                "Dear Sir/Madam,\n"
+                "I kindly request information regarding the related matter.\n"
+                "Best regards.",
+                "✅ مسودة بريد رسمي قصيرة:\n"
+                "الموضوع: طلب معلومات\n"
+                "السادة الكرام،\n"
+                "أرجو التكرم بمشاركة المعلومات المتعلقة بالموضوع.\n"
+                "مع خالص التقدير.",
+            ),
+            sources=[],
+        )
+
+    if "dilekce" in normalized or "dilekçe" in normalized or "petition" in normalized:
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                "✅ Kısa dilekçe taslağı:\n"
+                "İlgili makama,\n"
+                "Aşağıda belirtilen konuda gereğinin yapılmasını arz ederim.\n"
+                "Bilgilerinize sunarım.",
+                "✅ Short petition draft:\n"
+                "To the relevant authority,\n"
+                "I respectfully request the necessary action regarding the matter stated below.\n"
+                "Submitted for your consideration.",
+                "✅ مسودة طلب قصيرة:\n"
+                "إلى الجهة المختصة،\n"
+                "أرجو اتخاذ اللازم بخصوص الموضوع الموضح أدناه.\n"
+                "وتفضلوا بقبول الاحترام.",
+            ),
+            sources=[],
+        )
+
+    if "mesaj" in normalized or "message" in normalized:
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                "✅ Kısa mesaj taslağı:\n"
+                "Merhaba, ilgili konu hakkında kısa bir bilgilendirme rica ediyorum. Uygun olduğunuzda dönüş sağlayabilir misiniz?",
+                "✅ Short message draft:\n"
+                "Hello, I would appreciate a brief update on the related matter. Could you get back to me when convenient?",
+                "✅ مسودة رسالة قصيرة:\n"
+                "مرحبًا، أرجو تزويدي بإفادة مختصرة حول الموضوع. هل يمكنكم الرد عند توفر الوقت؟",
+            ),
+            sources=[],
+        )
+
+    return None
 
 
 def _should_answer_with_general_knowledge(query: str) -> bool:
     normalized = _query_key(query)
     if not normalized:
         return False
+    if _is_composition_request(query):
+        return True
     if looks_actionable(normalized):
         return False
     if any(
@@ -1668,7 +1861,7 @@ def _should_answer_with_general_knowledge(query: str) -> bool:
     ):
         return False
 
-    tokens = re.findall(r"[a-z0-9]+", normalized)
+    tokens = [token for token in normalized.split() if token]
     has_general_signal = any(
         term in normalized
         for term in (
@@ -1677,10 +1870,31 @@ def _should_answer_with_general_knowledge(query: str) -> bool:
             "neden",
             "kimdir",
             "kac",
+            "duzelt",
+            "gelistir",
+            "iyilestir",
+            "arastir",
+            "araştir",
+            "olustur",
+            "hazirla",
+            "yaz",
+            "mail yaz",
+            "mesaj yaz",
+            "dilekce",
+            "dilekçe",
+            "ozetle",
+            "çevir",
             "what",
             "how",
             "why",
             "who",
+            "write",
+            "fix",
+            "improve",
+            "create",
+            "draft",
+            "summarize",
+            "research",
             "matematik",
             "tarih",
             "yazilim",
@@ -1690,6 +1904,14 @@ def _should_answer_with_general_knowledge(query: str) -> bool:
             "bug",
             "error",
             "fix",
+            "مرحبا",
+            "كيف",
+            "اكتب",
+            "اصلح",
+            "حسن",
+            "ابحث",
+            "لخص",
+            "ترجم",
         )
     )
     has_math_signal = any(char in query for char in "+-*/=")
@@ -1699,6 +1921,7 @@ def _should_answer_with_general_knowledge(query: str) -> bool:
         or has_math_signal
         or is_coding_query(query)
         or len(tokens[0]) >= 3
+        or is_arabic_query(query)
     )
 
 
@@ -2103,6 +2326,42 @@ def _query_key(query: str) -> str:
     return normalize_for_matching(query)
 
 
+def _is_composition_request(query: str) -> bool:
+    normalized = _query_key(query)
+    return any(
+        term in normalized
+        for term in (
+            "yaz",
+            "duzelt",
+            "düzelt",
+            "gelistir",
+            "geliştir",
+            "iyilestir",
+            "araştır",
+            "arastir",
+            "olustur",
+            "oluştur",
+            "hazirla",
+            "hazırla",
+            "rewrite",
+            "write",
+            "draft",
+            "create",
+            "compose",
+            "fix",
+            "improve",
+            "summarize",
+            "research",
+            "اكتب",
+            "اصلح",
+            "حسن",
+            "ابحث",
+            "أنشئ",
+            "لخص",
+        )
+    )
+
+
 def _haystack(result: SearchResult) -> str:
     return normalize_for_matching(f"{result.chunk.url} {result.chunk.title} {result.chunk.text}")
 
@@ -2136,12 +2395,19 @@ def _is_faculty_query(query: str) -> bool:
             "faculty of economics",
             "economics and administrative sciences",
             "iibf faculty",
+            "جامعة قفقاس",
+            "كلية",
+            "العلوم الادارية",
+            "الاقتصاد",
+            "عميد",
         )
     )
 
 
 def _is_contact_query(query: str) -> bool:
     normalized = _query_key(query)
+    if _is_composition_request(query):
+        return False
     return any(
         term in normalized
         for term in (
@@ -2155,6 +2421,11 @@ def _is_contact_query(query: str) -> bool:
             "numara",
             "contact",
             "phone",
+            "تواصل",
+            "اتصال",
+            "هاتف",
+            "بريد",
+            "ايميل",
         )
     )
 
@@ -2177,6 +2448,9 @@ def _is_personnel_query(query: str) -> bool:
             "staff",
             "academic staff",
             "faculty members",
+            "كادر",
+            "هيئة التدريس",
+            "موظفين",
         )
     )
 
@@ -2197,6 +2471,9 @@ def _is_department_query(query: str) -> bool:
             "sbky",
             "sbui",
             "utl",
+            "قسم",
+            "الاقسام",
+            "نظم المعلومات",
         )
     )
 
@@ -2217,13 +2494,20 @@ def _is_announcement_query(query: str) -> bool:
             "news",
             "event",
             "events",
+            "اعلان",
+            "اعلانات",
+            "اخبار",
+            "فعاليات",
         )
     )
 
 
 def _is_exam_query(query: str) -> bool:
     normalized = _query_key(query)
-    return any(term in normalized for term in ("sinav", "vize", "final", "butunleme", "mazeret", "exam", "midterm", "makeup"))
+    return any(
+        term in normalized
+        for term in ("sinav", "vize", "final", "butunleme", "mazeret", "exam", "midterm", "makeup", "امتحان", "اختبار")
+    )
 
 
 def _is_academic_calendar_query(query: str) -> bool:
@@ -2232,17 +2516,24 @@ def _is_academic_calendar_query(query: str) -> bool:
         "akademik takvim" in normalized
         or ("akademik" in normalized and "takvim" in normalized)
         or "academic calendar" in normalized
+        or "التقويم الاكاديمي" in normalized
     )
 
 
 def _is_menu_query(query: str) -> bool:
     normalized = _query_key(query)
-    return any(term in normalized for term in ("yemek", "menu", "menusu", "yemekhane", "cafeteria", "food", "dining"))
+    return any(
+        term in normalized
+        for term in ("yemek", "menu", "menusu", "yemekhane", "cafeteria", "food", "dining", "طعام", "مقصف", "قائمة")
+    )
 
 
 def _is_location_query(query: str) -> bool:
     normalized = _query_key(query)
-    return any(term in normalized for term in ("nerede", "konum", "adres", "harita", "maps", "location", "where", "map"))
+    return any(
+        term in normalized
+        for term in ("nerede", "konum", "adres", "harita", "maps", "location", "where", "map", "اين", "موقع", "خريطة")
+    )
 
 
 def _is_management_query(query: str) -> bool:
@@ -2259,6 +2550,9 @@ def _is_management_query(query: str) -> bool:
             "vice rector",
             "senate",
             "deans",
+            "عميد",
+            "السناتور",
+            "رئيس الجامعة",
         )
     )
 

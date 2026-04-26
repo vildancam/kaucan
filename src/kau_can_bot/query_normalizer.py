@@ -278,6 +278,10 @@ GREETING_PATTERNS = {
     "hello",
     "hi",
     "hey",
+    "مرحبا",
+    "اهلا",
+    "أهلا",
+    "السلام عليكم",
 }
 
 SMALLTALK_PATTERNS = {
@@ -299,6 +303,11 @@ SMALLTALK_PATTERNS = {
     "whats up",
     "thank you",
     "thanks",
+    "كيف حالك",
+    "شلونك",
+    "ما اخبارك",
+    "ماذا تفعل",
+    "شكرا",
 }
 
 ACTIONABLE_KEYWORDS = {
@@ -375,6 +384,24 @@ ENGLISH_HINT_WORDS = {
     "why",
 }
 
+ARABIC_HINT_WORDS = {
+    "مرحبا",
+    "اهلا",
+    "أهلا",
+    "كيف",
+    "حالك",
+    "شكرا",
+    "جامعة",
+    "كلية",
+    "عميد",
+    "اعلان",
+    "اخبار",
+    "فعاليات",
+    "هاتف",
+    "بريد",
+    "اين",
+}
+
 TURKISH_HINT_WORDS = {
     "akademik",
     "duyuru",
@@ -425,7 +452,7 @@ def normalize_for_matching(text: str) -> str:
     value = value.translate(TURKISH_ASCII_MAP)
     value = unicodedata.normalize("NFKD", value)
     value = "".join(char for char in value if not unicodedata.combining(char))
-    value = re.sub(r"[^a-z0-9\s]", " ", value)
+    value = re.sub(r"[^a-z0-9\u0600-\u06FF\s]", " ", value)
     value = re.sub(r"\s+", " ", value).strip()
     return value
 
@@ -491,7 +518,10 @@ def is_english_query(text: str) -> bool:
     tokens = normalized.split()
     english_hits = sum(1 for token in tokens if token in ENGLISH_HINT_WORDS)
     turkish_hits = sum(1 for token in tokens if token in TURKISH_HINT_WORDS)
+    arabic_hits = sum(1 for token in tokens if token in ARABIC_HINT_WORDS)
     has_turkish_chars = any(char in text for char in "çğıöşüÇĞİÖŞÜ")
+    if arabic_hits >= 1 or has_arabic_text(text):
+        return False
 
     if has_turkish_chars and english_hits == 0:
         return False
@@ -507,6 +537,21 @@ def is_coding_query(text: str) -> bool:
     if not normalized:
         return False
     return any(keyword in normalized for keyword in CODING_KEYWORDS)
+
+
+def has_arabic_text(text: str) -> bool:
+    return bool(re.search(r"[\u0600-\u06FF]", text or ""))
+
+
+def is_arabic_query(text: str) -> bool:
+    if has_arabic_text(text):
+        return True
+    normalized = normalize_for_matching(text)
+    if not normalized:
+        return False
+    tokens = normalized.split()
+    arabic_hits = sum(1 for token in tokens if token in ARABIC_HINT_WORDS)
+    return arabic_hits >= 1
 
 
 def _correct_token(token: str) -> str:

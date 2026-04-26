@@ -31,7 +31,7 @@ POLITE_LANGUAGE_RESPONSE = (
 )
 
 WELCOME_MESSAGE = (
-    "👋 Merhaba, ben KAÜCAN - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında "
+    "👋 Merhaba, ben KAÜCAN Beta - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında "
     "duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve "
     "diğer konularda yardımcı olabilirim."
 )

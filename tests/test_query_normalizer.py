@@ -3,6 +3,7 @@ from __future__ import annotations
 import unittest
 
 from kau_can_bot.query_normalizer import (
+    is_arabic_query,
     is_coding_query,
     is_english_query,
     is_greeting_query,
@@ -37,6 +38,7 @@ class QueryNormalizerTests(unittest.TestCase):
     def test_greeting_query_is_detected(self) -> None:
         self.assertTrue(is_greeting_query("mrbb"))
         self.assertTrue(is_greeting_query("hello"))
+        self.assertTrue(is_greeting_query("مرحبا"))
         self.assertFalse(is_greeting_query("duyrular"))
 
     def test_actionable_topic_is_preserved(self) -> None:
@@ -47,6 +49,7 @@ class QueryNormalizerTests(unittest.TestCase):
         self.assertTrue(is_english_query("iibf contact"))
         self.assertTrue(is_coding_query("fix this python error"))
         self.assertFalse(is_english_query("python nedir"))
+        self.assertTrue(is_arabic_query("مرحبا كيف حالك"))
 
 
 if __name__ == "__main__":

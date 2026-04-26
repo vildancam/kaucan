@@ -113,9 +113,24 @@ body.js-ready .app-shell {
   gap: 14px;
 }
 
+.topbar-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .brand-home {
   min-width: 0;
   text-decoration: none;
+}
+
+.brand-logos,
+.brand-title-row {
+  display: flex;
+  align-items: center;
+}
+
+.brand-logos {
+  gap: 10px;
 }
 
 .logo-frame {
@@ -129,6 +144,13 @@ body.js-ready .app-shell {
   border: 1px solid var(--line);
   background: linear-gradient(180deg, #ffffff 0%, #eef6ff 100%);
   box-shadow: var(--shadow-soft);
+}
+
+.logo-frame-secondary {
+  width: 64px;
+  height: 64px;
+  flex-basis: 64px;
+  border-radius: 20px;
 }
 
 body[data-theme="dark"] .logo-frame,
@@ -163,6 +185,30 @@ body[data-theme="dark"] .assistant-avatar {
   min-width: 0;
 }
 
+.brand-title-row {
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.brand-mark {
+  margin: 0;
+  color: var(--blue-main);
+}
+
+.beta-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(0, 91, 170, 0.1);
+  color: var(--blue-main);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .eyebrow,
 .panel-eyebrow {
   margin: 0 0 4px;
@@ -181,8 +227,8 @@ p {
 }
 
 h1 {
-  font-size: clamp(1.75rem, 2.7vw, 2.3rem);
-  line-height: 1;
+  font-size: clamp(1.2rem, 2.1vw, 1.72rem);
+  line-height: 1.22;
   letter-spacing: -0.03em;
 }
 
@@ -237,7 +283,8 @@ body[data-theme="dark"] .status {
   margin: 16px auto 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+  justify-content: center;
 }
 
 .workspace {
@@ -348,6 +395,10 @@ textarea {
 .history-clear-button {
   min-height: 52px;
   white-space: nowrap;
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  box-shadow: 0 12px 24px rgba(153, 27, 27, 0.22);
 }
 
 .history-search:focus,
@@ -448,6 +499,13 @@ body[data-theme="dark"] .highlight-nav {
   color: #dcecff;
 }
 
+body[data-theme="dark"] .secondary-button,
+body[data-theme="dark"] .language-select {
+  color: #edf5ff;
+  background: rgba(9, 24, 40, 0.95);
+  border-color: rgba(146, 192, 241, 0.22);
+}
+
 .icon-button:hover,
 .history-action:hover,
 .highlight-nav:hover,
@@ -491,19 +549,77 @@ body[data-theme="dark"] .highlight-nav {
   border-color: var(--line);
 }
 
-.quick-prompts {
-  display: flex;
-  flex-wrap: wrap;
+.clear-button {
+  min-width: 110px;
+}
+
+.language-control {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
   gap: 10px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-soft);
+}
+
+.language-icon {
+  font-size: 1rem;
+}
+
+.language-select {
+  min-width: 122px;
+  border: 0;
+  background: transparent;
+  color: var(--blue-dark);
+  font-weight: 760;
+  outline: none;
+}
+
+.quick-prompts-shell {
+  display: grid;
+  gap: 14px;
   padding: 16px 20px 0;
 }
 
+.quick-prompts-title {
+  color: var(--blue-main);
+  text-align: center;
+  font-size: 0.94rem;
+  font-weight: 820;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
 .query-chip {
-  padding: 12px 16px;
-  text-align: left;
-  color: var(--ink);
-  background: var(--surface-strong);
-  border-color: var(--line);
+  min-width: min(100%, 260px);
+  padding: 14px 18px;
+  text-align: center;
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #005baa 0%, #0b76d0 100%);
+  box-shadow: 0 16px 30px rgba(0, 91, 170, 0.18);
+}
+
+.query-chip:nth-child(2) {
+  background: linear-gradient(135deg, #0b76d0 0%, #003b73 100%);
+}
+
+.query-chip:nth-child(3) {
+  background: linear-gradient(135deg, #0068c2 0%, #1d4ed8 100%);
+}
+
+.query-chip:nth-child(4) {
+  background: linear-gradient(135deg, #0f74bf 0%, #04528f 100%);
 }
 
 .messages-wrap {
@@ -515,18 +631,7 @@ body[data-theme="dark"] .highlight-nav {
 .messages {
   height: 100%;
   padding: 20px 20px 8px;
-}
-
-.scroll-controls {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  display: grid;
-  gap: 8px;
-}
-
-.scroll-button {
-  background: rgba(255, 255, 255, 0.94);
+  scrollbar-gutter: stable;
 }
 
 .message {
@@ -664,13 +769,25 @@ body[data-theme="dark"] .highlight-nav {
   align-items: center;
   justify-content: center;
   min-height: 40px;
-  padding: 0 14px;
+  padding: 0 16px;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: var(--surface-soft);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(226, 239, 255, 0.92) 100%);
   color: var(--blue-dark);
   font-weight: 760;
   text-decoration: none;
+}
+
+.quick-link:nth-child(3n + 1) {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(218, 235, 255, 0.96) 100%);
+}
+
+.quick-link:nth-child(3n + 2) {
+  background: linear-gradient(135deg, rgba(242, 248, 255, 0.98) 0%, rgba(230, 242, 255, 0.95) 100%);
+}
+
+.quick-link:nth-child(3n + 3) {
+  background: linear-gradient(135deg, rgba(236, 245, 255, 0.98) 0%, rgba(214, 232, 255, 0.95) 100%);
 }
 
 body[data-theme="dark"] .source-link,
@@ -744,6 +861,7 @@ textarea {
   resize: none;
   padding: 16px 18px;
   line-height: 1.6;
+  overflow-y: auto;
 }
 
 .submit-icon-button {
@@ -842,6 +960,35 @@ textarea {
   font-size: 0.95rem;
 }
 
+.history-list::-webkit-scrollbar,
+.messages::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
+  width: 11px;
+}
+
+.history-list::-webkit-scrollbar-track,
+.messages::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track {
+  background: rgba(0, 91, 170, 0.06);
+  border-radius: 999px;
+}
+
+.history-list::-webkit-scrollbar-thumb,
+.messages::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(0, 91, 170, 0.7) 0%, rgba(0, 59, 115, 0.82) 100%);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.history-list,
+.messages,
+textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 91, 170, 0.78) rgba(0, 91, 170, 0.08);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -937,8 +1084,8 @@ textarea {
     width: 100%;
   }
 
-  .scroll-controls {
-    right: 12px;
-    bottom: 12px;
+  .language-control {
+    width: 100%;
+    justify-content: center;
   }
 }

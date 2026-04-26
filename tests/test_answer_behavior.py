@@ -141,13 +141,9 @@ class AnswerBehaviorTests(unittest.TestCase):
 
         self.assertEqual(response.status, "direct_link")
         self.assertIn("📞", response.answer)
-        self.assertEqual(
-            [source.chunk.url for source in response.sources],
-            [
-                "https://kafkas.edu.tr/iibf/tr/sayfaYeni18817",
-                "https://kafkas.edu.tr/kau/rehber2",
-            ],
-        )
+        self.assertTrue(any("sayfaYeni18034" in source.chunk.url for source in response.sources))
+        self.assertTrue(any(source.chunk.url.startswith("tel:") for source in response.sources))
+        self.assertTrue(any(source.chunk.url.startswith("mailto:") for source in response.sources))
 
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
@@ -161,6 +157,10 @@ class AnswerBehaviorTests(unittest.TestCase):
         obs_response = assistant.answer_with_context("OBS")
         self.assertEqual(obs_response.status, "direct_link")
         self.assertEqual(obs_response.sources[0].chunk.url, "https://obsyeni.kafkas.edu.tr")
+
+        library_response = assistant.answer_with_context("kütüphane")
+        self.assertEqual(library_response.status, "direct_link")
+        self.assertEqual(library_response.sources[0].chunk.url, "https://www.kafkas.edu.tr/kddb/TR/default.aspx")
 
         english_contact = assistant.answer_with_context("iibf contact")
         self.assertEqual(english_contact.status, "direct_link")
@@ -289,6 +289,28 @@ class AnswerBehaviorTests(unittest.TestCase):
 
         self.assertEqual(response.status, "general")
         self.assertTrue(any("docs.python.org" in source.chunk.url for source in response.sources))
+
+    @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Resmi ve kısa bir e-posta taslağı hazırlanmıştır.")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_composition_request_is_not_misread_as_contact_lookup(self, _log_query, _log_interaction, _general_answer) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("İİBF için resmi bir mail yaz")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("taslağı", response.answer)
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_arabic_greeting_uses_arabic_welcome(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("مرحبا", preferred_language="ar")
+
+        self.assertEqual(response.status, "greeting")
+        self.assertIn("KAÜCAN Beta", response.answer)
+        self.assertIn("جامعة", response.answer)
 
     def test_generated_answer_is_sanitized(self) -> None:
         raw = (
