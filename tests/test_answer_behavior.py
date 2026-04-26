@@ -539,6 +539,22 @@ class AnswerBehaviorTests(unittest.TestCase):
 
         self.assertEqual(_sanitize_answer_text(raw), "Fakülte duyuruları günceldir.")
 
+    def test_broken_fallback_text_is_canonicalized_in_turkish(self) -> None:
+        raw = "⚠️ Bu konuda güvenilir bir bilgiye ula Shamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm."
+
+        self.assertEqual(
+            _sanitize_answer_text(raw, "tr"),
+            "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm.",
+        )
+
+    def test_mixed_language_text_is_filtered_to_expected_language(self) -> None:
+        raw = "📌 Bu konuda güvenilir bilgi bulunamadı. I can help with another question if needed."
+
+        self.assertEqual(
+            _sanitize_answer_text(raw, "tr"),
+            "📌 Bu konuda güvenilir bilgi bulunamadı.",
+        )
+
     @patch("kau_can_bot.answer._general_generators_for_settings", return_value=[BrokenGenerator(), GoodGenerator()])
     def test_general_generator_chain_falls_back_to_next_provider(self, _generators) -> None:
         assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)

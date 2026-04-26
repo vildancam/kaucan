@@ -1122,7 +1122,7 @@ class WebsiteGroundedAssistant:
                 support_context=live_support.context if live_support is not None else "",
             )
             if general_answer:
-                answer = _sanitize_answer_text(general_answer)
+                answer = _sanitize_answer_text(general_answer, language)
                 if answer:
                     general_sources = _merge_source_results(
                         _build_link_sources(live_support.sources) if live_support is not None else [],
@@ -1214,7 +1214,7 @@ class WebsiteGroundedAssistant:
 
         llm_answer = self._generate_with_llm(normalized_query, top_results)
         if llm_answer:
-            answer = _sanitize_answer_text(llm_answer)
+            answer = _sanitize_answer_text(llm_answer, language)
             if answer:
                 interaction = log_interaction(original_query or normalized_query, answer, top_results, "llm")
                 return AssistantResponse(
@@ -3825,7 +3825,11 @@ class LocalOnlyGenerator:
         return None
 
 
-def _sanitize_answer_text(answer: str) -> str:
+def _sanitize_answer_text(answer: str, language: str = "tr") -> str:
+    return _sanitize_answer_text_for_language(answer, language)
+
+
+def _sanitize_answer_text_for_language(answer: str, language: str) -> str:
     if not answer:
         return ""
 
@@ -3861,10 +3865,14 @@ def _sanitize_answer_text(answer: str) -> str:
     sanitized = re.sub(r"\n{3,}", "\n\n", sanitized).strip()
     if not sanitized:
         return ""
-    if FALLBACK_RESPONSE in sanitized:
-        return FALLBACK_RESPONSE
-    if "lütfen akademik ve uygun bir dil kullanınız" in sanitized.lower():
-        return POLITE_LANGUAGE_RESPONSE
+    sanitized = _repair_common_text_glitches(sanitized, language)
+    canonical = _canonicalize_standard_response(sanitized, language)
+    if canonical:
+        return canonical
+    sanitized = _filter_unexpected_language_segments(sanitized, language)
+    canonical = _canonicalize_standard_response(sanitized, language)
+    if canonical:
+        return canonical
     return sanitized
 
 
@@ -3886,6 +3894,109 @@ def _strip_technical_label(line: str) -> str:
         if re.match(pattern, line, flags=re.IGNORECASE):
             return ""
     return line
+
+
+def _repair_common_text_glitches(text: str, language: str) -> str:
+    repaired = text
+    if language == "tr":
+        replacements = (
+            (r"\bula\s*shamad[ıi]m\b", "ulaşamadım"),
+            (r"\bula\s*samad[ıi]m\b", "ulaşamadım"),
+            (r"\bguven[ıi]l[ıi]r\b", "güvenilir"),
+            (r"\biletisime\b", "iletişime"),
+        )
+        for pattern, replacement in replacements:
+            repaired = re.sub(pattern, replacement, repaired, flags=re.IGNORECASE)
+    repaired = re.sub(r"\s+([,.;:!?])", r"\1", repaired)
+    repaired = re.sub(r"([,.;:!?])([^\s])", r"\1 \2", repaired)
+    repaired = re.sub(r"\s{2,}", " ", repaired)
+    return repaired.strip()
+
+
+def _canonicalize_standard_response(text: str, language: str) -> str:
+    normalized = normalize_for_matching(text)
+    fallback_markers = (
+        normalize_for_matching(FALLBACK_RESPONSE),
+        "could not reach reliable information on this topic",
+        "for the most accurate information please contact the faculty directly",
+        "لم اتمكن من الوصول الى معلومات موثوقة حول هذا الموضوع",
+    )
+    unknown_markers = (
+        "bu sorunun yanitini henuz bilmiyorum",
+        "i do not know the answer to this question yet",
+        "لا اعرف اجابة هذا السؤال بعد",
+    )
+    polite_markers = (
+        "lutfen akademik ve uygun bir dil kullaniniz",
+        "please use academic and appropriate language",
+        "يرجى استخدام لغة اكاديمية ومناسبة",
+    )
+
+    if any(marker in normalized for marker in fallback_markers):
+        return _text_for_language(
+            language,
+            FALLBACK_RESPONSE,
+            "⚠️ I could not reach reliable information on this topic. For the most accurate information, please contact the faculty directly.",
+            "⚠️ لم أتمكن من الوصول إلى معلومات موثوقة حول هذا الموضوع. للحصول على أدق معلومة، يُنصح بالتواصل مع الكلية مباشرة.",
+        )
+    if any(marker in normalized for marker in unknown_markers):
+        return _unknown_answer_text(language)
+    if any(marker in normalized for marker in polite_markers):
+        return _text_for_language(
+            language,
+            POLITE_LANGUAGE_RESPONSE,
+            "⚠️ Please use academic and appropriate language. I would be glad to assist.",
+            "⚠️ يُرجى استخدام لغة أكاديمية ومناسبة. يسعدني مساعدتك.",
+        )
+    return ""
+
+
+def _filter_unexpected_language_segments(text: str, language: str) -> str:
+    if language not in {"tr", "en", "ar"}:
+        return text
+
+    segments = [segment.strip() for segment in re.split(r"(?<=[.!?])\s+|\n+", text) if segment.strip()]
+    if len(segments) <= 1:
+        return text
+
+    matching_segments: list[str] = []
+    unexpected_found = False
+    for segment in segments:
+        detected = _segment_language(segment)
+        if detected == language or detected == "neutral":
+            matching_segments.append(segment)
+        else:
+            unexpected_found = True
+
+    if unexpected_found and matching_segments:
+        return "\n".join(matching_segments).strip()
+    return text
+
+
+def _segment_language(segment: str) -> str:
+    lowered = clean_text(segment).lower()
+    if not lowered:
+        return "neutral"
+    if re.search(r"[\u0600-\u06FF]", segment):
+        return "ar"
+
+    turkish_score = sum(
+        lowered.count(token)
+        for token in ("ğ", "ü", "ş", "ı", "ö", "ç", " için ", " ile ", " bilgi ", " fakülte ", " yardımcı ", " henüz ")
+    )
+    english_score = sum(
+        lowered.count(token)
+        for token in (" the ", " and ", " for ", " with ", " information ", " faculty ", " please ", " help ", " question ")
+    )
+
+    words = re.findall(r"[a-zA-ZçğıöşüÇĞİÖŞÜ]+", segment)
+    if not words:
+        return "neutral"
+    if turkish_score > english_score:
+        return "tr"
+    if english_score > turkish_score:
+        return "en"
+    return "neutral"
 
 
 def _build_search_query(query: str) -> str:
