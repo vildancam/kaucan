@@ -397,6 +397,7 @@
     height: 0,
     dpr: 1,
     particles: [],
+    helices: [],
     animationFrame: 0,
     pointer: {
       x: 0,
@@ -854,6 +855,70 @@
     return value.slice(0, Math.max(0, limit - 1)).trim() + "…";
   }
 
+  function highlightSummaryFallback(topic) {
+    var fallbackByLanguage = {
+      tr: {
+        announcements: "Detaylar için resmi duyuru bağlantısı açılabilir.",
+        news: "Detaylar için resmi haber bağlantısı açılabilir.",
+        events: "Detaylar için resmi etkinlik bağlantısı açılabilir.",
+      },
+      en: {
+        announcements: "Open the official announcement link for details.",
+        news: "Open the official news link for details.",
+        events: "Open the official event link for details.",
+      },
+      ar: {
+        announcements: "يمكن فتح رابط الإعلان الرسمي للتفاصيل.",
+        news: "يمكن فتح رابط الخبر الرسمي للتفاصيل.",
+        events: "يمكن فتح رابط الفعالية الرسمية للتفاصيل.",
+      },
+    };
+    var language = getUiLanguage();
+    return (fallbackByLanguage[language] && fallbackByLanguage[language][topic]) || fallbackByLanguage.tr[topic] || "";
+  }
+
+  function cleanHighlightText(value) {
+    return String(value || "")
+      .replace(/\s+/g, " ")
+      .replace(/\u00a0/g, " ")
+      .trim();
+  }
+
+  function cleanHighlightSummary(summary, title) {
+    var cleaned = cleanHighlightText(summary);
+    var titleText = cleanHighlightText(title);
+
+    if (!cleaned) {
+      return "";
+    }
+
+    if (titleText && cleaned.indexOf(titleText) === 0) {
+      cleaned = cleanHighlightText(cleaned.slice(titleText.length));
+    }
+
+    cleaned = cleaned
+      .replace(/Bir Daha Gösterme.*$/i, "")
+      .replace(/Kapat.*$/i, "")
+      .replace(/Akıllı Kart.*$/i, "")
+      .replace(/Konuk Evi.*$/i, "")
+      .replace(/Yemek Listesi.*$/i, "")
+      .replace(/Kütüphane.*$/i, "")
+      .replace(/Akademik Takvim.*$/i, "")
+      .replace(/İNTERNET ERİŞİM.*$/i, "")
+      .replace(/UNIVERSITEMIZ.*$/i, "")
+      .replace(/ÜNİVERSİTEMİZ.*$/i, "")
+      .replace(/Kurumsal Yönetim.*$/i, "")
+      .replace(/Rektör.*$/i, "")
+      .replace(/Portal Türkçe.*$/i, "")
+      .replace(/English.*$/i, "");
+
+    cleaned = cleanHighlightText(cleaned);
+    if (!cleaned || cleaned.length < 12) {
+      return "";
+    }
+    return cleaned;
+  }
+
   function supportsAmbientScene() {
     return !!(ambientState.canvas && ambientState.canvas.getContext);
   }
@@ -862,8 +927,8 @@
     var canvas = ambientState.canvas;
     var context;
     var density;
-    var symbols;
-    var targetCount;
+    var helixCount;
+    var helixSpacing;
     var index;
 
     if (!supportsAmbientScene()) {
@@ -883,25 +948,37 @@
     canvas.height = Math.floor(ambientState.height * ambientState.dpr);
     context.setTransform(ambientState.dpr, 0, 0, ambientState.dpr, 0, 0);
 
-    density = Math.max(36, Math.min(ambientState.width / 24, 96));
-    symbols = ["0", "1", "A", "T", "G", "C", "U", "</>", "{}", "RNA", "DNA", "[]"];
-    targetCount = Math.round(density);
+    density = Math.max(18, Math.min(ambientState.width / 48, 38));
 
-    if (ambientState.particles.length > targetCount) {
-      ambientState.particles.length = targetCount;
+    if (ambientState.particles.length > density) {
+      ambientState.particles.length = density;
     }
 
-    for (index = ambientState.particles.length; index < targetCount; index += 1) {
+    for (index = ambientState.particles.length; index < density; index += 1) {
       ambientState.particles.push({
         x: Math.random() * ambientState.width,
         y: Math.random() * ambientState.height,
-        vx: (Math.random() - 0.5) * 0.8,
-        vy: (Math.random() - 0.5) * 0.8,
-        size: 12 + Math.random() * 12,
-        alpha: 0.22 + Math.random() * 0.4,
-        symbol: symbols[index % symbols.length],
-        spin: (Math.random() - 0.5) * 0.01,
-        angle: Math.random() * Math.PI * 2,
+        vx: (Math.random() - 0.5) * 0.34,
+        vy: (Math.random() - 0.5) * 0.34,
+        size: 2.2 + Math.random() * 3.8,
+        alpha: 0.14 + Math.random() * 0.22,
+        orbit: 8 + Math.random() * 14,
+        orbitSpeed: 0.0006 + Math.random() * 0.001,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+
+    helixCount = Math.max(2, Math.min(4, Math.round(ambientState.width / 520)));
+    helixSpacing = ambientState.width / (helixCount + 1);
+    ambientState.helices = [];
+    for (index = 0; index < helixCount; index += 1) {
+      ambientState.helices.push({
+        centerX: helixSpacing * (index + 1),
+        amplitude: 18 + Math.random() * 18,
+        wavelength: 0.014 + Math.random() * 0.006,
+        speed: 0.0007 + Math.random() * 0.0007,
+        phase: Math.random() * Math.PI * 2,
+        nodes: 16 + Math.round(Math.random() * 5),
       });
     }
   }
@@ -916,12 +993,15 @@
     ambientState.pointer.active = true;
   }
 
-  function drawAmbientScene() {
+  function drawAmbientScene(timestamp) {
     var context = ambientState.context;
     var pointer = ambientState.pointer;
     var width = ambientState.width;
     var height = ambientState.height;
     var particles = ambientState.particles;
+    var helices = ambientState.helices;
+    var darkTheme = document.body.getAttribute("data-theme") === "dark";
+    var time = typeof timestamp === "number" ? timestamp : window.performance.now();
     var index;
     var otherIndex;
 
@@ -943,21 +1023,20 @@
         dy = pointer.y - particle.y;
         distance = Math.sqrt(dx * dx + dy * dy) || 1;
         if (distance < 180) {
-          influence = (1 - distance / 180) * (pointer.down ? 0.32 : 0.12);
-          particle.vx += (dx / distance) * influence + pointer.vx * 0.0035 * influence;
-          particle.vy += (dy / distance) * influence + pointer.vy * 0.0035 * influence;
+          influence = (1 - distance / 180) * (pointer.down ? 0.14 : 0.06);
+          particle.vx += (dx / distance) * influence + pointer.vx * 0.0018 * influence;
+          particle.vy += (dy / distance) * influence + pointer.vy * 0.0018 * influence;
         }
-        if (distance < 42) {
-          particle.vx -= (dx / distance) * 0.24;
-          particle.vy -= (dy / distance) * 0.24;
+        if (distance < 56) {
+          particle.vx -= (dx / distance) * 0.12;
+          particle.vy -= (dy / distance) * 0.12;
         }
       }
 
       particle.x += particle.vx;
       particle.y += particle.vy;
-      particle.vx *= 0.985;
-      particle.vy *= 0.985;
-      particle.angle += particle.spin;
+      particle.vx *= 0.992;
+      particle.vy *= 0.992;
 
       if (particle.x < -20 || particle.x > width + 20) {
         particle.vx *= -1;
@@ -969,15 +1048,18 @@
       }
 
       context.save();
-      context.translate(particle.x, particle.y);
-      context.rotate(particle.angle);
-      context.font = "600 " + particle.size + "px Aptos, Segoe UI, sans-serif";
-      context.textAlign = "center";
-      context.textBaseline = "middle";
-      context.fillStyle = document.body.getAttribute("data-theme") === "dark"
-        ? "rgba(146, 199, 255, " + particle.alpha + ")"
+      context.fillStyle = darkTheme
+        ? "rgba(142, 199, 255, " + particle.alpha + ")"
         : "rgba(0, 91, 170, " + particle.alpha + ")";
-      context.fillText(particle.symbol, 0, 0);
+      context.beginPath();
+      context.arc(
+        particle.x + Math.cos(time * particle.orbitSpeed + particle.phase) * particle.orbit,
+        particle.y + Math.sin(time * particle.orbitSpeed + particle.phase) * particle.orbit,
+        particle.size,
+        0,
+        Math.PI * 2
+      );
+      context.fill();
       context.restore();
     }
 
@@ -992,7 +1074,7 @@
         if (lineDistance > 110) {
           continue;
         }
-        context.strokeStyle = document.body.getAttribute("data-theme") === "dark"
+        context.strokeStyle = darkTheme
           ? "rgba(142, 199, 255, " + (0.12 * (1 - lineDistance / 110)) + ")"
           : "rgba(0, 91, 170, " + (0.09 * (1 - lineDistance / 110)) + ")";
         context.beginPath();
@@ -1001,6 +1083,73 @@
         context.stroke();
       }
     }
+
+    helices.forEach(function (helix, helixIndex) {
+      var previousLeft = null;
+      var previousRight = null;
+      var nodeCount = helix.nodes;
+      var verticalStart = -40;
+      var verticalStep = (height + 80) / Math.max(1, nodeCount - 1);
+
+      for (index = 0; index < nodeCount; index += 1) {
+        var nodeY = verticalStart + verticalStep * index;
+        var phase = time * helix.speed + nodeY * helix.wavelength + helix.phase;
+        var offset = Math.sin(phase) * helix.amplitude;
+        var leftX = helix.centerX + offset;
+        var rightX = helix.centerX - offset;
+        var midpointX = (leftX + rightX) / 2;
+        var pointerDx = pointer.x - midpointX;
+        var pointerDy = pointer.y - nodeY;
+        var pointerDistance = Math.sqrt(pointerDx * pointerDx + pointerDy * pointerDy) || 1;
+        var push = 0;
+
+        if (pointer.active && pointerDistance < 170) {
+          push = (1 - pointerDistance / 170) * (pointer.down ? 18 : 9);
+          leftX -= (pointerDx / pointerDistance) * push;
+          rightX -= (pointerDx / pointerDistance) * push;
+          nodeY -= (pointerDy / pointerDistance) * push * 0.15;
+        }
+
+        context.strokeStyle = darkTheme
+          ? "rgba(142, 199, 255, " + (0.18 + (index / nodeCount) * 0.08) + ")"
+          : "rgba(0, 91, 170, " + (0.14 + (index / nodeCount) * 0.08) + ")";
+        context.lineWidth = 1 + helixIndex * 0.08;
+        context.beginPath();
+        context.moveTo(leftX, nodeY);
+        context.lineTo(rightX, nodeY);
+        context.stroke();
+
+        if (previousLeft) {
+          context.beginPath();
+          context.moveTo(previousLeft.x, previousLeft.y);
+          context.lineTo(leftX, nodeY);
+          context.moveTo(previousRight.x, previousRight.y);
+          context.lineTo(rightX, nodeY);
+          context.stroke();
+        }
+
+        context.fillStyle = darkTheme
+          ? "rgba(201, 231, 255, 0.72)"
+          : "rgba(0, 91, 170, 0.58)";
+        context.beginPath();
+        context.arc(leftX, nodeY, 2.2, 0, Math.PI * 2);
+        context.arc(rightX, nodeY, 2.2, 0, Math.PI * 2);
+        context.fill();
+
+        if (index % 4 === 0) {
+          var orbitAngle = time * 0.0011 + index + helixIndex;
+          var orbitX = midpointX + Math.cos(orbitAngle) * 9;
+          var orbitY = nodeY + Math.sin(orbitAngle) * 9;
+          context.fillStyle = darkTheme ? "rgba(142, 199, 255, 0.22)" : "rgba(0, 91, 170, 0.16)";
+          context.beginPath();
+          context.arc(orbitX, orbitY, 1.8, 0, Math.PI * 2);
+          context.fill();
+        }
+
+        previousLeft = { x: leftX, y: nodeY };
+        previousRight = { x: rightX, y: nodeY };
+      }
+    });
 
     ambientState.animationFrame = window.requestAnimationFrame(drawAmbientScene);
   }
@@ -2270,13 +2419,15 @@
     var fallback = HIGHLIGHT_FALLBACKS[topic];
     var data = item || fallback;
     var imageUrl = data.image_url || runtimeBranding.chatLogoUrl || "/static/assets/iibf_logo.png?v=20260426a";
-    var title = escapeHtml(truncateText(data.title || fallback.title, 92));
+    var cleanedTitle = cleanHighlightText(data.title || fallback.title);
+    var cleanedSummary = cleanHighlightSummary(data.summary || fallback.summary || "", cleanedTitle);
+    var title = escapeHtml(truncateText(cleanedTitle || fallback.title, 98));
     var meta = [data.date || "", data.category || ""]
       .filter(function (value) {
         return !!value;
       })
       .join(" • ");
-    var summary = escapeHtml(truncateText(data.summary || fallback.summary || "", 132));
+    var summary = escapeHtml(truncateText(cleanedSummary || highlightSummaryFallback(topic), 156));
 
     return (
       '<a class="highlight-link" href="' +

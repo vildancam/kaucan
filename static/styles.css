@@ -133,7 +133,7 @@ body.js-ready .app-shell {
   width: 100%;
   height: 100%;
   display: block;
-  opacity: 0.9;
+  opacity: 0.76;
 }
 
 .topbar-start,
@@ -361,7 +361,7 @@ body[data-theme="dark"] .status {
   width: min(1460px, calc(100% - 28px));
   margin: 18px auto 18px;
   display: grid;
-  grid-template-columns: minmax(0, 1.82fr) minmax(320px, 0.54fr);
+  grid-template-columns: minmax(0, 1.96fr) minmax(300px, 0.56fr);
   gap: 14px;
   flex: 0 0 auto;
   min-height: 0;
@@ -381,8 +381,8 @@ body[data-theme="dark"] .status {
 
 .chat-panel {
   min-height: 0;
-  height: min(82vh, 980px);
-  min-height: 780px;
+  height: min(84vh, 980px);
+  min-height: 760px;
   max-height: 980px;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto auto;
@@ -393,7 +393,7 @@ body[data-theme="dark"] .status {
 
 .highlights-panel {
   display: grid;
-  grid-template-rows: repeat(3, minmax(0, 214px));
+  grid-template-rows: repeat(3, minmax(0, 194px));
   gap: 10px;
   min-height: auto;
   overflow: hidden;
@@ -735,7 +735,7 @@ body[data-theme="dark"] .highlight-meta {
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
-  height: auto;
+  height: 100%;
   overflow: hidden;
   isolation: isolate;
 }
@@ -745,9 +745,10 @@ body[data-theme="dark"] .highlight-meta {
   min-height: 0;
   height: 100%;
   max-height: 100%;
-  padding: 20px 20px 14px;
+  padding: 20px 20px 28px;
   scrollbar-gutter: stable both-edges;
   overscroll-behavior: contain;
+  overflow-y: auto;
 }
 
 .message {
@@ -993,29 +994,30 @@ body[data-theme="dark"] .feedback-actions button.selected {
 
 .typing-row {
   display: grid;
-  grid-template-columns: 38px auto;
-  gap: 10px;
-  padding: 0 20px 12px;
+  grid-template-columns: 34px auto;
+  gap: 8px;
+  padding: 0 20px 10px;
   animation: message-in 0.32s ease;
 }
 
 .typing-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
 }
 
 .typing-bubble {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   width: fit-content;
-  padding: 12px 14px;
+  padding: 9px 12px;
+  border-radius: 16px;
 }
 
 .typing-bubble span {
-  width: 7px;
-  height: 7px;
+  width: 5px;
+  height: 5px;
   border-radius: 999px;
   background: rgba(0, 91, 170, 0.42);
   animation: typing-bounce 1s ease infinite;
@@ -1032,12 +1034,14 @@ body[data-theme="dark"] .feedback-actions button.selected {
 .composer {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
   gap: 10px;
   flex-shrink: 0;
   padding: 18px 20px 20px;
   border-top: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(234, 244, 255, 0.72) 100%);
-  position: relative;
+  position: sticky;
+  bottom: 0;
   z-index: 2;
   box-shadow: 0 -10px 24px rgba(0, 59, 115, 0.08);
 }
@@ -1050,6 +1054,7 @@ body[data-theme="dark"] .composer {
   position: relative;
   min-width: 0;
   min-height: 58px;
+  width: 100%;
 }
 
 textarea {
@@ -1065,14 +1070,25 @@ textarea {
 .submit-icon-button {
   width: 58px;
   min-width: 58px;
+  height: 58px;
+  min-height: 58px;
+  max-height: 58px;
   padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: end;
+  justify-self: end;
   font-size: 1.15rem;
+  line-height: 1;
+  flex: 0 0 58px;
 }
 
 .voice-button {
   position: absolute;
   right: 10px;
-  bottom: 10px;
+  top: 50%;
+  bottom: auto;
   width: 44px;
   min-width: 44px;
   height: 44px;
@@ -1080,6 +1096,7 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transform: translateY(-50%);
   border-radius: 14px;
   border: 1px solid var(--line);
   background: var(--surface-strong);
@@ -1119,39 +1136,44 @@ body[data-theme="dark"] .voice-button {
 .highlight-card {
   min-height: 0;
   grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
 }
 
 .highlight-track {
   display: flex;
   min-height: 0;
   height: 100%;
+  align-items: stretch;
 }
 
 .highlight-link {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 7px;
+  gap: 8px;
   width: 100%;
   height: 100%;
   min-height: 0;
-  padding: 10px;
+  padding: 12px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: linear-gradient(180deg, var(--surface-strong) 0%, var(--blue-softer) 100%);
   text-decoration: none;
   color: inherit;
+  overflow: hidden;
 }
 
 .highlight-body {
   display: grid;
   align-content: start;
-  gap: 6px;
+  gap: 5px;
   min-height: 0;
+  grid-template-rows: auto auto 1fr;
 }
 
 .highlight-image {
   width: 100%;
-  aspect-ratio: 16 / 5.2;
+  aspect-ratio: 16 / 4.1;
+  min-height: 72px;
   border-radius: 12px;
   overflow: hidden;
   background: var(--surface-soft);
@@ -1171,22 +1193,21 @@ body[data-theme="dark"] .voice-button {
 }
 
 .highlight-link h3 {
+  color: var(--ink);
   font-size: 0.92rem;
   line-height: 1.34;
-  display: -webkit-box;
+  display: block;
   overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  max-height: 2.68em;
 }
 
 .highlight-summary {
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.81rem;
   line-height: 1.42;
-  display: -webkit-box;
+  display: block;
   overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  max-height: 4.26em;
 }
 
 .highlight-empty {
@@ -1469,34 +1490,40 @@ body::-webkit-scrollbar-thumb {
     justify-content: center;
   }
 
-  .composer {
-    grid-template-columns: 1fr;
-  }
-
-  .submit-icon-button,
-  .voice-button {
-    width: 100%;
-  }
-
   .language-control {
     width: 100%;
     justify-content: center;
   }
 
   .chat-panel {
-    min-height: 72vh;
-    height: auto;
-    max-height: none;
+    min-height: 0;
+    height: min(76vh, 760px);
+    max-height: 760px;
     position: static;
+  }
+
+  .composer {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+
+  .submit-icon-button {
+    width: 54px;
+    min-width: 54px;
+    height: 54px;
+    min-height: 54px;
+    max-height: 54px;
   }
 
   .voice-button {
-    position: static;
-    min-height: 52px;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    right: 8px;
   }
 
   textarea {
-    padding-right: 18px;
+    padding-right: 56px;
   }
 }
 
