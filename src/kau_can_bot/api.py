@@ -36,6 +36,8 @@ class AskRequest(BaseModel):
     question: str
     client_id: str = ""
     preferred_language: str = ""
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 
 class SourceItem(BaseModel):
@@ -119,6 +121,8 @@ def ask(request: AskRequest) -> AskResponse:
         request.question,
         client_id=request.client_id,
         preferred_language=request.preferred_language,
+        latitude=request.latitude,
+        longitude=request.longitude,
     )
     return AskResponse(
         answer=response.answer,

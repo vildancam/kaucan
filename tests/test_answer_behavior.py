@@ -80,6 +80,35 @@ class AnswerBehaviorTests(unittest.TestCase):
                     "department": "İşletme",
                 },
             ],
+            "senate_people": [
+                {
+                    "name": "Prof. Dr. Deniz ÖZYAKIŞIR",
+                    "designation": "İktisadi ve İdari Bilimler Fakültesi Dekanı",
+                    "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651",
+                    "detail_url": "https://unis.kafkas.edu.tr/akademisyen/denizozyakisir",
+                },
+                {
+                    "name": "Prof. Dr. Adem BALKAYA",
+                    "designation": "Fen-Edebiyat Fakültesi Dekanı",
+                    "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651",
+                    "detail_url": "https://unis.kafkas.edu.tr/akademisyen/adembalkaya",
+                },
+            ],
+            "faculty_navigation": [
+                {
+                    "title": "Misyon & Vizyon",
+                    "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17979",
+                    "normalized_title": "misyon vizyon",
+                }
+            ],
+            "faculty_pages": {
+                "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17979": {
+                    "title": "Misyon & Vizyon",
+                    "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17979",
+                    "summary": "Fakülte; bilimsel, yenilikçi ve toplumsal katkı odaklı eğitim anlayışını benimsemektedir.",
+                    "body_excerpt": "Fakülte; bilimsel, yenilikçi ve toplumsal katkı odaklı eğitim anlayışını benimsemektedir.",
+                }
+            },
             "department_order": ["ybs", "isletme"],
             "departments": {
                 "ybs": {
@@ -292,6 +321,44 @@ class AnswerBehaviorTests(unittest.TestCase):
         self.assertEqual(response.status, "official")
         self.assertIn("According to the official senate page", response.answer)
 
+    @patch("kau_can_bot.answer.get_official_snapshot")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_other_faculty_dean_query_uses_matching_senate_person(
+        self,
+        _log_query,
+        _log_interaction,
+        mock_snapshot,
+    ) -> None:
+        mock_snapshot.return_value = self.build_official_snapshot()
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("Fen Edebiyat Fakültesi dekanı kim?")
+
+        self.assertEqual(response.status, "official")
+        self.assertIn("Adem BALKAYA", response.answer)
+        self.assertNotIn("Deniz ÖZYAKIŞIR", response.answer)
+
+    @patch("kau_can_bot.answer.ensure_faculty_page", side_effect=lambda snapshot, *_: snapshot)
+    @patch("kau_can_bot.answer.get_official_snapshot")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_iibf_menu_query_returns_navigation_page_summary(
+        self,
+        _log_query,
+        _log_interaction,
+        mock_snapshot,
+        _ensure_faculty_page,
+    ) -> None:
+        mock_snapshot.return_value = self.build_official_snapshot()
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("iibf misyon")
+
+        self.assertEqual(response.status, "official")
+        self.assertIn("bilimsel", response.answer.lower())
+        self.assertTrue(any("sayfaYeni17979" in source.chunk.url for source in response.sources))
+
     @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Python, genel amaçlı bir programlama dilidir.")
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
@@ -314,6 +381,27 @@ class AnswerBehaviorTests(unittest.TestCase):
 
         self.assertEqual(response.status, "general")
         self.assertTrue(any("docs.python.org" in source.chunk.url for source in response.sources))
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_text_correction_works_without_colon(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("bu metni düzelt ben bugun okula gelemedm cunku hastaym")
+
+        self.assertIn("Düzeltilmiş metin", response.answer)
+        self.assertIn("bugün", response.answer.lower())
+        self.assertIn("gelemedim", response.answer.lower())
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_explicit_date_query_returns_weekday(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("29 Ekim 2026 hangi gün?")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("Perşembe", response.answer)
 
     @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Resmi ve kısa bir e-posta taslağı hazırlanmıştır.")
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))

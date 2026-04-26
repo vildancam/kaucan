@@ -64,6 +64,9 @@
         loading: "Hazırlanıyor",
         ready: "Hazır",
         preparing: "Yanıt hazırlanıyor",
+        requestingLocation: "Konum izni isteniyor",
+        locationDenied: "Konum izni verilmedi",
+        locationUnavailable: "Konum alınamadı",
         error: "Hata",
         connection: "Bağlantı hatası",
         indexing: "İndeks bekleniyor",
@@ -148,6 +151,9 @@
         loading: "Loading",
         ready: "Ready",
         preparing: "Preparing answer",
+        requestingLocation: "Requesting location permission",
+        locationDenied: "Location permission denied",
+        locationUnavailable: "Location could not be retrieved",
         error: "Error",
         connection: "Connection error",
         indexing: "Index pending",
@@ -232,6 +238,9 @@
         loading: "جارٍ التحضير",
         ready: "جاهز",
         preparing: "جارٍ إعداد الإجابة",
+        requestingLocation: "جارٍ طلب إذن الموقع",
+        locationDenied: "تم رفض إذن الموقع",
+        locationUnavailable: "تعذر الحصول على الموقع",
         error: "خطأ",
         connection: "خطأ في الاتصال",
         indexing: "الفهرس قيد الانتظار",
@@ -296,6 +305,7 @@
   var submitButton = document.getElementById("submitButton");
   var clearButton = document.getElementById("clearButton");
   var voiceButton = document.getElementById("voiceButton");
+  var quickPromptsShell = document.getElementById("quickPromptsShell");
   var statusBadge = document.getElementById("statusBadge");
   var typingRow = document.getElementById("typingRow");
   var chips = document.querySelectorAll(".query-chip");
@@ -353,6 +363,12 @@
     },
     clientId: "",
     preferredLanguage: "tr",
+    location: {
+      latitude: null,
+      longitude: null,
+      updatedAt: 0,
+      permission: "prompt",
+    },
   };
 
   function getUiLanguage() {
@@ -1158,6 +1174,16 @@
     return state.conversations[0];
   }
 
+  function updateQuickPromptsVisibility(conversation) {
+    var activeConversation = conversation || getActiveConversation();
+    var hasUserMessages = activeConversation.messages.some(function (message) {
+      return message.role === "user" && String(message.text || "").trim();
+    });
+    if (quickPromptsShell) {
+      quickPromptsShell.hidden = hasUserMessages;
+    }
+  }
+
   function toTitle(text) {
     var cleaned = String(text || "")
       .replace(/\s+/g, " ")
@@ -1539,6 +1565,7 @@
       element.classList.remove("message-enter");
       messages.appendChild(element);
     }
+    updateQuickPromptsVisibility(conversation);
     syncTyping();
     scrollMessagesToBottom();
   }
@@ -1571,6 +1598,7 @@
 
     persistState();
     renderHistoryList();
+    updateQuickPromptsVisibility(conversation);
 
     if (renderNow && state.activeConversationId === conversation.id) {
       appendMessage(role, text, message);
@@ -1609,7 +1637,60 @@
     playTone("clear");
   }
 
-  function askQuestion(question, conversationId) {
+  function questionNeedsLocation(question) {
+    return /(hava durumu|weather|forecast|temperature|sıcaklık|sicaklik|الطقس|طقس)/i.test(String(question || ""));
+  }
+
+  function hasFreshLocation() {
+    return (
+      typeof state.location.latitude === "number" &&
+      typeof state.location.longitude === "number" &&
+      Date.now() - Number(state.location.updatedAt || 0) < 15 * 60 * 1000
+    );
+  }
+
+  function requestGeolocationIfNeeded(question) {
+    return new Promise(function (resolve) {
+      if (!questionNeedsLocation(question) || !navigator.geolocation) {
+        resolve(null);
+        return;
+      }
+
+      if (hasFreshLocation()) {
+        resolve({
+          latitude: state.location.latitude,
+          longitude: state.location.longitude,
+        });
+        return;
+      }
+
+      setStatus(getUiText().status.requestingLocation, "busy");
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          state.location.latitude = Number(position.coords.latitude);
+          state.location.longitude = Number(position.coords.longitude);
+          state.location.updatedAt = Date.now();
+          state.location.permission = "granted";
+          resolve({
+            latitude: state.location.latitude,
+            longitude: state.location.longitude,
+          });
+        },
+        function () {
+          state.location.permission = "denied";
+          setStatus(getUiText().status.locationDenied, "error");
+          resolve(null);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 5000,
+          maximumAge: 10 * 60 * 1000,
+        }
+      );
+    });
+  }
+
+  function askQuestion(question, conversationId, locationData) {
     setStatus("Yanıt hazırlanıyor", "busy");
     submitButton.disabled = true;
     state.pendingConversationId = conversationId;
@@ -1629,6 +1710,8 @@
         question: question,
         client_id: state.clientId || "",
         preferred_language: state.preferredLanguage || "tr",
+        latitude: locationData && typeof locationData.latitude === "number" ? locationData.latitude : null,
+        longitude: locationData && typeof locationData.longitude === "number" ? locationData.longitude : null,
       }),
     })
       .then(function (response) {
@@ -1681,7 +1764,9 @@
     input.value = "";
     autoResize();
     playTone("send");
-    askQuestion(question, conversation.id);
+    requestGeolocationIfNeeded(question).then(function (locationData) {
+      askQuestion(question, conversation.id, locationData);
+    });
   }
 
   function applyLogo(url) {

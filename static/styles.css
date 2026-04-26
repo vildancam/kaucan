@@ -300,10 +300,11 @@ body[data-theme="dark"] .status {
   width: min(1320px, calc(100% - 28px));
   margin: 18px auto 18px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.28fr) 320px;
+  gap: 18px;
   flex: 1;
   min-height: 0;
+  height: 100%;
   align-items: stretch;
   overflow: hidden;
 }
@@ -412,10 +413,10 @@ textarea {
 .history-clear-button {
   min-height: 52px;
   white-space: nowrap;
-  color: #ffffff;
-  border-color: transparent;
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-  box-shadow: 0 12px 24px rgba(153, 27, 27, 0.22);
+  color: #ffffff !important;
+  border-color: rgba(127, 29, 29, 0.36) !important;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+  box-shadow: 0 12px 24px rgba(153, 27, 27, 0.28);
 }
 
 .history-search:focus,
@@ -523,10 +524,25 @@ body[data-theme="dark"] .language-select {
   border-color: rgba(146, 192, 241, 0.22);
 }
 
+body[data-theme="dark"] .history-search,
+body[data-theme="dark"] textarea,
+body[data-theme="dark"] .icon-button,
+body[data-theme="dark"] .history-action,
+body[data-theme="dark"] .highlight-nav,
+body[data-theme="dark"] .language-control {
+  background: rgba(10, 28, 46, 0.96);
+  border-color: rgba(146, 192, 241, 0.24);
+}
+
+body[data-theme="dark"] .clear-button,
+body[data-theme="dark"] .secondary-button {
+  color: #f4f9ff;
+}
+
 body[data-theme="dark"] .history-clear-button {
   color: #ffffff;
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-  border-color: transparent;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+  border-color: rgba(248, 113, 113, 0.32) !important;
 }
 
 .icon-button:hover,
@@ -616,6 +632,11 @@ body[data-theme="dark"] .history-clear-button {
   text-transform: uppercase;
 }
 
+body[data-theme="dark"] .quick-prompts-title,
+body[data-theme="dark"] .highlight-meta {
+  color: #8ec7ff;
+}
+
 .quick-prompts {
   display: flex;
   flex-wrap: wrap;
@@ -650,13 +671,15 @@ body[data-theme="dark"] .history-clear-button {
   min-height: 0;
   height: 100%;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .messages {
   height: 100%;
   max-height: 100%;
   padding: 20px 20px 8px;
-  scrollbar-gutter: stable;
+  scrollbar-gutter: stable both-edges;
+  overscroll-behavior: contain;
 }
 
 .message {
@@ -741,6 +764,22 @@ body[data-theme="dark"] .history-clear-button {
   overflow-wrap: anywhere;
 }
 
+body[data-theme="dark"] .bubble,
+body[data-theme="dark"] .typing-bubble,
+body[data-theme="dark"] .highlight-link {
+  background: linear-gradient(180deg, rgba(12, 34, 55, 0.98) 0%, rgba(12, 45, 78, 0.96) 100%);
+  border-color: rgba(146, 192, 241, 0.22);
+}
+
+body[data-theme="dark"] .bubble,
+body[data-theme="dark"] .bubble p,
+body[data-theme="dark"] .bubble li,
+body[data-theme="dark"] .highlight-summary,
+body[data-theme="dark"] .history-title,
+body[data-theme="dark"] .history-empty {
+  color: #f2f8ff;
+}
+
 .bubble p,
 .bubble li {
   line-height: 1.65;
@@ -820,9 +859,15 @@ body[data-theme="dark"] .quick-link {
   color: #dcecff;
 }
 
+body[data-theme="dark"] .source-link {
+  background: linear-gradient(180deg, rgba(10, 28, 46, 0.98) 0%, rgba(13, 48, 82, 0.94) 100%);
+  border-color: rgba(146, 192, 241, 0.24);
+}
+
 body[data-theme="dark"] .quick-link {
   background: linear-gradient(180deg, rgba(10, 30, 51, 0.98) 0%, rgba(12, 45, 79, 0.94) 100%);
   border-color: rgba(146, 192, 241, 0.24);
+  color: #f4f9ff;
 }
 
 .feedback-actions button {
@@ -836,9 +881,20 @@ body[data-theme="dark"] .quick-link {
   font-weight: 760;
 }
 
+body[data-theme="dark"] .feedback-actions button {
+  color: #f2f8ff;
+  background: rgba(9, 24, 40, 0.98);
+  border-color: rgba(146, 192, 241, 0.24);
+}
+
 .feedback-actions button.selected {
   background: var(--surface-soft);
   color: var(--blue-dark);
+}
+
+body[data-theme="dark"] .feedback-actions button.selected {
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(0, 91, 170, 0.96) 0%, rgba(0, 59, 115, 0.96) 100%);
 }
 
 .typing-row {
@@ -925,6 +981,12 @@ textarea {
   box-shadow: var(--shadow-soft);
 }
 
+body[data-theme="dark"] .voice-button {
+  color: #ffffff;
+  background: rgba(10, 28, 46, 0.98);
+  border-color: rgba(146, 192, 241, 0.24);
+}
+
 .voice-button svg {
   width: 20px;
   height: 20px;
@@ -949,11 +1011,11 @@ textarea {
 }
 
 .highlight-card {
-  min-height: 240px;
+  min-height: 208px;
 }
 
 .highlight-track {
-  min-height: 180px;
+  min-height: 148px;
 }
 
 .highlight-link {

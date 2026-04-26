@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import time
+from difflib import SequenceMatcher
 from urllib.parse import urljoin, urlsplit
 
 import requests
@@ -17,6 +18,7 @@ FACULTY_PERSONNEL_URL = "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
 FACULTY_ANNOUNCEMENTS_URL = "https://www.kafkas.edu.tr/iibf/tr/tumduyurular2"
 FACULTY_NEWS_URL = "https://www.kafkas.edu.tr/iibf/tr/tumHaberler"
 FACULTY_EVENTS_URL = "https://www.kafkas.edu.tr/iibf/tr/tumEtkinlikler2"
+FACULTY_ROOT_URL = "https://www.kafkas.edu.tr/iibf"
 SENATE_URL = "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
 FACULTY_PLACEHOLDER_IMAGE = "https://www.kafkas.edu.tr/imgs/haber.png"
 
@@ -91,6 +93,34 @@ KNOWN_DEPARTMENTS = {
         "aliases": ("elektronik ticaret ve yönetimi", "electronic commerce and management"),
         "root_slug": "iibfety",
     },
+}
+
+FACULTY_QUERY_STOPWORDS = {
+    "iibf",
+    "iktisadi",
+    "idari",
+    "bilimler",
+    "fakultesi",
+    "fakulte",
+    "faculty",
+    "feas",
+    "about",
+    "hakkinda",
+    "hakkında",
+    "sayfasi",
+    "sayfasi",
+    "sayfa",
+    "page",
+    "nedir",
+    "kim",
+    "kimdir",
+    "what",
+    "who",
+    "show",
+    "goster",
+    "göster",
+    "bilgi",
+    "ver",
 }
 
 
@@ -193,16 +223,73 @@ def ensure_department_content(
     return snapshot
 
 
+def find_faculty_navigation_matches(snapshot: dict, query: str, limit: int = 3) -> list[dict]:
+    navigation = snapshot.get("faculty_navigation", [])
+    if not navigation:
+        return []
+
+    query_key = normalize_for_matching(query)
+    query_tokens = [
+        token
+        for token in re.split(r"\s+", query_key)
+        if token and token not in FACULTY_QUERY_STOPWORDS and len(token) > 1
+    ]
+    matches: list[tuple[float, dict]] = []
+
+    for entry in navigation:
+        score = _navigation_match_score(query_key, query_tokens, entry)
+        if score <= 0:
+            continue
+        matches.append((score, entry))
+
+    matches.sort(key=lambda item: item[0], reverse=True)
+    return [entry for _, entry in matches[:limit]]
+
+
+def ensure_faculty_page(snapshot: dict, url: str) -> dict:
+    if not url:
+        return snapshot
+
+    pages = snapshot.setdefault("faculty_pages", {})
+    existing = pages.get(url) or {}
+    if existing.get("summary") and existing.get("body_excerpt"):
+        return snapshot
+
+    try:
+        soup = BeautifulSoup(_fetch_html(url), "html.parser")
+    except requests.RequestException:
+        return snapshot
+
+    title = _navigation_title_for_url(snapshot, url) or _best_page_title(soup) or clean_text(urlsplit(url).path.rsplit("/", 1)[-1])
+    body = _extract_faculty_page_body(soup)
+    page_data = {
+        "title": title,
+        "url": url,
+        "summary": _extract_summary_from_body(body, title),
+        "body_excerpt": _truncate_text(body, 1400),
+    }
+    pages[url] = page_data
+    snapshot["faculty_pages"] = pages
+    _persist_snapshot(snapshot)
+    return snapshot
+
+
 def _build_official_snapshot() -> dict:
+    faculty_root_html = _fetch_html(FACULTY_ROOT_URL)
     faculty_personnel_html = _fetch_html(FACULTY_PERSONNEL_URL)
     senate_html = _fetch_html(SENATE_URL)
 
+    faculty_root_soup = BeautifulSoup(faculty_root_html, "html.parser")
     faculty_personnel_soup = BeautifulSoup(faculty_personnel_html, "html.parser")
     faculty_personnel = _parse_personnel_cards(
         faculty_personnel_soup.select(".inner-box"),
         FACULTY_PERSONNEL_URL,
     )
-    department_roots = _parse_department_roots(faculty_personnel_soup)
+    department_roots = _merge_department_roots(
+        _parse_department_roots(faculty_root_soup),
+        _parse_department_roots(faculty_personnel_soup),
+    )
+    faculty_navigation = _parse_faculty_navigation(faculty_root_soup, FACULTY_ROOT_URL)
     senate_people = _parse_role_cards(
         BeautifulSoup(senate_html, "html.parser").select(".inner-box"),
         SENATE_URL,
@@ -233,10 +320,13 @@ def _build_official_snapshot() -> dict:
             "faculty_announcements": FACULTY_ANNOUNCEMENTS_URL,
             "faculty_news": FACULTY_NEWS_URL,
             "faculty_events": FACULTY_EVENTS_URL,
+            "faculty_root": FACULTY_ROOT_URL,
         },
         "faculty_dean": _extract_faculty_dean(senate_people),
         "senate_people": senate_people,
         "faculty_personnel": faculty_personnel,
+        "faculty_navigation": faculty_navigation,
+        "faculty_pages": {},
         "faculty_content": {
             "announcements": [],
             "news": [],
@@ -309,6 +399,159 @@ def _parse_department_roots(soup: BeautifulSoup) -> list[dict]:
             }
         )
     return fallback_roots
+
+
+def _merge_department_roots(*groups: list[dict]) -> list[dict]:
+    merged: list[dict] = []
+    seen: set[str] = set()
+    for group in groups:
+        for item in group:
+            key = item.get("key", "")
+            if not key or key in seen:
+                continue
+            merged.append(item)
+            seen.add(key)
+    return merged
+
+
+def _parse_faculty_navigation(soup: BeautifulSoup, source_url: str) -> list[dict]:
+    entries: list[dict] = []
+    seen_urls: set[str] = set()
+
+    for link in soup.find_all("a", href=True):
+        title = clean_text(link.get_text(" ", strip=True))
+        url = _absolute_url(source_url, link.get("href"))
+        if not _looks_navigation_candidate(title, url):
+            continue
+        if url in seen_urls:
+            continue
+        entries.append(
+            {
+                "title": title,
+                "url": url,
+                "normalized_title": normalize_for_matching(title),
+            }
+        )
+        seen_urls.add(url)
+    return entries
+
+
+def _looks_navigation_candidate(title: str, url: str) -> bool:
+    if not title or not url:
+        return False
+    if "kafkas.edu.tr" not in url or "/iibf" not in url:
+        return False
+    if any(part in url.lower() for part in ("/duyuru2/", "/haber", "/etkinlik", "/video", "/galeri")):
+        return False
+    if title.upper() == "DEVAMINI OKU":
+        return False
+    normalized_title = normalize_for_matching(title)
+    if len(normalized_title) < 2 or normalized_title in {"turkce", "english", "anasayfa"}:
+        return False
+    return any(
+        marker in url.lower()
+        for marker in (
+            "/sayfayeni",
+            "/akademikpersonel",
+            "/tumduyurular2",
+            "/tumhaberler",
+            "/tumetkinlikler2",
+            "iibfikt",
+            "iibfisletme",
+            "iibfsbky",
+            "iibfsbui",
+            "iibfutl",
+            "iibfsh",
+            "iibfybs",
+            "iibfety",
+            "/iibf",
+        )
+    )
+
+
+def _navigation_match_score(query_key: str, query_tokens: list[str], entry: dict) -> float:
+    title_key = normalize_for_matching(entry.get("normalized_title") or entry.get("title", ""))
+    url_key = normalize_for_matching(entry.get("url", ""))
+    haystack = f"{title_key} {url_key}".strip()
+    if not haystack:
+        return 0.0
+
+    title_tokens = [token for token in re.split(r"\s+", title_key) if token]
+    overlap = 0.0
+    for token in query_tokens:
+        if token in title_tokens:
+            overlap += 1.6
+        elif any(part.startswith(token) or token.startswith(part) for part in title_tokens if len(part) > 3):
+            overlap += 0.8
+        elif re.search(rf"(?<!\w){re.escape(token)}(?!\w)", haystack):
+            overlap += 0.7
+
+    if title_key and title_key in query_key:
+        overlap += 3.2
+    if query_key and query_key in title_key:
+        overlap += 3.6
+
+    ratio = SequenceMatcher(None, query_key, title_key).ratio() if title_key else 0.0
+    if overlap <= 0 and ratio < 0.45:
+        return 0.0
+    return overlap + ratio
+
+
+def _best_page_title(soup: BeautifulSoup) -> str:
+    selectors = (
+        "h1",
+        ".page-title",
+        ".title h1",
+        ".breadcrumb-title",
+        ".inner-page-title",
+    )
+    for selector in selectors:
+        node = soup.select_one(selector)
+        text = _text_or_empty(node)
+        if text and len(text) > 2:
+            return text
+    if soup.title:
+        return clean_text(soup.title.get_text(" ", strip=True))
+    return ""
+
+
+def _navigation_title_for_url(snapshot: dict, url: str) -> str:
+    for entry in snapshot.get("faculty_navigation", []):
+        if clean_text(entry.get("url", "")) == url:
+            return clean_text(entry.get("title", ""))
+    return ""
+
+
+def _extract_faculty_page_body(soup: BeautifulSoup) -> str:
+    selectors = (
+        ".default-content",
+        ".page-content",
+        ".post-content",
+        ".editor-content",
+        ".content-body",
+        ".content",
+        ".blog-content",
+        "article",
+        ".container",
+    )
+    longest = ""
+    for selector in selectors:
+        for node in soup.select(selector):
+            text = clean_text(node.get_text("\n", strip=True))
+            if len(text) > len(longest):
+                longest = text
+
+    if len(longest) >= 240:
+        return longest
+    body = soup.body or soup
+    return clean_text(body.get_text("\n", strip=True))
+
+
+def _truncate_text(value: str, limit: int = 600) -> str:
+    text = clean_text(value)
+    if len(text) <= limit:
+        return text
+    return text[: limit - 1].rstrip() + "…"
 
 
 def _parse_personnel_cards(boxes: list, source_url: str, default_department: str | None = None) -> list[dict]:
@@ -596,6 +839,7 @@ def _join_non_empty(parts: list[str]) -> str:
 def _hydrate_snapshot(snapshot: dict) -> dict:
     changed = False
     departments = snapshot.setdefault("departments", {})
+    sources = snapshot.setdefault("sources", {})
 
     if not snapshot.get("department_order"):
         snapshot["department_order"] = list(departments)
@@ -609,6 +853,20 @@ def _hydrate_snapshot(snapshot: dict) -> dict:
 
     snapshot.setdefault("faculty_content", {"announcements": [], "news": [], "events": []})
     snapshot.setdefault("faculty_personnel", [])
+    snapshot.setdefault("faculty_pages", {})
+    if not sources.get("faculty_root"):
+        sources["faculty_root"] = FACULTY_ROOT_URL
+        changed = True
+    if not snapshot.get("faculty_navigation"):
+        try:
+            navigation_html = _fetch_html(FACULTY_ROOT_URL)
+            snapshot["faculty_navigation"] = _parse_faculty_navigation(
+                BeautifulSoup(navigation_html, "html.parser"),
+                FACULTY_ROOT_URL,
+            )
+            changed = True
+        except requests.RequestException:
+            snapshot.setdefault("faculty_navigation", [])
 
     for key, department in KNOWN_DEPARTMENTS.items():
         if key not in departments:

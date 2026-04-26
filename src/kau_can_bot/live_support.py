@@ -110,14 +110,17 @@ class LiveSupportResult:
     context: str = ""
     sources: list[tuple[str, str]] = field(default_factory=list)
     prefer_direct: bool = False
-
-
-def build_live_support(query: str, language: str) -> LiveSupportResult | None:
+def _build_live_support(
+    query: str,
+    language: str,
+    latitude: float | None = None,
+    longitude: float | None = None,
+) -> LiveSupportResult | None:
     query = clean_text(query)
     if not query:
         return None
 
-    weather_support = _weather_support(query, language)
+    weather_support = _weather_support(query, language, latitude=latitude, longitude=longitude)
     if weather_support is not None:
         return weather_support
 
@@ -132,13 +135,23 @@ def build_live_support(query: str, language: str) -> LiveSupportResult | None:
     return None
 
 
-def _weather_support(query: str, language: str) -> LiveSupportResult | None:
+def build_live_support(
+    query: str,
+    language: str,
+    latitude: float | None = None,
+    longitude: float | None = None,
+) -> LiveSupportResult | None:
+    return _build_live_support(query, language, latitude=latitude, longitude=longitude)
+
+
+def _weather_support(query: str, language: str, latitude: float | None = None, longitude: float | None = None) -> LiveSupportResult | None:
     normalized = normalize_for_matching(query)
     if not any(term in normalized for term in map(normalize_for_matching, WEATHER_TERMS)):
         return None
 
     location = _extract_weather_location(query)
-    if not location:
+    coords_available = latitude is not None and longitude is not None
+    if not location and not coords_available:
         return LiveSupportResult(
             answer=_text_for_language(
                 language,
@@ -151,8 +164,9 @@ def _weather_support(query: str, language: str) -> LiveSupportResult | None:
             prefer_direct=True,
         )
 
+    weather_key = location or f"{latitude:.4f},{longitude:.4f}"
     try:
-        payload = _fetch_weather_payload(location, int(time.time() // 600))
+        payload = _fetch_weather_payload(weather_key, int(time.time() // 600))
     except requests.RequestException:
         return LiveSupportResult(
             answer=_text_for_language(
@@ -168,15 +182,15 @@ def _weather_support(query: str, language: str) -> LiveSupportResult | None:
 
     current = (payload.get("current_condition") or [{}])[0]
     nearest_area = (payload.get("nearest_area") or [{}])[0]
-    resolved_location = clean_text(_nested_value(nearest_area, "areaName")) or location
-    if normalize_for_matching(location) not in normalize_for_matching(resolved_location):
+    resolved_location = clean_text(_nested_value(nearest_area, "areaName")) or location or "bulunduğunuz konum"
+    if location and normalize_for_matching(location) not in normalize_for_matching(resolved_location):
         resolved_location = location
     description = clean_text(_nested_value(current, "weatherDesc")) or "-"
     temp_c = clean_text(current.get("temp_C", ""))
     feels_like_c = clean_text(current.get("FeelsLikeC", ""))
     humidity = clean_text(current.get("humidity", ""))
     wind_kmph = clean_text(current.get("windspeedKmph", ""))
-    source_url = f"https://wttr.in/{quote(location)}?format=j1"
+    source_url = f"https://wttr.in/{quote(weather_key)}?format=j1"
 
     answer = _text_for_language(
         language,

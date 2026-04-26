@@ -4,9 +4,11 @@ import ast
 import operator
 import re
 from dataclasses import dataclass
+from datetime import date, datetime, timedelta
 from functools import lru_cache
 from html import unescape
 from urllib.parse import quote_plus
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -35,6 +37,8 @@ from .official_data import (
     department_keys_for_query,
     ensure_department_content,
     ensure_faculty_content,
+    ensure_faculty_page,
+    find_faculty_navigation_matches,
     get_official_snapshot,
 )
 from .live_support import build_live_support
@@ -200,6 +204,154 @@ SMALLTALK_RESPONSES = {
         "ar": "😊 على الرحب والسعة. يسعدني أن أساعدك في أي وقت.",
     },
 }
+ISTANBUL_TZ = ZoneInfo("Europe/Istanbul")
+FACULTY_ALIAS_MAP = {
+    "iibf": (
+        "iibf",
+        "iktisadi ve idari bilimler",
+        "iktisadi idari bilimler",
+        "feas",
+        "faculty of economics and administrative sciences",
+    ),
+    "fen-edebiyat": (
+        "fen edebiyat",
+        "fen-edebiyat",
+        "arts and sciences",
+        "faculty of arts and sciences",
+    ),
+    "egitim": (
+        "egitim",
+        "dede korkut egitim",
+        "education faculty",
+        "faculty of education",
+    ),
+    "guzel-sanatlar": (
+        "guzel sanatlar",
+        "fine arts",
+        "faculty of fine arts",
+    ),
+    "ilahiyat": (
+        "ilahiyat",
+        "theology",
+        "faculty of theology",
+    ),
+    "dis-hekimligi": (
+        "dis hekimligi",
+        "diş hekimliği",
+        "dentistry",
+        "faculty of dentistry",
+    ),
+    "muhendislik-mimarlik": (
+        "muhendislik mimarlik",
+        "mühendislik mimarlık",
+        "engineering architecture",
+        "engineering and architecture",
+        "faculty of engineering and architecture",
+    ),
+    "saglik-bilimleri": (
+        "saglik bilimleri",
+        "sağlık bilimleri",
+        "health sciences",
+        "faculty of health sciences",
+    ),
+    "spor-bilimleri": (
+        "spor bilimleri",
+        "sarikamis spor bilimleri",
+        "sports sciences",
+        "faculty of sports sciences",
+    ),
+    "turizm": (
+        "sarikamis turizm",
+        "turizm",
+        "tourism",
+        "faculty of tourism",
+    ),
+    "tip": (
+        "tip fakultesi",
+        "tıp fakültesi",
+        "medical faculty",
+        "faculty of medicine",
+    ),
+    "veteriner": (
+        "veteriner",
+        "veterinary",
+        "faculty of veterinary medicine",
+    ),
+}
+WEEKDAY_NAMES = {
+    "tr": ("Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"),
+    "en": ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
+    "ar": ("الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"),
+}
+MONTH_NAMES_TR = {
+    "ocak": 1,
+    "subat": 2,
+    "şubat": 2,
+    "mart": 3,
+    "nisan": 4,
+    "mayis": 5,
+    "mayıs": 5,
+    "haziran": 6,
+    "temmuz": 7,
+    "agustos": 8,
+    "ağustos": 8,
+    "eylul": 9,
+    "eylül": 9,
+    "ekim": 10,
+    "kasim": 11,
+    "kasım": 11,
+    "aralik": 12,
+    "aralık": 12,
+}
+MONTH_NAMES_EN = {
+    "january": 1,
+    "february": 2,
+    "march": 3,
+    "april": 4,
+    "may": 5,
+    "june": 6,
+    "july": 7,
+    "august": 8,
+    "september": 9,
+    "october": 10,
+    "november": 11,
+    "december": 12,
+}
+SPECIAL_DAY_BUILDERS = {
+    "yilbasi": lambda year: date(year, 1, 1),
+    "new year": lambda year: date(year, 1, 1),
+    "sevgililer gunu": lambda year: date(year, 2, 14),
+    "valentine": lambda year: date(year, 2, 14),
+    "8 mart": lambda year: date(year, 3, 8),
+    "kadinlar gunu": lambda year: date(year, 3, 8),
+    "dunya kadinlar gunu": lambda year: date(year, 3, 8),
+    "18 mart": lambda year: date(year, 3, 18),
+    "canakkale zaferi": lambda year: date(year, 3, 18),
+    "23 nisan": lambda year: date(year, 4, 23),
+    "ulusal egemenlik ve cocuk bayrami": lambda year: date(year, 4, 23),
+    "1 mayis": lambda year: date(year, 5, 1),
+    "emek ve dayanisma gunu": lambda year: date(year, 5, 1),
+    "anneler gunu": lambda year: _nth_weekday_of_month(year, 5, 6, 2),
+    "mother's day": lambda year: _nth_weekday_of_month(year, 5, 6, 2),
+    "mothers day": lambda year: _nth_weekday_of_month(year, 5, 6, 2),
+    "19 mayis": lambda year: date(year, 5, 19),
+    "ataturk u anma genclik ve spor bayrami": lambda year: date(year, 5, 19),
+    "genclik ve spor bayrami": lambda year: date(year, 5, 19),
+    "babalar gunu": lambda year: _nth_weekday_of_month(year, 6, 6, 3),
+    "father's day": lambda year: _nth_weekday_of_month(year, 6, 6, 3),
+    "fathers day": lambda year: _nth_weekday_of_month(year, 6, 6, 3),
+    "15 temmuz": lambda year: date(year, 7, 15),
+    "demokrasi ve milli birlik gunu": lambda year: date(year, 7, 15),
+    "30 agustos": lambda year: date(year, 8, 30),
+    "zafer bayrami": lambda year: date(year, 8, 30),
+    "29 ekim": lambda year: date(year, 10, 29),
+    "cumhuriyet bayrami": lambda year: date(year, 10, 29),
+    "10 kasim": lambda year: date(year, 11, 10),
+    "ataturk u anma": lambda year: date(year, 11, 10),
+    "24 kasim": lambda year: date(year, 11, 24),
+    "ogretmenler gunu": lambda year: date(year, 11, 24),
+    "teachers day": lambda year: date(year, 11, 24),
+}
 MATH_BINARY_OPERATORS = {
     ast.Add: operator.add,
     ast.Sub: operator.sub,
@@ -256,14 +408,29 @@ class WebsiteGroundedAssistant:
         self.settings = settings or Settings()
         self.index = index or SearchIndex.load(INDEX_PATH)
 
-    def answer(self, query: str, client_id: str | None = None, preferred_language: str | None = None) -> str:
-        return self.answer_with_context(query, client_id=client_id, preferred_language=preferred_language).answer
+    def answer(
+        self,
+        query: str,
+        client_id: str | None = None,
+        preferred_language: str | None = None,
+        latitude: float | None = None,
+        longitude: float | None = None,
+    ) -> str:
+        return self.answer_with_context(
+            query,
+            client_id=client_id,
+            preferred_language=preferred_language,
+            latitude=latitude,
+            longitude=longitude,
+        ).answer
 
     def answer_with_context(
         self,
         query: str,
         client_id: str | None = None,
         preferred_language: str | None = None,
+        latitude: float | None = None,
+        longitude: float | None = None,
     ) -> AssistantResponse:
         original_query = clean_text(query)
         normalized_query = normalize_query(original_query) or original_query
@@ -380,6 +547,21 @@ class WebsiteGroundedAssistant:
                 status="direct_link",
             )
 
+        datetime_response = _datetime_shortcut(original_query or normalized_query, language)
+        if datetime_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                datetime_response.text,
+                datetime_response.sources,
+                "general",
+            )
+            return AssistantResponse(
+                answer=datetime_response.text,
+                sources=datetime_response.sources,
+                interaction_id=interaction.id,
+                status="general",
+            )
+
         direct_link_response = _match_direct_service_link(normalized_query, language)
         if direct_link_response is not None:
             interaction = log_interaction(
@@ -439,7 +621,12 @@ class WebsiteGroundedAssistant:
                 status="general",
             )
 
-        live_support = build_live_support(general_query, language)
+        live_support = build_live_support(
+            general_query,
+            language,
+            latitude=latitude,
+            longitude=longitude,
+        )
         if live_support is not None and live_support.prefer_direct:
             interaction = log_interaction(
                 original_query or normalized_query,
@@ -1065,13 +1252,36 @@ def _location_shortcut(query: str, language: str) -> ComposedAnswer | None:
         return None
     if not _is_location_query(query):
         return None
+
+    destination = _extract_route_destination(query)
+    if destination:
+        maps_url = f"https://www.google.com/maps/dir/?api=1&destination={quote_plus(destination)}"
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"📌 {destination} için yol tarifi aşağıdaki harita bağlantısından açılabilir.",
+                f"📌 Directions to {destination} can be opened from the map link below.",
+                f"📌 يمكن فتح الاتجاهات إلى {destination} من رابط الخريطة التالي.",
+            ),
+            sources=_build_link_sources([("Yol Tarifi", maps_url)]),
+        )
+
     if not (
-        _is_faculty_query(query)
+        _query_targets_iibf(query)
         or "kafkas universitesi" in normalized
         or "kau" in normalized
         or "universite" in normalized
+        or "university" in normalized
     ):
-        return None
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                "📌 Yol tarifi oluşturabilmem için gidilmek istenen konum biraz daha açık yazılmalıdır. Örnek: Kafkas Üniversitesi İİBF'ye nasıl giderim?",
+                "📌 Please specify the destination more clearly so I can provide directions. Example: How do I get to Kafkas University FEAS?",
+                "📌 يُرجى تحديد الوجهة بشكل أوضح حتى أتمكن من مشاركة الاتجاهات. مثال: كيف أصل إلى كلية الاقتصاد والعلوم الإدارية في جامعة قفقاس؟",
+            ),
+            sources=[],
+        )
 
     return ComposedAnswer(
         text=_text_for_language(
@@ -1250,9 +1460,16 @@ def _official_data_shortcut(query: str, language: str) -> ComposedAnswer | None:
         return None
 
     if _is_dean_query(query):
-        answer = _official_dean_answer(snapshot, language)
+        answer = _official_dean_answer(snapshot, query, language)
         if answer is not None:
             return answer
+
+    if _other_faculty_requested(query):
+        return None
+
+    navigation_answer = _official_navigation_answer(snapshot, query, language)
+    if navigation_answer is not None:
+        return navigation_answer
 
     department_keys = department_keys_for_query(query)
     topic = _official_content_topic(query)
@@ -1292,8 +1509,8 @@ def _official_data_shortcut(query: str, language: str) -> ComposedAnswer | None:
     return None
 
 
-def _official_dean_answer(snapshot: dict, language: str) -> ComposedAnswer | None:
-    dean = snapshot.get("faculty_dean") or {}
+def _official_dean_answer(snapshot: dict, query: str, language: str) -> ComposedAnswer | None:
+    dean = _find_dean_for_query(snapshot, query)
     if not dean:
         return None
 
@@ -1305,12 +1522,13 @@ def _official_dean_answer(snapshot: dict, language: str) -> ComposedAnswer | Non
     if not dean_name:
         return None
 
+    faculty_label = _faculty_label_from_designation(designation) or "İİBF"
     return ComposedAnswer(
         text=_text_for_language(
             language,
-            f"👤 İİBF dekanı resmi senato sayfasına göre {dean_name} olarak yer almaktadır. {designation}".strip(),
-            f"👤 According to the official senate page, the dean of FEAS is {dean_name}. Dean of the Faculty of Economics and Administrative Sciences.",
-            f"👤 وفقًا لصفحة مجلس الجامعة الرسمية، فإن عميد الكلية هو {dean_name}.",
+            f"👤 Resmi senato sayfasına göre {faculty_label} için dekan bilgisi {dean_name} olarak yer almaktadır. {designation}".strip(),
+            f"👤 According to the official senate page, the dean information for {faculty_label} is listed as {dean_name}. {designation}".strip(),
+            f"👤 وفقًا لصفحة مجلس الجامعة الرسمية، فإن معلومات العميد الخاصة بـ {faculty_label} منشورة باسم {dean_name}.",
         ),
         sources=_build_link_sources(
             [
@@ -1592,6 +1810,48 @@ def _official_department_info_answer(department: dict, language: str) -> Compose
     )
 
 
+def _official_navigation_answer(snapshot: dict, query: str, language: str) -> ComposedAnswer | None:
+    if not _query_targets_iibf(query) and not _looks_like_iibf_menu_query(query):
+        return None
+
+    matches = find_faculty_navigation_matches(snapshot, query, limit=3)
+    if not matches:
+        return None
+
+    best = matches[0]
+    snapshot = ensure_faculty_page(snapshot, clean_text(best.get("url", "")))
+    page = snapshot.get("faculty_pages", {}).get(best.get("url", ""), {})
+    title = clean_text(page.get("title", "")) or clean_text(best.get("title", ""))
+    summary = _clean_official_summary(page.get("summary", ""), title)
+    body_excerpt = clean_text(page.get("body_excerpt", ""))
+
+    if not summary and body_excerpt:
+        summary = _extract_summary_sentence(body_excerpt, title, max_chars=220)
+
+    if not title:
+        return None
+
+    if summary:
+        text = _text_for_language(
+            language,
+            f"📌 İİBF {title} sayfasına göre: {summary}",
+            f"📌 According to the FEAS page titled {title}: {summary}",
+            f"📌 وفقًا لصفحة الكلية بعنوان {title}: {summary}",
+        )
+    else:
+        text = _text_for_language(
+            language,
+            f"📌 İİBF {title} bilgisi resmi fakülte sayfasında yer almaktadır.",
+            f"📌 The FEAS information for {title} is available on the official faculty page.",
+            f"📌 تتوفر معلومات {title} في صفحة الكلية الرسمية.",
+        )
+
+    return ComposedAnswer(
+        text=text,
+        sources=_build_link_sources([(title, clean_text(best.get("url", "")))]),
+    )
+
+
 def _official_item_row(item: dict) -> str:
     title = clean_text(item.get("title", ""))
     date = clean_text(item.get("date", ""))
@@ -1712,6 +1972,7 @@ def _should_use_official_data(query: str) -> bool:
             _is_faculty_department_heads_query(query),
             bool(department_keys_for_query(query)),
             bool(_official_content_topic(query)),
+            _looks_like_iibf_menu_query(query),
             normalized in {"ybs", "akademik kadro", "duyurular", "haberler", "etkinlikler", "bolumler"},
         )
     )
@@ -1991,19 +2252,26 @@ def _compose_corrected_text(query: str, language: str) -> str:
             " oklaa ": " okula ",
             " yarin ": " yarın ",
             " hocamlaa ": " hocamla ",
+            " noktlama ": " noktalama ",
+            " yazim ": " yazım ",
+            " bi ": " bir ",
         }
         corrected = f" {corrected.lower()} "
         for old, new in replacements.items():
             corrected = corrected.replace(old, new)
-        corrected = corrected.strip()
-        corrected = corrected[:1].upper() + corrected[1:] if corrected else corrected
+        corrected = re.sub(r"\s+", " ", corrected).strip()
+        corrected = re.sub(r"\s+([,.;!?])", r"\1", corrected)
+        corrected = re.sub(r"([,.;!?])([^\s])", r"\1 \2", corrected)
+        corrected = _capitalize_sentences(corrected)
         if corrected and corrected[-1] not in ".!?":
             corrected += "."
         return "✅ Düzeltilmiş metin:\n" + corrected
 
     if language == "en":
-        corrected = corrected.strip()
-        corrected = corrected[:1].upper() + corrected[1:] if corrected else corrected
+        corrected = re.sub(r"\s+", " ", corrected).strip()
+        corrected = re.sub(r"\s+([,.;!?])", r"\1", corrected)
+        corrected = re.sub(r"([,.;!?])([^\s])", r"\1 \2", corrected)
+        corrected = _capitalize_sentences(corrected)
         if corrected and corrected[-1] not in ".!?":
             corrected += "."
         return "✅ Corrected text:\n" + corrected
@@ -2014,12 +2282,30 @@ def _compose_corrected_text(query: str, language: str) -> str:
 
 def _extract_task_payload(query: str) -> str:
     cleaned = clean_text(query)
+    quoted_match = re.search(r"[\"“](.+?)[\"”]", cleaned)
+    if quoted_match:
+        return clean_text(quoted_match.group(1))
     if ":" in cleaned:
         return clean_text(cleaned.split(":", 1)[1])
     if "\n" in cleaned:
         lines = [clean_text(line) for line in cleaned.splitlines() if clean_text(line)]
         if len(lines) >= 2:
             return lines[-1]
+    command_patterns = (
+        r"(?i)^(?:bu\s+)?metni\s+d[üu]zelt[:\s-]*",
+        r"(?i)^yaz[ıi]m(?:\s+ve\s+noktalama)?\s+hatalar[ıi]n[ıi]\s+d[üu]zelt[:\s-]*",
+        r"(?i)^noktalama(?:\s+isaretleri| işaretleri)?(?:ni)?\s+d[üu]zelt[:\s-]*",
+        r"(?i)^metin(?:i)?\s+d[üu]zenle[:\s-]*",
+        r"(?i)^rewrite(?:\s+this\s+text)?[:\s-]*",
+        r"(?i)^correct(?:\s+this\s+text)?[:\s-]*",
+        r"(?i)^improve(?:\s+this\s+text)?[:\s-]*",
+        r"(?i)^اصلح(?:\s+هذا\s+النص)?[:\s-]*",
+        r"(?i)^حسن(?:\s+هذا\s+النص)?[:\s-]*",
+    )
+    for pattern in command_patterns:
+        stripped = re.sub(pattern, "", cleaned).strip()
+        if stripped and stripped != cleaned:
+            return stripped
     return ""
 
 
@@ -2030,6 +2316,288 @@ def _infer_subject(payload: str, language: str) -> str:
     if any(term in normalized for term in ("staj", "internship", "تدريب")):
         return _text_for_language(language, "Staj Bilgisi Talebi", "Internship Information Request", "طلب معلومات عن التدريب")
     return _text_for_language(language, "Bilgi Talebi", "Information Request", "طلب معلومات")
+
+
+def _datetime_shortcut(query: str, language: str) -> ComposedAnswer | None:
+    normalized = _query_key(query)
+    if _is_composition_request(query):
+        return None
+    if not (_is_datetime_query(query) or _is_special_day_query(query)):
+        return None
+
+    now = datetime.now(ISTANBUL_TZ)
+    target_special_day = _resolve_special_day(query, now.year)
+    explicit_date = _parse_explicit_date(query, now.year)
+
+    if target_special_day is not None:
+        label = _special_day_label(query)
+        formatted = _format_date_with_weekday(target_special_day, language)
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"📅 {label} {target_special_day.year} yılında {formatted} gününe denk geliyor.",
+                f"📅 {label} in {target_special_day.year} falls on {formatted}.",
+                f"📅 {label} في عام {target_special_day.year} يوافق {formatted}.",
+            ),
+            sources=[],
+        )
+
+    if explicit_date is not None and any(
+        term in normalized for term in ("hangi gun", "hangi gün", "what day", "day of week", "gunu", "günü")
+    ):
+        formatted = _format_date_with_weekday(explicit_date, language)
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"📅 {formatted} tarihine denk geliyor.",
+                f"📅 It falls on {formatted}.",
+                f"📅 يوافق التاريخ {formatted}.",
+            ),
+            sources=[],
+        )
+
+    if any(term in normalized for term in ("saat", "time", "clock", "الساعة")):
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"🕒 İstanbul saatine göre şu an {_format_date_with_weekday(now.date(), language)}, saat {now.strftime('%H:%M')}.",
+                f"🕒 According to Istanbul time, it is now {_format_date_with_weekday(now.date(), language)} at {now.strftime('%H:%M')}.",
+                f"🕒 حسب توقيت إسطنبول الآن {_format_date_with_weekday(now.date(), language)} والساعة {now.strftime('%H:%M')}.",
+            ),
+            sources=[],
+        )
+
+    relative_target = _resolve_relative_date(normalized, now.date())
+    if relative_target is not None:
+        prefix = _text_for_language(language, "📅", "📅", "📅")
+        label = _relative_date_label(normalized, language)
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"{prefix} {label} {_format_date_with_weekday(relative_target, language)}.",
+                f"{prefix} {label} {_format_date_with_weekday(relative_target, language)}.",
+                f"{prefix} {label} {_format_date_with_weekday(relative_target, language)}.",
+            ),
+            sources=[],
+        )
+
+    if explicit_date is not None:
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"📅 Tarih bilgisi: {_format_date_with_weekday(explicit_date, language)}.",
+                f"📅 Date information: {_format_date_with_weekday(explicit_date, language)}.",
+                f"📅 معلومات التاريخ: {_format_date_with_weekday(explicit_date, language)}.",
+            ),
+            sources=[],
+        )
+
+    return ComposedAnswer(
+        text=_text_for_language(
+            language,
+            f"📅 İstanbul saatine göre bugün {_format_date_with_weekday(now.date(), language)}.",
+            f"📅 According to Istanbul time, today is {_format_date_with_weekday(now.date(), language)}.",
+            f"📅 وفقًا لتوقيت إسطنبول فإن اليوم هو {_format_date_with_weekday(now.date(), language)}.",
+        ),
+        sources=[],
+    )
+
+
+def _is_datetime_query(query: str) -> bool:
+    normalized = _query_key(query)
+    return any(
+        term in normalized
+        for term in (
+            "bugun",
+            "bugün",
+            "yarin",
+            "yarın",
+            "dun",
+            "dün",
+            "tarih",
+            "saat",
+            "gunlerden ne",
+            "günlerden ne",
+            "hangi gun",
+            "hangi gün",
+            "what day",
+            "what date",
+            "what time",
+            "today",
+            "tomorrow",
+            "yesterday",
+            "date",
+            "time",
+            "clock",
+            "اليوم",
+            "غدا",
+            "تاريخ",
+            "الساعة",
+            "اي يوم",
+        )
+    ) or bool(_parse_explicit_date(query, datetime.now(ISTANBUL_TZ).year))
+
+
+def _is_special_day_query(query: str) -> bool:
+    normalized = _query_key(query)
+    return any(term in normalized for term in SPECIAL_DAY_BUILDERS)
+
+
+def _resolve_relative_date(normalized_query: str, reference: date) -> date | None:
+    if any(term in normalized_query for term in ("yarin", "yarın", "tomorrow", "غدا")):
+        return reference + timedelta(days=1)
+    if any(term in normalized_query for term in ("dun", "dün", "yesterday", "امس")):
+        return reference - timedelta(days=1)
+    if any(term in normalized_query for term in ("bugun", "bugün", "today", "اليوم")):
+        return reference
+    return None
+
+
+def _relative_date_label(normalized_query: str, language: str) -> str:
+    if any(term in normalized_query for term in ("yarin", "yarın", "tomorrow", "غدا")):
+        return _text_for_language(language, "Yarın", "Tomorrow is", "غدًا")
+    if any(term in normalized_query for term in ("dun", "dün", "yesterday", "امس")):
+        return _text_for_language(language, "Dün", "Yesterday was", "أمس")
+    return _text_for_language(language, "Bugün", "Today is", "اليوم")
+
+
+def _parse_explicit_date(query: str, default_year: int) -> date | None:
+    cleaned = clean_text(query)
+
+    numeric_match = re.search(r"\b(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})\b", cleaned)
+    if numeric_match:
+        day, month, year = map(int, numeric_match.groups())
+        year = 2000 + year if year < 100 else year
+        return _safe_date(year, month, day)
+
+    month_match = re.search(r"\b(\d{1,2})\s+([A-Za-zÇĞİÖŞÜçğıöşü]+)\s*(\d{4})?\b", cleaned)
+    if month_match:
+        day = int(month_match.group(1))
+        month_name = clean_text(month_match.group(2)).lower()
+        year = int(month_match.group(3)) if month_match.group(3) else default_year
+        month = MONTH_NAMES_TR.get(month_name) or MONTH_NAMES_EN.get(month_name)
+        if month:
+            return _safe_date(year, month, day)
+    return None
+
+
+def _resolve_special_day(query: str, default_year: int) -> date | None:
+    normalized = _query_key(query)
+    year = _extract_requested_year(query) or default_year
+    for alias, builder in SPECIAL_DAY_BUILDERS.items():
+        if alias in normalized:
+            try:
+                return builder(year)
+            except ValueError:
+                return None
+    return None
+
+
+def _special_day_label(query: str) -> str:
+    normalized = _query_key(query)
+    labels = {
+        "yilbasi": "Yılbaşı",
+        "new year": "New Year",
+        "sevgililer gunu": "Sevgililer Günü",
+        "valentine": "Valentine's Day",
+        "8 mart": "8 Mart Dünya Kadınlar Günü",
+        "kadinlar gunu": "Dünya Kadınlar Günü",
+        "dunya kadinlar gunu": "Dünya Kadınlar Günü",
+        "18 mart": "18 Mart Çanakkale Zaferi",
+        "canakkale zaferi": "Çanakkale Zaferi",
+        "23 nisan": "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı",
+        "ulusal egemenlik ve cocuk bayrami": "Ulusal Egemenlik ve Çocuk Bayramı",
+        "1 mayis": "1 Mayıs Emek ve Dayanışma Günü",
+        "emek ve dayanisma gunu": "Emek ve Dayanışma Günü",
+        "anneler gunu": "Anneler Günü",
+        "mother's day": "Mother's Day",
+        "mothers day": "Mother's Day",
+        "19 mayis": "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı",
+        "ataturk u anma genclik ve spor bayrami": "Atatürk'ü Anma, Gençlik ve Spor Bayramı",
+        "genclik ve spor bayrami": "Gençlik ve Spor Bayramı",
+        "babalar gunu": "Babalar Günü",
+        "father's day": "Father's Day",
+        "fathers day": "Father's Day",
+        "15 temmuz": "15 Temmuz Demokrasi ve Milli Birlik Günü",
+        "demokrasi ve milli birlik gunu": "Demokrasi ve Milli Birlik Günü",
+        "30 agustos": "30 Ağustos Zafer Bayramı",
+        "zafer bayrami": "Zafer Bayramı",
+        "29 ekim": "29 Ekim Cumhuriyet Bayramı",
+        "cumhuriyet bayrami": "Cumhuriyet Bayramı",
+        "10 kasim": "10 Kasım Atatürk'ü Anma Günü",
+        "ataturk u anma": "Atatürk'ü Anma Günü",
+        "24 kasim": "24 Kasım Öğretmenler Günü",
+        "ogretmenler gunu": "Öğretmenler Günü",
+        "teachers day": "Teachers' Day",
+    }
+    for alias in SPECIAL_DAY_BUILDERS:
+        if alias in normalized:
+            return labels.get(alias, alias.title())
+    return "Özel gün"
+
+
+def _extract_requested_year(query: str) -> int | None:
+    match = re.search(r"\b(20\d{2})\b", query)
+    if not match:
+        return None
+    return int(match.group(1))
+
+
+def _format_date_with_weekday(target: date, language: str) -> str:
+    weekday_name = WEEKDAY_NAMES.get(language, WEEKDAY_NAMES["tr"])[target.weekday()]
+    if language == "en":
+        month_name = target.strftime("%B")
+        return f"{weekday_name}, {month_name} {target.day}, {target.year}"
+    if language == "ar":
+        return f"{weekday_name} {target.day}/{target.month}/{target.year}"
+    month_names_tr = (
+        "",
+        "Ocak",
+        "Şubat",
+        "Mart",
+        "Nisan",
+        "Mayıs",
+        "Haziran",
+        "Temmuz",
+        "Ağustos",
+        "Eylül",
+        "Ekim",
+        "Kasım",
+        "Aralık",
+    )
+    month_name_tr = month_names_tr[target.month]
+    return f"{target.day} {month_name_tr} {target.year} {weekday_name}"
+
+
+def _safe_date(year: int, month: int, day: int) -> date | None:
+    try:
+        return date(year, month, day)
+    except ValueError:
+        return None
+
+
+def _nth_weekday_of_month(year: int, month: int, weekday: int, occurrence: int) -> date:
+    first_day = date(year, month, 1)
+    offset = (weekday - first_day.weekday()) % 7
+    day_number = 1 + offset + (occurrence - 1) * 7
+    return date(year, month, day_number)
+
+
+def _capitalize_sentences(text: str) -> str:
+    sentence = text.strip()
+    if not sentence:
+        return ""
+
+    pieces = re.split(r"([.!?]\s+)", sentence)
+    rebuilt: list[str] = []
+    for piece in pieces:
+        if not piece:
+            continue
+        if re.fullmatch(r"[.!?]\s+", piece):
+            rebuilt.append(piece)
+            continue
+        rebuilt.append(piece[:1].upper() + piece[1:] if piece else piece)
+    return "".join(rebuilt).strip()
 
 
 def _should_answer_with_general_knowledge(query: str) -> bool:
@@ -2602,28 +3170,131 @@ def _response_emoji(query: str) -> str:
     return "📌"
 
 
-def _is_faculty_query(query: str) -> bool:
+def _query_targets_iibf(query: str) -> bool:
     normalized = _query_key(query)
     return any(
         term in normalized
         for term in (
             "iibf",
             "iktisadi ve idari bilimler",
-            "iktisadi",
-            "idari bilimler",
-            "bilimler fakultesi",
-            "fakulte",
-            "dekan",
+            "iktisadi idari bilimler",
             "feas",
             "faculty of economics and administrative sciences",
-            "faculty of economics",
             "economics and administrative sciences",
-            "iibf faculty",
+            "الاقتصاد والعلوم الادارية",
+        )
+    )
+
+
+def _matched_faculty_key(query: str) -> str:
+    normalized = _query_key(query)
+    for key, aliases in FACULTY_ALIAS_MAP.items():
+        if any(_query_key(alias) in normalized for alias in aliases):
+            return key
+    return ""
+
+
+def _other_faculty_requested(query: str) -> bool:
+    faculty_key = _matched_faculty_key(query)
+    return bool(faculty_key and faculty_key != "iibf")
+
+
+def _find_dean_for_query(snapshot: dict, query: str) -> dict:
+    senate_people = snapshot.get("senate_people", [])
+    faculty_key = _matched_faculty_key(query) or "iibf"
+
+    for item in senate_people:
+        if _senate_designation_matches(clean_text(item.get("designation", "")), faculty_key):
+            return item
+
+    if faculty_key == "iibf":
+        return snapshot.get("faculty_dean") or {}
+    return {}
+
+
+def _senate_designation_matches(designation: str, faculty_key: str) -> bool:
+    designation_key = normalize_for_matching(designation)
+    aliases = FACULTY_ALIAS_MAP.get(faculty_key, ())
+    if not aliases:
+        return False
+    return "dekan" in designation_key and any(_query_key(alias) in designation_key for alias in aliases)
+
+
+def _faculty_label_from_designation(designation: str) -> str:
+    cleaned = clean_text(designation)
+    if not cleaned:
+        return ""
+    return re.sub(r"\s+Dekan(?:ı|i| V\.)?$", "", cleaned, flags=re.IGNORECASE).strip()
+
+
+def _looks_like_iibf_menu_query(query: str) -> bool:
+    normalized = _query_key(query)
+    if _other_faculty_requested(query):
+        return False
+    return any(
+        term in normalized
+        for term in (
+            "misyon",
+            "vizyon",
+            "tanitim",
+            "tanıtım",
+            "dekanimizin mesaji",
+            "dekanımızın mesajı",
+            "yonetim",
+            "yönetim",
+            "sss",
+            "sikca sorulan sorular",
+            "sıkça sorulan sorular",
+            "fakulte kurulu",
+            "fakulte yonetim kurulu",
+            "danisma kurulu",
+            "kurulu",
+            "kurul",
+            "komisyon",
+            "formlar",
+            "mezun",
+            "mevzuat",
+            "organizasyon",
+            "iletisim",
+            "iletişim",
+            "dekana sor",
+            "iibf misyon",
+        )
+    )
+
+
+def _extract_route_destination(query: str) -> str:
+    cleaned = clean_text(query)
+    patterns = (
+        r"(?i)\b(.+?)\s+(?:nasil giderim|nasil gidebilirim|yol tarifi)\b",
+        r"(?i)\bhow do i get to\s+(.+)$",
+        r"(?i)\bhow can i get to\s+(.+)$",
+        r"(?i)\bdirections to\s+(.+)$",
+        r"(?i)\b(.+?)\s+(?:adresi|adresi)\b",
+        r"(?i)\b(?:كيف اذهب الى|كيف اصل الى)\s+(.+)$",
+    )
+    for pattern in patterns:
+        match = re.search(pattern, cleaned)
+        if match:
+            return clean_text(match.group(1).strip(" ?"))
+
+    lowered = _query_key(query)
+    if any(term in lowered for term in ("iibf", "kafkas universitesi", "kampus", "kampus", "feas")):
+        return "Kafkas Üniversitesi İİBF"
+    return ""
+
+
+def _is_faculty_query(query: str) -> bool:
+    normalized = _query_key(query)
+    if _other_faculty_requested(query):
+        return False
+    return _query_targets_iibf(query) or any(
+        term in normalized
+        for term in (
+            "fakulte",
+            "faculty",
             "جامعة قفقاس",
             "كلية",
-            "العلوم الادارية",
-            "الاقتصاد",
-            "عميد",
         )
     )
 
@@ -2756,7 +3427,29 @@ def _is_location_query(query: str) -> bool:
     normalized = _query_key(query)
     return any(
         term in normalized
-        for term in ("nerede", "konum", "adres", "harita", "maps", "location", "where", "map", "اين", "موقع", "خريطة")
+        for term in (
+            "nerede",
+            "konum",
+            "adres",
+            "harita",
+            "maps",
+            "location",
+            "where",
+            "map",
+            "nasil giderim",
+            "nasil gidebilirim",
+            "yol tarifi",
+            "route",
+            "directions",
+            "how do i get",
+            "how can i get",
+            "get to",
+            "اين",
+            "موقع",
+            "خريطة",
+            "كيف اذهب",
+            "كيف اصل",
+        )
     )
 
 
