@@ -968,7 +968,15 @@ def _management_shortcut(query: str, language: str) -> ComposedAnswer | None:
 
 
 def _faculty_contact_shortcut(query: str, language: str) -> ComposedAnswer | None:
-    if not (_is_contact_query(query) and _is_faculty_query(query)):
+    normalized = _query_key(query)
+    if not _is_contact_query(query):
+        return None
+    if not (
+        _is_faculty_query(query)
+        or "faculty" in normalized
+        or "college" in normalized
+        or "كلية" in normalized
+    ):
         return None
 
     return ComposedAnswer(

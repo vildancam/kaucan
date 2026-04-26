@@ -18,6 +18,260 @@
     en: "Type your question or use voice dictation...",
     ar: "اكتب سؤالك أو استخدم الإملاء الصوتي...",
   };
+  var UI_TEXTS = {
+    tr: {
+      documentTitle: "KAÜCAN | Kafkas Üniversitesi Dijital Asistanı",
+      brandHeading: "Kafkas Üniversitesi İktisadi ve İdari Bilimler Fakültesi",
+      languageNames: {
+        tr: "Türkçe",
+        en: "English",
+        ar: "العربية",
+      },
+      languageLabel: "Sohbet dili seçin",
+      historyEyebrow: "Geçmiş",
+      historyTitle: "Konuşma Geçmişi",
+      historySearchLabel: "Sohbetlerde ara",
+      historySearchPlaceholder: "Sohbetlerde ara",
+      historyOpen: "Konuşma geçmişi",
+      historyClose: "Geçmişi kapat",
+      newChat: "Yeni Sohbet",
+      deleteAll: "Tümünü Sil",
+      chatEyebrow: "Sohbet",
+      chatTitle: "KAÜCAN Beta",
+      clear: "Temizle",
+      quickPromptsTitle: "Hızlı Sorular",
+      chips: {
+        announcements: "📢 Güncel duyurular nelerdir?",
+        exams: "📅 Sınav programı hakkında bilgi verir misiniz?",
+        staff: "👤 Akademik personel hakkında bilgi verir misiniz?",
+        contact: "📞 Fakülte iletişim bilgileri nelerdir?",
+      },
+      quickLinks: {
+        menu: "🍽️ Yemekhane Menüsü",
+        calendar: "📅 Akademik Takvim",
+        obs: "✅ OBS",
+        wifi: "🌐 Okul İnterneti",
+        library: "📚 Kütüphane",
+        ebys: "🗂️ EBYS",
+        directory: "📞 Telefon Rehberi",
+      },
+      highlights: {
+        announcements: "Duyurular",
+        news: "Haberler",
+        events: "Etkinlikler",
+      },
+      status: {
+        loading: "Hazırlanıyor",
+        ready: "Hazır",
+        preparing: "Yanıt hazırlanıyor",
+        error: "Hata",
+        connection: "Bağlantı hatası",
+        indexing: "İndeks bekleniyor",
+        serviceReady: "Servis hazır",
+        listening: "Dinleniyor",
+        micPermission: "Mikrofon izni gerekli",
+        voiceStopped: "Sesli yazma durdu",
+        micFailed: "Mikrofon başlatılamadı",
+      },
+      history: {
+        empty: "Aranan başlıkla eşleşen sohbet bulunamadı.",
+        share: "Paylaş",
+        edit: "Başlığı düzenle",
+        delete: "Sil",
+        editPrompt: "Sohbet başlığını düzenleyin:",
+      },
+      feedback: {
+        up: "Yararlı",
+        down: "Geliştirilmeli",
+      },
+      share: {
+        title: "KAÜCAN Sohbeti",
+        userLabel: "Kullanıcı",
+        botLabel: "KAÜCAN",
+      },
+      voice: {
+        start: "Sesli yazma",
+        stop: "Dikteyi durdur",
+        unsupported: "Tarayıcı sesli yazmayı desteklemiyor",
+      },
+      theme: {
+        label: "Temayı değiştir",
+      },
+      send: {
+        label: "Mesaj gönder",
+      },
+      typingLabel: "KAÜCAN yazıyor",
+      defaultTitle: "Yeni Sohbet",
+    },
+    en: {
+      documentTitle: "KAUCAN | Kafkas University Digital Assistant",
+      brandHeading: "Kafkas University Faculty of Economics and Administrative Sciences",
+      languageNames: {
+        tr: "Turkish",
+        en: "English",
+        ar: "Arabic",
+      },
+      languageLabel: "Select chat language",
+      historyEyebrow: "History",
+      historyTitle: "Conversation History",
+      historySearchLabel: "Search conversations",
+      historySearchPlaceholder: "Search conversations",
+      historyOpen: "Conversation history",
+      historyClose: "Close history",
+      newChat: "New Chat",
+      deleteAll: "Delete All",
+      chatEyebrow: "Chat",
+      chatTitle: "KAUCAN Beta",
+      clear: "Clear",
+      quickPromptsTitle: "Quick Questions",
+      chips: {
+        announcements: "📢 What are the current announcements?",
+        exams: "📅 Could you share the exam schedule?",
+        staff: "👤 Could you provide academic staff information?",
+        contact: "📞 What are the faculty contact details?",
+      },
+      quickLinks: {
+        menu: "🍽️ Cafeteria Menu",
+        calendar: "📅 Academic Calendar",
+        obs: "✅ OBS",
+        wifi: "🌐 Campus Internet",
+        library: "📚 Library",
+        ebys: "🗂️ EBYS",
+        directory: "📞 Phone Directory",
+      },
+      highlights: {
+        announcements: "Announcements",
+        news: "News",
+        events: "Events",
+      },
+      status: {
+        loading: "Loading",
+        ready: "Ready",
+        preparing: "Preparing answer",
+        error: "Error",
+        connection: "Connection error",
+        indexing: "Index pending",
+        serviceReady: "Service ready",
+        listening: "Listening",
+        micPermission: "Microphone permission required",
+        voiceStopped: "Voice input stopped",
+        micFailed: "Microphone could not start",
+      },
+      history: {
+        empty: "No conversation matches the current search.",
+        share: "Share",
+        edit: "Edit title",
+        delete: "Delete",
+        editPrompt: "Edit the conversation title:",
+      },
+      feedback: {
+        up: "Helpful",
+        down: "Needs work",
+      },
+      share: {
+        title: "KAUCAN Chat",
+        userLabel: "User",
+        botLabel: "KAUCAN",
+      },
+      voice: {
+        start: "Voice dictation",
+        stop: "Stop dictation",
+        unsupported: "This browser does not support voice dictation",
+      },
+      theme: {
+        label: "Change theme",
+      },
+      send: {
+        label: "Send message",
+      },
+      typingLabel: "KAUCAN is typing",
+      defaultTitle: "New Chat",
+    },
+    ar: {
+      documentTitle: "KAÜCAN | المساعد الرقمي لجامعة قفقاس",
+      brandHeading: "جامعة قفقاس كلية الاقتصاد والعلوم الإدارية",
+      languageNames: {
+        tr: "التركية",
+        en: "الإنجليزية",
+        ar: "العربية",
+      },
+      languageLabel: "اختر لغة المحادثة",
+      historyEyebrow: "السجل",
+      historyTitle: "سجل المحادثات",
+      historySearchLabel: "ابحث في المحادثات",
+      historySearchPlaceholder: "ابحث في المحادثات",
+      historyOpen: "سجل المحادثات",
+      historyClose: "إغلاق السجل",
+      newChat: "دردشة جديدة",
+      deleteAll: "حذف الكل",
+      chatEyebrow: "المحادثة",
+      chatTitle: "KAÜCAN Beta",
+      clear: "مسح",
+      quickPromptsTitle: "أسئلة سريعة",
+      chips: {
+        announcements: "📢 ما هي الإعلانات الحالية؟",
+        exams: "📅 هل يمكن مشاركة برنامج الامتحانات؟",
+        staff: "👤 هل يمكن تقديم معلومات عن الكادر الأكاديمي؟",
+        contact: "📞 ما هي معلومات التواصل مع الكلية؟",
+      },
+      quickLinks: {
+        menu: "🍽️ قائمة الطعام",
+        calendar: "📅 التقويم الأكاديمي",
+        obs: "✅ نظام OBS",
+        wifi: "🌐 إنترنت الجامعة",
+        library: "📚 المكتبة",
+        ebys: "🗂️ نظام EBYS",
+        directory: "📞 دليل الهاتف",
+      },
+      highlights: {
+        announcements: "الإعلانات",
+        news: "الأخبار",
+        events: "الفعاليات",
+      },
+      status: {
+        loading: "جارٍ التحضير",
+        ready: "جاهز",
+        preparing: "جارٍ إعداد الإجابة",
+        error: "خطأ",
+        connection: "خطأ في الاتصال",
+        indexing: "الفهرس قيد الانتظار",
+        serviceReady: "الخدمة جاهزة",
+        listening: "جارٍ الاستماع",
+        micPermission: "مطلوب إذن الميكروفون",
+        voiceStopped: "تم إيقاف الإملاء الصوتي",
+        micFailed: "تعذر تشغيل الميكروفون",
+      },
+      history: {
+        empty: "لا توجد محادثة مطابقة لبحثك.",
+        share: "مشاركة",
+        edit: "تعديل العنوان",
+        delete: "حذف",
+        editPrompt: "عدّل عنوان المحادثة:",
+      },
+      feedback: {
+        up: "مفيد",
+        down: "بحاجة لتحسين",
+      },
+      share: {
+        title: "محادثة KAÜCAN",
+        userLabel: "المستخدم",
+        botLabel: "KAÜCAN",
+      },
+      voice: {
+        start: "إملاء صوتي",
+        stop: "إيقاف الإملاء",
+        unsupported: "هذا المتصفح لا يدعم الإملاء الصوتي",
+      },
+      theme: {
+        label: "تغيير النمط",
+      },
+      send: {
+        label: "إرسال الرسالة",
+      },
+      typingLabel: "KAÜCAN يكتب الآن",
+      defaultTitle: "دردشة جديدة",
+    },
+  };
   var HIGHLIGHT_FALLBACKS = {
     announcements: {
       title: "İİBF Duyuruları",
@@ -117,8 +371,188 @@
     input.placeholder = INPUT_PLACEHOLDERS[getUiLanguage()] || INPUT_PLACEHOLDERS.tr;
   }
 
+  function getUiText() {
+    return UI_TEXTS[getUiLanguage()] || UI_TEXTS.tr;
+  }
+
+  function getDefaultConversationTitle() {
+    return getUiText().defaultTitle || UI_TEXTS.tr.defaultTitle;
+  }
+
+  function isDefaultConversationTitle(value) {
+    var titles = [UI_TEXTS.tr.defaultTitle, UI_TEXTS.en.defaultTitle, UI_TEXTS.ar.defaultTitle];
+    return titles.indexOf(String(value || "").trim()) !== -1;
+  }
+
+  function translateStatusText(text) {
+    var ui = getUiText();
+    var input = String(text || "");
+    var languageKeys = Object.keys(UI_TEXTS);
+    var index;
+
+    for (index = 0; index < languageKeys.length; index += 1) {
+      var statusMap = UI_TEXTS[languageKeys[index]].status || {};
+      var statusKeys = Object.keys(statusMap);
+      var innerIndex;
+      for (innerIndex = 0; innerIndex < statusKeys.length; innerIndex += 1) {
+        var key = statusKeys[innerIndex];
+        if (statusMap[key] === input && ui.status[key]) {
+          return ui.status[key];
+        }
+      }
+    }
+    return input;
+  }
+
+  function applyInterfaceLanguage() {
+    var ui = getUiText();
+
+    document.documentElement.lang = getUiLanguage() === "ar" ? "ar" : getUiLanguage();
+    document.documentElement.dir = getUiLanguage() === "ar" ? "rtl" : "ltr";
+    document.title = ui.documentTitle;
+
+    if (document.getElementById("historyEyebrow")) {
+      document.getElementById("historyEyebrow").textContent = ui.historyEyebrow;
+    }
+    if (document.getElementById("historyTitle")) {
+      document.getElementById("historyTitle").textContent = ui.historyTitle;
+    }
+    if (document.getElementById("historySearchLabel")) {
+      document.getElementById("historySearchLabel").textContent = ui.historySearchLabel;
+    }
+    if (historySearchInput) {
+      historySearchInput.placeholder = ui.historySearchPlaceholder;
+    }
+    if (historyToggleButton) {
+      historyToggleButton.title = ui.historyOpen;
+      historyToggleButton.setAttribute("aria-label", ui.historyOpen);
+    }
+    if (historyCloseButton) {
+      historyCloseButton.title = ui.historyClose;
+      historyCloseButton.setAttribute("aria-label", ui.historyClose);
+    }
+    if (newChatButton) {
+      newChatButton.textContent = ui.newChat;
+    }
+    if (deleteAllChatsButton) {
+      deleteAllChatsButton.textContent = ui.deleteAll;
+      deleteAllChatsButton.title = ui.deleteAll;
+      deleteAllChatsButton.setAttribute("aria-label", ui.deleteAll);
+    }
+    if (document.getElementById("brandHeading")) {
+      document.getElementById("brandHeading").textContent = ui.brandHeading;
+    }
+    if (document.getElementById("chatEyebrow")) {
+      document.getElementById("chatEyebrow").textContent = ui.chatEyebrow;
+    }
+    if (document.getElementById("chatTitle")) {
+      document.getElementById("chatTitle").textContent = ui.chatTitle;
+    }
+    if (clearButton) {
+      clearButton.textContent = ui.clear;
+    }
+    if (document.getElementById("quickPromptsTitle")) {
+      document.getElementById("quickPromptsTitle").textContent = ui.quickPromptsTitle;
+    }
+    if (document.getElementById("chipAnnouncements")) {
+      document.getElementById("chipAnnouncements").textContent = ui.chips.announcements;
+    }
+    if (document.getElementById("chipExams")) {
+      document.getElementById("chipExams").textContent = ui.chips.exams;
+    }
+    if (document.getElementById("chipStaff")) {
+      document.getElementById("chipStaff").textContent = ui.chips.staff;
+    }
+    if (document.getElementById("chipContact")) {
+      document.getElementById("chipContact").textContent = ui.chips.contact;
+    }
+    if (document.getElementById("quickLinkMenu")) {
+      document.getElementById("quickLinkMenu").textContent = ui.quickLinks.menu;
+    }
+    if (document.getElementById("quickLinkCalendar")) {
+      document.getElementById("quickLinkCalendar").textContent = ui.quickLinks.calendar;
+    }
+    if (document.getElementById("quickLinkObs")) {
+      document.getElementById("quickLinkObs").textContent = ui.quickLinks.obs;
+    }
+    if (document.getElementById("quickLinkWifi")) {
+      document.getElementById("quickLinkWifi").textContent = ui.quickLinks.wifi;
+    }
+    if (document.getElementById("quickLinkLibrary")) {
+      document.getElementById("quickLinkLibrary").textContent = ui.quickLinks.library;
+    }
+    if (document.getElementById("quickLinkEbys")) {
+      document.getElementById("quickLinkEbys").textContent = ui.quickLinks.ebys;
+    }
+    if (document.getElementById("quickLinkDirectory")) {
+      document.getElementById("quickLinkDirectory").textContent = ui.quickLinks.directory;
+    }
+    if (document.getElementById("announcementsTitle")) {
+      document.getElementById("announcementsTitle").textContent = ui.highlights.announcements;
+    }
+    if (document.getElementById("newsTitle")) {
+      document.getElementById("newsTitle").textContent = ui.highlights.news;
+    }
+    if (document.getElementById("eventsTitle")) {
+      document.getElementById("eventsTitle").textContent = ui.highlights.events;
+    }
+    if (themeToggleButton) {
+      themeToggleButton.title = ui.theme.label;
+      themeToggleButton.setAttribute("aria-label", ui.theme.label);
+    }
+    if (languageSelect) {
+      languageSelect.title = ui.languageLabel;
+      languageSelect.setAttribute("aria-label", ui.languageLabel);
+      Array.prototype.forEach.call(languageSelect.options, function (option) {
+        if (ui.languageNames[option.value]) {
+          option.textContent = ui.languageNames[option.value];
+        }
+      });
+    }
+    if (voiceButton) {
+      voiceButton.title = state.voice.listening ? ui.voice.stop : ui.voice.start;
+      voiceButton.setAttribute("aria-label", state.voice.listening ? ui.voice.stop : ui.voice.start);
+    }
+    if (submitButton) {
+      submitButton.title = ui.send.label;
+      submitButton.setAttribute("aria-label", ui.send.label);
+    }
+    if (typingRow) {
+      typingRow.setAttribute("aria-label", ui.typingLabel);
+    }
+    updateComposerCopy();
+    if (statusBadge) {
+      var currentStatusText = String(statusBadge.textContent || "").replace(/\s+/g, " ").trim();
+      var currentStateName = statusBadge.classList.contains("error")
+        ? "error"
+        : statusBadge.classList.contains("busy")
+          ? "busy"
+          : "ready";
+      if (currentStatusText) {
+        setStatus(currentStatusText, currentStateName);
+      }
+    }
+  }
+
+  function refreshLanguageSensitiveConversations() {
+    state.conversations.forEach(function (conversation) {
+      if (isDefaultConversationTitle(conversation.title)) {
+        conversation.title = getDefaultConversationTitle();
+      }
+      if (
+        conversation.messages.length === 1 &&
+        conversation.messages[0] &&
+        conversation.messages[0].role === "assistant" &&
+        conversation.messages[0].status === "greeting"
+      ) {
+        conversation.messages[0].text = getWelcomeMessage(getUiLanguage());
+      }
+    });
+  }
+
   function setStatus(text, stateName) {
     stateName = stateName || "ready";
+    text = translateStatusText(text);
     statusBadge.innerHTML = "";
 
     var dot = document.createElement("span");
@@ -327,7 +761,7 @@
         link.target = "_blank";
         link.rel = "noopener noreferrer";
       }
-      link.textContent = uniqueSources[index].title || "🔗 Kaynağı Aç " + (index + 1);
+      link.textContent = uniqueSources[index].title || "🔗 " + (index + 1);
       wrapper.appendChild(link);
     }
 
@@ -398,8 +832,8 @@
         feedback.className = "feedback-actions";
         positive.type = "button";
         negative.type = "button";
-        positive.textContent = "Yararlı";
-        negative.textContent = "Geliştirilmeli";
+        positive.textContent = getUiText().feedback.up;
+        negative.textContent = getUiText().feedback.down;
         positive.dataset.rating = "up";
         negative.dataset.rating = "down";
         buttons = [positive, negative];
@@ -484,7 +918,8 @@
 
     voiceButton.classList.toggle("listening", !!listening);
     voiceButton.setAttribute("aria-pressed", listening ? "true" : "false");
-    voiceButton.title = listening ? "Dikteyi durdur" : "Sesli yazma";
+    voiceButton.title = listening ? getUiText().voice.stop : getUiText().voice.start;
+    voiceButton.setAttribute("aria-label", voiceButton.title);
   }
 
   function getAudioContext() {
@@ -622,7 +1057,7 @@
     var timestamp = Date.now();
     return {
       id: newConversationId(),
-      title: "Yeni Sohbet",
+      title: getDefaultConversationTitle(),
       createdAt: timestamp,
       updatedAt: timestamp,
       messages: [createWelcomeMessage()],
@@ -652,7 +1087,7 @@
 
     return {
       id: conversation && conversation.id ? String(conversation.id) : newConversationId(),
-      title: conversation && conversation.title ? String(conversation.title) : "Yeni Sohbet",
+      title: conversation && conversation.title ? String(conversation.title) : getDefaultConversationTitle(),
       createdAt: conversation && conversation.createdAt ? Number(conversation.createdAt) : Date.now(),
       updatedAt: conversation && conversation.updatedAt ? Number(conversation.updatedAt) : Date.now(),
       messages: normalizedMessages,
@@ -730,7 +1165,7 @@
       .trim();
 
     if (!cleaned) {
-      return "Yeni Sohbet";
+      return getDefaultConversationTitle();
     }
 
     if (cleaned.length <= 48) {
@@ -773,9 +1208,10 @@
   }
 
   function conversationToShareText(conversation) {
-    var lines = [conversation.title || "KAÜCAN Sohbeti", ""];
+    var ui = getUiText();
+    var lines = [conversation.title || ui.share.title, ""];
     conversation.messages.forEach(function (message) {
-      var label = message.role === "user" ? "Kullanıcı" : "KAÜCAN";
+      var label = message.role === "user" ? ui.share.userLabel : ui.share.botLabel;
       lines.push(label + ": " + String(message.text || "").trim());
     });
     return lines.join("\n");
@@ -786,7 +1222,7 @@
     if (navigator.share) {
       navigator
         .share({
-          title: conversation.title || "KAÜCAN Sohbeti",
+          title: conversation.title || getUiText().share.title,
           text: text,
         })
         .then(function () {
@@ -811,13 +1247,13 @@
   }
 
   function editConversationTitle(conversation) {
-    var nextTitle = window.prompt("Sohbet başlığını düzenleyin:", conversation.title || "Yeni Sohbet");
+    var nextTitle = window.prompt(getUiText().history.editPrompt, conversation.title || getDefaultConversationTitle());
     if (nextTitle === null) {
       return;
     }
 
     nextTitle = toTitle(nextTitle);
-    conversation.title = nextTitle || "Yeni Sohbet";
+    conversation.title = nextTitle || getDefaultConversationTitle();
     conversation.updatedAt = Date.now();
     persistState();
     renderHistoryList();
@@ -994,7 +1430,7 @@
 
     if (!state.voice.supported) {
       voiceButton.disabled = true;
-      voiceButton.title = "Tarayıcı sesli yazmayı desteklemiyor";
+      voiceButton.title = getUiText().voice.unsupported;
       return;
     }
 
@@ -1037,7 +1473,7 @@
 
         title = document.createElement("div");
         title.className = "history-title";
-        title.textContent = conversation.title || "Yeni Sohbet";
+        title.textContent = conversation.title || getDefaultConversationTitle();
         mainButton.appendChild(title);
 
         actions = document.createElement("div");
@@ -1046,8 +1482,8 @@
         shareButton = document.createElement("button");
         shareButton.type = "button";
         shareButton.className = "history-action";
-        shareButton.title = "Paylaş";
-        shareButton.setAttribute("aria-label", "Paylaş");
+        shareButton.title = getUiText().history.share;
+        shareButton.setAttribute("aria-label", getUiText().history.share);
         shareButton.innerHTML = '<span aria-hidden="true">⤴</span>';
         shareButton.addEventListener("click", function (event) {
           event.stopPropagation();
@@ -1057,8 +1493,8 @@
         editButton = document.createElement("button");
         editButton.type = "button";
         editButton.className = "history-action";
-        editButton.title = "Başlığı düzenle";
-        editButton.setAttribute("aria-label", "Başlığı düzenle");
+        editButton.title = getUiText().history.edit;
+        editButton.setAttribute("aria-label", getUiText().history.edit);
         editButton.innerHTML = '<span aria-hidden="true">✎</span>';
         editButton.addEventListener("click", function (event) {
           event.stopPropagation();
@@ -1068,8 +1504,8 @@
         deleteButton = document.createElement("button");
         deleteButton.type = "button";
         deleteButton.className = "history-action";
-        deleteButton.title = "Sil";
-        deleteButton.setAttribute("aria-label", "Sil");
+        deleteButton.title = getUiText().history.delete;
+        deleteButton.setAttribute("aria-label", getUiText().history.delete);
         deleteButton.innerHTML = '<span aria-hidden="true">🗑</span>';
         deleteButton.addEventListener("click", function (event) {
           event.stopPropagation();
@@ -1087,7 +1523,7 @@
     if (!hasItem) {
       var empty = document.createElement("div");
       empty.className = "history-empty";
-      empty.textContent = "Aranan başlıkla eşleşen sohbet bulunamadı.";
+      empty.textContent = getUiText().history.empty;
       historyList.appendChild(empty);
     }
   }
@@ -1129,7 +1565,7 @@
 
     conversation.messages.push(message);
     conversation.updatedAt = Date.now();
-    if (role === "user" && (conversation.title === "Yeni Sohbet" || conversation.messages.length <= 2)) {
+    if (role === "user" && (isDefaultConversationTitle(conversation.title) || conversation.messages.length <= 2)) {
       conversation.title = toTitle(text);
     }
 
@@ -1161,7 +1597,7 @@
   function resetActiveConversation() {
     stopVoiceInput(false);
     var conversation = getActiveConversation();
-    conversation.title = "Yeni Sohbet";
+    conversation.title = getDefaultConversationTitle();
     conversation.updatedAt = Date.now();
     conversation.messages = [createWelcomeMessage()];
     persistState();
@@ -1315,9 +1751,13 @@
     try {
       window.localStorage.setItem(LANGUAGE_KEY, state.preferredLanguage);
     } catch (error) {
-      return;
+      // Keep the UI responsive even if storage is unavailable.
     }
-    updateComposerCopy();
+    applyInterfaceLanguage();
+    refreshLanguageSensitiveConversations();
+    persistState();
+    renderHistoryList();
+    renderConversation();
   }
 
   function loadPreferredLanguage() {
@@ -1528,13 +1968,12 @@
   function init() {
     document.body.classList.add("js-ready");
     loadTheme();
-    loadPreferredLanguage();
     state.clientId = ensureClientId();
     ensureConversationState();
+    loadPreferredLanguage();
     initializeVoiceButton();
     bindEvents();
     autoResize();
-    updateComposerCopy();
     renderHistoryList();
     renderConversation();
     renderHighlights();

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KAÜCAN | Kafkas Üniversitesi Dijital Asistanı</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260426c" />
+    <link rel="stylesheet" href="/static/styles.css?v=20260426e" />
   </head>
   <body data-theme="light">
     <div class="history-backdrop" id="historyBackdrop" hidden></div>
@@ -12,8 +12,8 @@
     <aside class="history-panel" id="historyPanel" aria-label="Konuşma geçmişi">
       <div class="history-header">
         <div>
-          <p class="panel-eyebrow">Geçmiş</p>
-          <h2>Konuşma Geçmişi</h2>
+          <p class="panel-eyebrow" id="historyEyebrow">Geçmiş</p>
+          <h2 id="historyTitle">Konuşma Geçmişi</h2>
         </div>
         <button class="icon-button" id="historyCloseButton" type="button" aria-label="Geçmişi kapat" title="Geçmişi kapat">
           <span aria-hidden="true">✕</span>
@@ -33,7 +33,7 @@
         </button>
       </div>
 
-      <label class="sr-only" for="historySearchInput">Sohbetlerde ara</label>
+      <label class="sr-only" for="historySearchInput" id="historySearchLabel">Sohbetlerde ara</label>
       <input
         class="history-search"
         id="historySearchInput"
@@ -52,44 +52,54 @@
             <span aria-hidden="true">☰</span>
           </button>
 
-          <a
-            class="brand-home"
-            href="https://www.kafkas.edu.tr"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Kafkas Üniversitesi sitesini aç"
-          >
+          <div class="brand-home">
             <div class="brand-logos">
-              <div class="logo-frame">
-                <img
-                  id="brandLogo"
-                  class="brand-logo"
-                  src="/static/assets/kau_logo.png?v=20260426a"
-                  alt="Kafkas Üniversitesi logosu"
-                  onerror="this.hidden=true;document.getElementById('brandFallback').hidden=false;"
-                />
-                <div class="brand-fallback" id="brandFallback" hidden>KAÜCAN</div>
-              </div>
+              <a
+                class="logo-link"
+                href="https://www.kafkas.edu.tr"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Kafkas Üniversitesi sitesini aç"
+              >
+                <div class="logo-frame">
+                  <img
+                    id="brandLogo"
+                    class="brand-logo"
+                    src="/static/assets/kau_logo.png?v=20260426a"
+                    alt="Kafkas Üniversitesi logosu"
+                    onerror="this.hidden=true;document.getElementById('brandFallback').hidden=false;"
+                  />
+                  <div class="brand-fallback" id="brandFallback" hidden>KAÜCAN</div>
+                </div>
+              </a>
 
-              <div class="logo-frame logo-frame-secondary">
-                <img
-                  id="brandFacultyLogo"
-                  class="brand-logo"
-                  src="/static/assets/iibf_logo.png?v=20260426a"
-                  alt="İİBF logosu"
-                  onerror="this.hidden=true;"
-                />
-              </div>
+              <a
+                class="logo-link"
+                href="https://www.kafkas.edu.tr/iibf"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="İİBF sitesini aç"
+              >
+                <div class="logo-frame logo-frame-secondary">
+                  <img
+                    id="brandFacultyLogo"
+                    class="brand-logo"
+                    src="/static/assets/iibf_logo.png?v=20260426a"
+                    alt="İİBF logosu"
+                    onerror="this.hidden=true;"
+                  />
+                </div>
+              </a>
             </div>
 
             <div class="brand-copy">
               <div class="brand-title-row">
-                <p class="eyebrow brand-mark">KAÜCAN</p>
+                <p class="eyebrow brand-mark" id="brandMark">KAÜCAN</p>
                 <span class="beta-pill">Beta</span>
               </div>
-              <h1>Kafkas Üniversitesi İktisadi ve İdari Bilimler Fakültesi</h1>
+              <h1 id="brandHeading">Kafkas Üniversitesi İktisadi ve İdari Bilimler Fakültesi</h1>
             </div>
-          </a>
+          </div>
         </div>
 
         <div class="topbar-actions">
@@ -114,32 +124,32 @@
       </header>
 
       <section class="quick-strip" aria-label="Hızlı erişim">
-        <a class="quick-link" href="https://www.kafkas.edu.tr/skdb" target="_blank" rel="noopener noreferrer">🍽️ Yemekhane Menüsü</a>
-        <a class="quick-link" href="https://www.kafkas.edu.tr/oidb/tr/sayfaYeni6016" target="_blank" rel="noopener noreferrer">📅 Akademik Takvim</a>
-        <a class="quick-link" href="https://obsyeni.kafkas.edu.tr" target="_blank" rel="noopener noreferrer">✅ OBS</a>
-        <a class="quick-link" href="https://captive.kafkas.edu.tr:6082/php/uid.php?vsys=1&rule=4&url=https://www.yok.gov.tr" target="_blank" rel="noopener noreferrer">🌐 Okul İnterneti</a>
-        <a class="quick-link" href="https://www.kafkas.edu.tr/kddb/TR/default.aspx" target="_blank" rel="noopener noreferrer">📚 Kütüphane</a>
-        <a class="quick-link" href="https://ebys.kafkas.edu.tr/DYS/documentmanagement/" target="_blank" rel="noopener noreferrer">🗂️ EBYS</a>
-        <a class="quick-link" href="https://www.kafkas.edu.tr/kau/rehber2" target="_blank" rel="noopener noreferrer">📞 Telefon Rehberi</a>
+        <a class="quick-link" id="quickLinkMenu" href="https://www.kafkas.edu.tr/skdb" target="_blank" rel="noopener noreferrer">🍽️ Yemekhane Menüsü</a>
+        <a class="quick-link" id="quickLinkCalendar" href="https://www.kafkas.edu.tr/oidb/tr/sayfaYeni6016" target="_blank" rel="noopener noreferrer">📅 Akademik Takvim</a>
+        <a class="quick-link" id="quickLinkObs" href="https://obsyeni.kafkas.edu.tr" target="_blank" rel="noopener noreferrer">✅ OBS</a>
+        <a class="quick-link" id="quickLinkWifi" href="https://captive.kafkas.edu.tr:6082/php/uid.php?vsys=1&rule=4&url=https://www.yok.gov.tr" target="_blank" rel="noopener noreferrer">🌐 Okul İnterneti</a>
+        <a class="quick-link" id="quickLinkLibrary" href="https://www.kafkas.edu.tr/kddb/TR/default.aspx" target="_blank" rel="noopener noreferrer">📚 Kütüphane</a>
+        <a class="quick-link" id="quickLinkEbys" href="https://ebys.kafkas.edu.tr/DYS/documentmanagement/" target="_blank" rel="noopener noreferrer">🗂️ EBYS</a>
+        <a class="quick-link" id="quickLinkDirectory" href="https://www.kafkas.edu.tr/kau/rehber2" target="_blank" rel="noopener noreferrer">📞 Telefon Rehberi</a>
       </section>
 
       <main class="workspace">
         <section class="chat-panel" aria-label="Sohbet alanı">
           <div class="panel-header">
             <div>
-              <p class="panel-eyebrow">Sohbet</p>
-              <h2>KAÜCAN Beta</h2>
+              <p class="panel-eyebrow" id="chatEyebrow">Sohbet</p>
+              <h2 id="chatTitle">KAÜCAN Beta</h2>
             </div>
             <button class="secondary-button clear-button" id="clearButton" type="button">Temizle</button>
           </div>
 
           <section class="quick-prompts-shell" aria-label="Hızlı başlıklar">
-            <p class="quick-prompts-title">Hızlı Sorular</p>
+            <p class="quick-prompts-title" id="quickPromptsTitle">Hızlı Sorular</p>
             <div class="quick-prompts">
-              <button class="query-chip" type="button">📢 Güncel duyurular nelerdir?</button>
-              <button class="query-chip" type="button">📅 Sınav programı hakkında bilgi verir misiniz?</button>
-              <button class="query-chip" type="button">👤 Akademik personel hakkında bilgi verir misiniz?</button>
-              <button class="query-chip" type="button">📞 Fakültenin iletişim bilgileri nelerdir?</button>
+              <button class="query-chip" id="chipAnnouncements" data-query-key="announcements" type="button">📢 Güncel duyurular nelerdir?</button>
+              <button class="query-chip" id="chipExams" data-query-key="exams" type="button">📅 Sınav programı hakkında bilgi verir misiniz?</button>
+              <button class="query-chip" id="chipStaff" data-query-key="staff" type="button">👤 Akademik personel hakkında bilgi verir misiniz?</button>
+              <button class="query-chip" id="chipContact" data-query-key="contact" type="button">📞 Fakülte iletişim bilgileri nelerdir?</button>
             </div>
           </section>
 
@@ -181,37 +191,43 @@
 
           <form class="composer" id="askForm">
             <label class="sr-only" for="questionInput">Soru</label>
-            <textarea
-              id="questionInput"
-              name="question"
-              rows="1"
-              maxlength="700"
-              placeholder="Sorunuzu yazınız..."
-              autocomplete="off"
-              required
-            ></textarea>
-
-            <div class="composer-buttons">
+            <div class="composer-field">
+              <textarea
+                id="questionInput"
+                name="question"
+                rows="1"
+                maxlength="700"
+                placeholder="Sorunuzu yazınız..."
+                autocomplete="off"
+                required
+              ></textarea>
               <button
                 type="button"
-                class="secondary-button voice-button"
+                class="voice-button"
                 id="voiceButton"
                 aria-label="Sesli yazma"
                 title="Sesli yazma"
               >
-                <span aria-hidden="true">🎙</span>
-              </button>
-
-              <button
-                type="submit"
-                class="primary-button submit-icon-button"
-                id="submitButton"
-                aria-label="Mesaj gönder"
-                title="Mesaj gönder"
-              >
-                <span aria-hidden="true">➤</span>
+                <span aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V7a3.5 3.5 0 1 0-7 0v4a3.5 3.5 0 0 0 3.5 3.5Z"></path>
+                    <path d="M6.5 11a5.5 5.5 0 0 0 11 0"></path>
+                    <path d="M12 16.5V20"></path>
+                    <path d="M9 20h6"></path>
+                  </svg>
+                </span>
               </button>
             </div>
+
+            <button
+              type="submit"
+              class="primary-button submit-icon-button"
+              id="submitButton"
+              aria-label="Mesaj gönder"
+              title="Mesaj gönder"
+            >
+              <span aria-hidden="true">➤</span>
+            </button>
           </form>
         </section>
 
@@ -256,6 +272,6 @@
       </footer>
     </div>
 
-    <script defer src="/static/app.js?v=20260426c"></script>
+    <script defer src="/static/app.js?v=20260426e"></script>
   </body>
 </html>

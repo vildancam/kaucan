@@ -166,15 +166,25 @@ class AnswerBehaviorTests(unittest.TestCase):
         self.assertEqual(english_contact.status, "direct_link")
         self.assertIn("contact", english_contact.answer.lower())
 
+        faculty_contact = assistant.answer_with_context("What are the faculty contact details?", preferred_language="en")
+        self.assertEqual(faculty_contact.status, "direct_link")
+        self.assertTrue(any(source.chunk.url.startswith("tel:") for source in faculty_contact.sources))
+
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
     def test_smalltalk_is_supported(self, _log_query, _log_interaction) -> None:
         assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
 
         response = assistant.answer_with_context("merhaba nasılsın")
+        english_response = assistant.answer_with_context("how r u", preferred_language="en")
+        arabic_response = assistant.answer_with_context("شلونك", preferred_language="ar")
 
         self.assertEqual(response.status, "smalltalk")
         self.assertTrue("yardımcı" in response.answer or "iyiyim" in response.answer.lower())
+        self.assertEqual(english_response.status, "smalltalk")
+        self.assertTrue("chat" in english_response.answer.lower() or "question" in english_response.answer.lower())
+        self.assertEqual(arabic_response.status, "smalltalk")
+        self.assertTrue("الدردشة" in arabic_response.answer or "بخير" in arabic_response.answer)
 
     @patch("kau_can_bot.answer._fetch_rector_name", return_value="Prof. Dr. Hüsnü KAPU")
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
