@@ -103,6 +103,11 @@
       send: {
         label: "Mesaj gönder",
       },
+      copy: {
+        label: "Kodu kopyala",
+        success: "Kod kopyalandı",
+        failure: "Kod kopyalanamadı",
+      },
       typingLabel: "KAÜCAN yazıyor",
       defaultTitle: "Yeni Sohbet",
     },
@@ -190,6 +195,11 @@
       send: {
         label: "Send message",
       },
+      copy: {
+        label: "Copy code",
+        success: "Code copied",
+        failure: "Code could not be copied",
+      },
       typingLabel: "KAUCAN is typing",
       defaultTitle: "New Chat",
     },
@@ -276,6 +286,11 @@
       },
       send: {
         label: "إرسال الرسالة",
+      },
+      copy: {
+        label: "نسخ الكود",
+        success: "تم نسخ الكود",
+        failure: "تعذر نسخ الكود",
       },
       typingLabel: "KAÜCAN يكتب الآن",
       defaultTitle: "دردشة جديدة",
@@ -374,6 +389,8 @@
       permission: "prompt",
     },
   };
+  var toastElement = null;
+  var toastTimer = 0;
 
   function getUiLanguage() {
     return state.preferredLanguage || "tr";
@@ -788,6 +805,102 @@
     return wrapper;
   }
 
+  function ensureToast() {
+    if (toastElement) {
+      return toastElement;
+    }
+
+    toastElement = document.createElement("div");
+    toastElement.className = "copy-toast";
+    toastElement.setAttribute("role", "status");
+    toastElement.setAttribute("aria-live", "polite");
+    document.body.appendChild(toastElement);
+    return toastElement;
+  }
+
+  function showToast(message) {
+    var toast = ensureToast();
+    window.clearTimeout(toastTimer);
+    toast.textContent = String(message || "").trim();
+    toast.classList.add("visible");
+    toastTimer = window.setTimeout(function () {
+      toast.classList.remove("visible");
+    }, 1800);
+  }
+
+  function copyText(text) {
+    var value = String(text || "");
+    if (!value) {
+      showToast(getUiText().copy.failure);
+      return;
+    }
+
+    function fallbackCopy() {
+      try {
+        var helper = document.createElement("textarea");
+        helper.value = value;
+        helper.setAttribute("readonly", "readonly");
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand("copy");
+        document.body.removeChild(helper);
+        playTone("share");
+        showToast(getUiText().copy.success);
+      } catch (error) {
+        showToast(getUiText().copy.failure);
+      }
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(value)
+        .then(function () {
+          playTone("share");
+          showToast(getUiText().copy.success);
+        })
+        .catch(function () {
+          fallbackCopy();
+        });
+      return;
+    }
+
+    fallbackCopy();
+  }
+
+  function enhanceCodeBlocks(container) {
+    var blocks = container.querySelectorAll(".code-block");
+    Array.prototype.forEach.call(blocks, function (block) {
+      if (!block || (block.parentNode && block.parentNode.classList.contains("code-block-shell"))) {
+        return;
+      }
+
+      var shell = document.createElement("div");
+      var actions = document.createElement("div");
+      var copyButton = document.createElement("button");
+      var code = block.textContent || "";
+
+      shell.className = "code-block-shell";
+      actions.className = "code-block-actions";
+      copyButton.type = "button";
+      copyButton.className = "code-copy-button";
+      copyButton.title = getUiText().copy.label;
+      copyButton.setAttribute("aria-label", getUiText().copy.label);
+      copyButton.innerHTML = '<span aria-hidden="true">⧉</span>';
+      copyButton.addEventListener("click", function () {
+        copyText(code);
+      });
+
+      if (block.parentNode) {
+        block.parentNode.insertBefore(shell, block);
+      }
+      actions.appendChild(copyButton);
+      shell.appendChild(actions);
+      shell.appendChild(block);
+    });
+  }
+
   function sendFeedback(interactionId, rating, buttons) {
     buttons.forEach(function (button) {
       button.disabled = true;
@@ -838,6 +951,8 @@
     bubble.innerHTML = role === "assistant" ? renderAssistantText(text) : renderUserText(text);
 
     if (role === "assistant") {
+      enhanceCodeBlocks(bubble);
+
       var sourceLinks = renderSources(meta.sources || []);
       if (sourceLinks) {
         bubble.appendChild(sourceLinks);

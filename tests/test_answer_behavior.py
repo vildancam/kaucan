@@ -436,6 +436,29 @@ class AnswerBehaviorTests(unittest.TestCase):
         self.assertEqual(response.status, "general")
         self.assertIn("24 Kasım", response.answer)
 
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_religious_day_answer_uses_diyanet_source(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("Kadir gecesi ne zaman?")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("16 Mart 2026", response.answer)
+        self.assertTrue(any("vakithesaplama.diyanet.gov.tr/dinigunler.php?yil=2026" in source.chunk.url for source in response.sources))
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_religious_schedule_query_lists_current_year_entries(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("2026 dini günler")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("Ramazan Bayramı", response.answer)
+        self.assertIn("Kurban Bayramı", response.answer)
+        self.assertTrue(any("vakithesaplama.diyanet.gov.tr/dinigunler.php?yil=2026" in source.chunk.url for source in response.sources))
+
     @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Resmi ve kısa bir e-posta taslağı hazırlanmıştır.")
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)

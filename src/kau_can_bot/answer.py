@@ -425,6 +425,146 @@ SPECIAL_DAY_DEFINITIONS = (
     {"key": "christmas_eve", "labels": {"tr": "Noel Arifesi", "en": "Christmas Eve"}, "aliases": ("noel arifesi", "christmas eve"), "builder": lambda year: date(year, 12, 24)},
     {"key": "christmas", "labels": {"tr": "Noel", "en": "Christmas Day"}, "aliases": ("noel", "christmas", "christmas day"), "builder": lambda year: date(year, 12, 25)},
 )
+DIYANET_RELIGIOUS_CALENDAR_URL = "https://vakithesaplama.diyanet.gov.tr/dinigunler.php?yil={year}"
+DIYANET_RELIGIOUS_SCHEDULES = {
+    2026: {
+        "uc_aylar_baslangici": date(2026, 12, 10),
+        "regaib_kandili": date(2026, 12, 10),
+        "mirac_kandili": date(2026, 1, 15),
+        "berat_kandili": date(2026, 2, 2),
+        "ramazan_baslangici": date(2026, 2, 19),
+        "kadir_gecesi": date(2026, 3, 16),
+        "ramazan_arefesi": date(2026, 3, 19),
+        "ramazan_bayrami": date(2026, 3, 20),
+        "kurban_arefesi": date(2026, 5, 26),
+        "kurban_bayrami": date(2026, 5, 27),
+        "hicri_yilbasi": date(2026, 6, 16),
+        "asure_gunu": date(2026, 6, 25),
+        "mevlid_kandili": date(2026, 8, 24),
+    }
+}
+RELIGIOUS_SPECIAL_DAY_DEFINITIONS = (
+    {
+        "key": "uc_aylar_baslangici",
+        "labels": {"tr": "Üç Ayların Başlangıcı", "en": "Beginning of the Three Holy Months", "ar": "بداية الأشهر الحرم الثلاثة"},
+        "aliases": ("uc aylar", "üç aylar", "uc aylarin baslangici", "üç ayların başlangıcı", "three holy months"),
+        "builder": lambda year: _religious_day_date("uc_aylar_baslangici", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "regaib_kandili",
+        "labels": {"tr": "Regaib Kandili", "en": "Regaib Kandili", "ar": "ليلة الرغائب"},
+        "aliases": ("regaib kandili", "regaip kandili", "regaib", "regaip"),
+        "builder": lambda year: _religious_day_date("regaib_kandili", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "mirac_kandili",
+        "labels": {"tr": "Miraç Kandili", "en": "Miraj Kandili", "ar": "ليلة المعراج"},
+        "aliases": ("mirac kandili", "miraç kandili", "mirac gecesi", "miraç gecesi"),
+        "builder": lambda year: _religious_day_date("mirac_kandili", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "berat_kandili",
+        "labels": {"tr": "Berat Kandili", "en": "Berat Kandili", "ar": "ليلة البراءة"},
+        "aliases": ("berat kandili", "beraat kandili", "berat gecesi"),
+        "builder": lambda year: _religious_day_date("berat_kandili", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "ramazan_baslangici",
+        "labels": {"tr": "Ramazan Başlangıcı", "en": "Beginning of Ramadan", "ar": "بداية رمضان"},
+        "aliases": ("ramazan baslangici", "ramazan başlangıcı", "ramazan ne zaman", "ramadan starts", "start of ramadan"),
+        "builder": lambda year: _religious_day_date("ramazan_baslangici", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "kadir_gecesi",
+        "labels": {"tr": "Kadir Gecesi", "en": "Laylat al-Qadr", "ar": "ليلة القدر"},
+        "aliases": ("kadir gecesi", "kadir gecesi ne zaman", "laylat al qadr", "night of power"),
+        "builder": lambda year: _religious_day_date("kadir_gecesi", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "ramazan_arefesi",
+        "labels": {"tr": "Ramazan Bayramı Arefesi", "en": "Eid al-Fitr Eve", "ar": "وقفة عيد الفطر"},
+        "aliases": ("ramazan arefesi", "ramazan bayrami arefesi", "ramazan bayramı arefesi", "eid al-fitr eve"),
+        "builder": lambda year: _religious_day_date("ramazan_arefesi", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "ramazan_bayrami",
+        "labels": {"tr": "Ramazan Bayramı", "en": "Eid al-Fitr", "ar": "عيد الفطر"},
+        "aliases": ("ramazan bayrami", "ramazan bayramı", "seker bayrami", "şeker bayramı", "eid al-fitr", "eid ul fitr"),
+        "builder": lambda year: _religious_day_date("ramazan_bayrami", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+        "duration_days": 3,
+    },
+    {
+        "key": "kurban_arefesi",
+        "labels": {"tr": "Kurban Bayramı Arefesi", "en": "Eid al-Adha Eve", "ar": "وقفة عيد الأضحى"},
+        "aliases": ("kurban arefesi", "kurban bayrami arefesi", "kurban bayramı arefesi", "eid al-adha eve"),
+        "builder": lambda year: _religious_day_date("kurban_arefesi", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "kurban_bayrami",
+        "labels": {"tr": "Kurban Bayramı", "en": "Eid al-Adha", "ar": "عيد الأضحى"},
+        "aliases": ("kurban bayrami", "kurban bayramı", "eid al-adha", "eid ul adha"),
+        "builder": lambda year: _religious_day_date("kurban_bayrami", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+        "duration_days": 4,
+    },
+    {
+        "key": "hicri_yilbasi",
+        "labels": {"tr": "Hicri Yılbaşı", "en": "Islamic New Year", "ar": "رأس السنة الهجرية"},
+        "aliases": ("hicri yilbasi", "hicri yılbaşı", "islamic new year", "hijri new year"),
+        "builder": lambda year: _religious_day_date("hicri_yilbasi", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "asure_gunu",
+        "labels": {"tr": "Aşure Günü", "en": "Ashura", "ar": "يوم عاشوراء"},
+        "aliases": ("asure gunu", "aşure günü", "asure", "aşure", "ashura"),
+        "builder": lambda year: _religious_day_date("asure_gunu", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+    {
+        "key": "mevlid_kandili",
+        "labels": {"tr": "Mevlid Kandili", "en": "Mawlid al-Nabi", "ar": "ليلة المولد النبوي"},
+        "aliases": ("mevlid kandili", "mevlit kandili", "mawlid", "mawlid al nabi"),
+        "builder": lambda year: _religious_day_date("mevlid_kandili", year),
+        "source_title": "Diyanet Dini Günler Takvimi",
+        "source_url": DIYANET_RELIGIOUS_CALENDAR_URL,
+        "religious": True,
+    },
+)
+SPECIAL_DAY_DEFINITIONS = SPECIAL_DAY_DEFINITIONS + RELIGIOUS_SPECIAL_DAY_DEFINITIONS
 MATH_BINARY_OPERATORS = {
     ast.Add: operator.add,
     ast.Sub: operator.sub,
@@ -2403,10 +2543,26 @@ def _datetime_shortcut(query: str, language: str) -> ComposedAnswer | None:
     relative_target = _resolve_relative_date(normalized, now.date())
     target_special_days = _resolve_special_days(query, now.year)
     special_day_listing_query = _is_special_day_listing_query(query)
+    religious_schedule_query = _is_religious_schedule_query(query)
     day_name_query = _is_day_name_query(query)
 
     if target_special_days:
         return _build_special_day_response(target_special_days, language)
+
+    if religious_schedule_query and explicit_date is None and relative_target is None:
+        target_year = _extract_requested_year(query) or now.year
+        religious_entries = _religious_schedule_entries(target_year)
+        if religious_entries:
+            return _build_religious_schedule_response(target_year, religious_entries, language)
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"⚠️ {target_year} yılı için resmi dini gün takvimi verisine ulaşamadım.",
+                f"⚠️ I could not reach the official religious calendar data for {target_year}.",
+                f"⚠️ لم أتمكن من الوصول إلى بيانات التقويم الديني الرسمية لعام {target_year}.",
+            ),
+            sources=[],
+        )
 
     if special_day_listing_query:
         target_date = explicit_date or relative_target or now.date()
@@ -2529,7 +2685,7 @@ def _is_datetime_query(query: str) -> bool:
 
 def _is_special_day_query(query: str) -> bool:
     normalized = _query_key(query)
-    return _is_special_day_listing_query(query) or any(
+    return _is_special_day_listing_query(query) or _is_religious_schedule_query(query) or any(
         any(alias in normalized for alias in entry["aliases"])
         for entry in SPECIAL_DAY_DEFINITIONS
     )
@@ -2571,6 +2727,46 @@ def _parse_explicit_date(query: str, default_year: int) -> date | None:
         if month:
             return _safe_date(year, month, day)
     return None
+
+
+def _religious_day_date(key: str, year: int) -> date:
+    year_schedule = DIYANET_RELIGIOUS_SCHEDULES.get(year)
+    if not year_schedule or key not in year_schedule:
+        raise ValueError(f"Religious day schedule is unavailable for {year}.")
+    return year_schedule[key]
+
+
+def _is_religious_schedule_query(query: str) -> bool:
+    normalized = _query_key(query)
+    return any(
+        term in normalized
+        for term in (
+            "dini gun",
+            "dini gün",
+            "dini gunler",
+            "dini günler",
+            "dini geceler",
+            "kandil tarihleri",
+            "kandiller",
+            "religious holidays",
+            "religious days",
+            "muslim holidays",
+            "islamic holidays",
+            "الايام الدينية",
+            "الأيام الدينية",
+            "المناسبات الدينية",
+        )
+    )
+
+
+def _religious_schedule_entries(year: int) -> list[tuple[dict, date]]:
+    entries: list[tuple[dict, date]] = []
+    for entry in RELIGIOUS_SPECIAL_DAY_DEFINITIONS:
+        try:
+            entries.append((entry, entry["builder"](year)))
+        except ValueError:
+            continue
+    return entries
 
 
 def _resolve_special_days(query: str, default_year: int) -> list[tuple[dict, date]]:
@@ -2672,6 +2868,63 @@ def _special_day_display_name(entry: dict, language: str) -> str:
     return clean_text(labels.get("tr", labels.get("en", "")))
 
 
+def _special_day_sources(entries: list[dict]) -> list[SearchResult]:
+    seen: set[str] = set()
+    sources: list[SearchResult] = []
+    for entry in entries:
+        source_template = clean_text(entry.get("source_url", ""))
+        if not source_template:
+            continue
+        source_url = source_template.format(year="{year}") if "{year}" not in source_template else source_template
+        # If the template still expects a year, skip it here and let callers pass a concrete URL.
+        if "{year}" in source_url:
+            continue
+        if source_url in seen:
+            continue
+        title = clean_text(entry.get("source_title", "Özel Gün Kaynağı")) or "Özel Gün Kaynağı"
+        sources.append(
+            SearchResult(
+                chunk=Chunk(
+                    id=stable_id(title, source_url),
+                    title=title,
+                    url=source_url,
+                    text=title,
+                    ordinal=1,
+                ),
+                score=1.0,
+            )
+        )
+        seen.add(source_url)
+    return sources
+
+
+def _special_day_sources_for_year(entries: list[dict], year: int) -> list[SearchResult]:
+    seen: set[str] = set()
+    sources: list[SearchResult] = []
+    for entry in entries:
+        source_template = clean_text(entry.get("source_url", ""))
+        if not source_template:
+            continue
+        source_url = source_template.format(year=year)
+        if source_url in seen:
+            continue
+        title = clean_text(entry.get("source_title", "Özel Gün Kaynağı")) or "Özel Gün Kaynağı"
+        sources.append(
+            SearchResult(
+                chunk=Chunk(
+                    id=stable_id(title, source_url),
+                    title=title,
+                    url=source_url,
+                    text=title,
+                    ordinal=1,
+                ),
+                score=1.0,
+            )
+        )
+        seen.add(source_url)
+    return sources
+
+
 def _build_special_day_response(entries: list[tuple[dict, date]], language: str) -> ComposedAnswer:
     if len(entries) == 1:
         entry, target_date = entries[0]
@@ -2684,7 +2937,7 @@ def _build_special_day_response(entries: list[tuple[dict, date]], language: str)
                 f"📅 {label} in {target_date.year} falls on {formatted}.",
                 f"📅 {label} في عام {target_date.year} يوافق {formatted}.",
             ),
-            sources=[],
+            sources=_special_day_sources_for_year([entry], target_date.year),
         )
 
     rows = [f"• {_special_day_display_name(entry, language)} - {_format_date_with_weekday(target_date, language)}" for entry, target_date in entries]
@@ -2695,7 +2948,7 @@ def _build_special_day_response(entries: list[tuple[dict, date]], language: str)
             "📅 Matching special days:\n" + "\n".join(rows),
             "📅 الأيام الخاصة المطابقة:\n" + "\n".join(rows),
         ),
-        sources=[],
+        sources=_special_day_sources_for_year([entry for entry, _ in entries], entries[0][1].year),
     )
 
 
@@ -2708,7 +2961,20 @@ def _build_special_day_listing_response(target_date: date, entries: list[dict], 
             f"📅 The highlighted special days on {_format_date_with_weekday(target_date, language)} are:\n" + "\n".join(rows),
             f"📅 الأيام الخاصة البارزة بتاريخ {_format_date_with_weekday(target_date, language)} هي:\n" + "\n".join(rows),
         ),
-        sources=[],
+        sources=_special_day_sources_for_year(entries, target_date.year),
+    )
+
+
+def _build_religious_schedule_response(year: int, entries: list[tuple[dict, date]], language: str) -> ComposedAnswer:
+    rows = [f"• {_special_day_display_name(entry, language)} - {_format_date_with_weekday(target_date, language)}" for entry, target_date in entries]
+    return ComposedAnswer(
+        text=_text_for_language(
+            language,
+            f"🕌 {year} yılı resmi dini günler takvimi:\n" + "\n".join(rows),
+            f"🕌 Official religious calendar for {year}:\n" + "\n".join(rows),
+            f"🕌 التقويم الرسمي للمناسبات الدينية لعام {year}:\n" + "\n".join(rows),
+        ),
+        sources=_special_day_sources_for_year([entry for entry, _ in entries], year),
     )
 
 
