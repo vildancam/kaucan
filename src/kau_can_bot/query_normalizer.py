@@ -325,8 +325,12 @@ SMALLTALK_PATTERNS = {
     "ne haber",
     "naber",
     "iyi misin",
+    "ne var ne yok",
     "napiyorsun",
     "ne yapiyorsun",
+    "nasil gidiyor",
+    "gunun nasil geciyor",
+    "iyi gidiyor mu",
     "tesekkurler",
     "tesekkur ederim",
     "selam nasilsin",
@@ -338,6 +342,9 @@ SMALLTALK_PATTERNS = {
     "how are u",
     "how r u",
     "hru",
+    "how is it going",
+    "hows it going",
+    "how are things",
     "what s up",
     "whats up",
     "sup",
@@ -472,6 +479,7 @@ TURKISH_HINT_WORDS = {
 CODING_KEYWORDS = {
     "api",
     "bug",
+    "calismiyor",
     "code",
     "coding",
     "css",
@@ -482,6 +490,7 @@ CODING_KEYWORDS = {
     "fix",
     "flask",
     "function",
+    "hata",
     "html",
     "javascript",
     "js",
@@ -491,7 +500,11 @@ CODING_KEYWORDS = {
     "react",
     "sql",
     "stack trace",
+    "syntaxerror",
+    "traceback",
+    "typeerror",
     "typescript",
+    "valueerror",
 }
 
 
@@ -584,7 +597,10 @@ def is_coding_query(text: str) -> bool:
     normalized = normalize_for_matching(text)
     if not normalized:
         return False
-    return any(keyword in normalized for keyword in CODING_KEYWORDS)
+    tokens = set(normalized.split())
+    phrase_keywords = {keyword for keyword in CODING_KEYWORDS if " " in keyword}
+    token_keywords = CODING_KEYWORDS - phrase_keywords
+    return any(keyword in tokens for keyword in token_keywords) or any(keyword in normalized for keyword in phrase_keywords)
 
 
 def has_arabic_text(text: str) -> bool:

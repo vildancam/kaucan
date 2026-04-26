@@ -65,14 +65,17 @@ class MemoryBehaviorTests(unittest.TestCase):
 
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
-    def test_smalltalk_is_personalized_after_learning(self, _log_query, _log_interaction) -> None:
+    def test_smalltalk_does_not_force_name_after_learning(self, _log_query, _log_interaction) -> None:
         assistant = WebsiteGroundedAssistant(index=DummyIndex(), settings=self.settings)
 
         assistant.answer_with_context("Bana Vildan diye hitap et", client_id="user-4")
         response = assistant.answer_with_context("Nasılsın?", client_id="user-4")
+        greeting = assistant.answer_with_context("Merhaba", client_id="user-4")
 
         self.assertEqual(response.status, "smalltalk")
-        self.assertIn("Vildan", response.answer)
+        self.assertNotIn("Vildan", response.answer)
+        self.assertEqual(greeting.status, "greeting")
+        self.assertNotIn("Vildan", greeting.answer)
 
 
 if __name__ == "__main__":

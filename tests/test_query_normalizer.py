@@ -4,6 +4,7 @@ import unittest
 
 from kau_can_bot.query_normalizer import (
     is_arabic_query,
+    is_smalltalk_query,
     is_coding_query,
     is_english_query,
     is_greeting_query,
@@ -48,8 +49,10 @@ class QueryNormalizerTests(unittest.TestCase):
     def test_english_and_coding_queries_are_detected(self) -> None:
         self.assertTrue(is_english_query("iibf contact"))
         self.assertTrue(is_coding_query("fix this python error"))
+        self.assertTrue(is_coding_query("kod hata veriyor"))
         self.assertFalse(is_english_query("python nedir"))
         self.assertTrue(is_arabic_query("مرحبا كيف حالك"))
+        self.assertTrue(is_smalltalk_query("nasıl gidiyor"))
 
 
 if __name__ == "__main__":

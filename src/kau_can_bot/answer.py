@@ -142,6 +142,51 @@ DIRECT_SERVICE_LINKS = (
         "terms": ("telefon rehberi", "rehber", "telefon listesi", "phone directory", "directory"),
     },
 )
+CLASSROOM_LOCATION_GROUPS = (
+    {
+        "codes": ("101", "102", "103", "104"),
+        "label": "101-102-103-104",
+        "tr": "📌 101-102-103-104 nolu derslikler 1. katta, Uluslararası Ticaret ve Lojistik Bölüm Başkanlığının karşısındadır.",
+        "en": "📌 Classrooms 101-102-103-104 are on the 1st floor, opposite the Department Chair of International Trade and Logistics.",
+        "ar": "📌 القاعات 101-102-103-104 تقع في الطابق الأول مقابل رئاسة قسم التجارة الدولية واللوجستيات.",
+    },
+    {
+        "codes": ("105", "106", "107", "108"),
+        "label": "105-106-107-108",
+        "tr": "📌 105-106-107-108 nolu derslikler 1. katta, İktisat Bölüm Başkanlığının karşısındadır.",
+        "en": "📌 Classrooms 105-106-107-108 are on the 1st floor, opposite the Department Chair of Economics.",
+        "ar": "📌 القاعات 105-106-107-108 تقع في الطابق الأول مقابل رئاسة قسم الاقتصاد.",
+    },
+    {
+        "codes": ("201", "202", "203", "204"),
+        "label": "201-202-203-204",
+        "tr": "📌 201-202-203-204 nolu derslikler 2. katta, Yönetim Bilişim Sistemleri Bölüm Başkanlığının karşısındadır.",
+        "en": "📌 Classrooms 201-202-203-204 are on the 2nd floor, opposite the Department Chair of Management Information Systems.",
+        "ar": "📌 القاعات 201-202-203-204 تقع في الطابق الثاني مقابل رئاسة قسم نظم المعلومات الإدارية.",
+    },
+    {
+        "codes": ("205", "206", "207", "208"),
+        "label": "205-206-207-208",
+        "tr": "📌 205-206-207-208 nolu derslikler 2. katta, İşletme Bölüm Başkanlığının karşısındadır.",
+        "en": "📌 Classrooms 205-206-207-208 are on the 2nd floor, opposite the Department Chair of Business Administration.",
+        "ar": "📌 القاعات 205-206-207-208 تقع في الطابق الثاني مقابل رئاسة قسم إدارة الأعمال.",
+    },
+    {
+        "codes": ("301",),
+        "label": "301",
+        "tr": "📌 301 nolu derslik 3. katta, Siyaset Bilimi ve Kamu Yönetimi Bölüm Başkanlığının karşısındadır.",
+        "en": "📌 Classroom 301 is on the 3rd floor, opposite the Department Chair of Political Science and Public Administration.",
+        "ar": "📌 القاعة 301 تقع في الطابق الثالث مقابل رئاسة قسم العلوم السياسية والإدارة العامة.",
+    },
+)
+NAMED_CLASSROOM_LOCATIONS = (
+    {
+        "terms": ("huseyin aytemiz konferans salonu", "hüseyin aytemiz konferans salonu", "huseyin aytemiz", "hüseyin aytemiz"),
+        "tr": "📌 Hüseyin Aytemiz Konferans Salonu 3. katta, Siyaset Bilimi ve Kamu Yönetimi Bölümü karşısındadır.",
+        "en": "📌 The Huseyin Aytemiz Conference Hall is on the 3rd floor, opposite the Department of Political Science and Public Administration.",
+        "ar": "📌 تقع قاعة حسين أيتميز للمؤتمرات في الطابق الثالث مقابل قسم العلوم السياسية والإدارة العامة.",
+    },
+)
 FACULTY_CONTACT_PAGE = "https://kafkas.edu.tr/iibf/tr/sayfaYeni18034"
 MAPS_LINK = ("Maps'te Aç", "https://maps.app.goo.gl/HMYYaxbZBcZVisbN7")
 RECTOR_PAGE = ("Rektör", "https://www.kafkas.edu.tr/rektorluk/tr/sayfaYeni655")
@@ -172,6 +217,21 @@ SMALLTALK_RESPONSES = {
         "tr": "😊 Sorulara yanıt vermek ve birlikte çözüm üretmek için hazır durumdayım. İstenirse kampüs, dersler ya da genel bilgi konularında devam edilebilir.",
         "en": "😊 I'm here to answer questions and help work through problems. We can continue with campus, coursework, or general topics.",
         "ar": "😊 أنا جاهز للإجابة عن الأسئلة والمساعدة في إيجاد الحلول. يمكننا المتابعة في موضوع جامعي أو عام أو تقني.",
+    },
+    "nasil gidiyor": {
+        "tr": "😊 Gayet iyi gidiyor. İstenirse sohbet edilebilir ya da hemen bir soruya geçilebilir.",
+        "en": "😊 It's going well. We can keep chatting or move straight to your next question.",
+        "ar": "😊 الأمور تسير بشكل جيد. يمكننا متابعة الدردشة أو الانتقال مباشرة إلى سؤالك التالي.",
+    },
+    "ne var ne yok": {
+        "tr": "😊 Şu an her şey yolunda. İstenirse günlük bir sohbet yapılabilir ya da doğrudan bir konuya geçilebilir.",
+        "en": "😊 Everything is fine at the moment. We can chat casually or jump into a specific topic.",
+        "ar": "😊 كل شيء على ما يرام حاليًا. يمكننا الدردشة قليلًا أو الانتقال إلى موضوع محدد.",
+    },
+    "gunun nasil geciyor": {
+        "tr": "😊 Yoğun ama verimli geçiyor. Sohbet etmek ya da bir konuda birlikte ilerlemek memnuniyetle mümkün.",
+        "en": "😊 It's busy but productive. I'm happy to chat or help move a topic forward.",
+        "ar": "😊 اليوم مزدحم لكنه جيد. يسعدني أن أدردش أو أساعد في أي موضوع.",
     },
     "tesekkurler": {
         "tr": "😊 Rica ederim. Yeni bir soru olduğunda yardımcı olmaktan memnuniyet duyarım.",
@@ -595,20 +655,11 @@ def _text_for_language(language: str, tr_text: str, en_text: str, ar_text: str |
 
 
 def _welcome_message(language: str, user_memory: dict[str, object] | None = None) -> str:
-    greeting = _text_for_language(
+    return _text_for_language(
         language,
         WELCOME_MESSAGE,
         "👋 Hello, I am KAUCAN Beta - the Digital Assistant of Kafkas University. I can help with IIBF announcements, academic information, staff, contact, exams, cafeteria menu, writing, coding, and many other topics.",
         "👋 مرحبًا، أنا KAÜCAN Beta، المساعد الرقمي لجامعة قفقاس. يمكنني المساعدة في إعلانات الكلية والمعلومات الأكاديمية والكوادر والاتصال والامتحانات وقائمة الطعام والكتابة والبرمجة وغيرها.",
-    )
-    display_name = user_display_name(user_memory or {})
-    if not display_name:
-        return greeting
-    return _text_for_language(
-        language,
-        f"👋 Merhaba {display_name}, ben KAÜCAN Beta. İİBF, genel bilgi, yazım ve günlük sorularda yardımcı olabilirim.",
-        f"👋 Hello {display_name}, I am KAUCAN Beta. I can help with IIBF topics, general questions, writing, and everyday conversation.",
-        f"👋 مرحبًا {display_name}، أنا KAÜCAN Beta. يمكنني المساعدة في موضوعات الكلية والأسئلة العامة والكتابة والمحادثة اليومية.",
     )
 
 
@@ -743,6 +794,21 @@ class WebsiteGroundedAssistant:
                 sources=faculty_contact_response.sources,
                 interaction_id=interaction.id,
                 status="direct_link",
+            )
+
+        classroom_response = _classroom_location_shortcut(original_query or normalized_query, language)
+        if classroom_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                classroom_response.text,
+                classroom_response.sources,
+                "direct_answer",
+            )
+            return AssistantResponse(
+                answer=classroom_response.text,
+                sources=classroom_response.sources,
+                interaction_id=interaction.id,
+                status="direct_answer",
             )
 
         location_response = _location_shortcut(normalized_query, language)
@@ -915,6 +981,15 @@ class WebsiteGroundedAssistant:
                 status="general",
             )
 
+        if _should_answer_with_general_knowledge(general_query) or _looks_like_code_request(general_query):
+            answer = _unknown_answer_text(language)
+            interaction = log_interaction(original_query or normalized_query, answer, [], "fallback")
+            return AssistantResponse(
+                answer=answer,
+                interaction_id=interaction.id,
+                status="fallback",
+            )
+
         if is_ambiguous(normalized_query) and not looks_actionable(normalized_query):
             answer = _text_for_language(
                 language,
@@ -944,12 +1019,7 @@ class WebsiteGroundedAssistant:
         )
 
         if not reliable_results:
-            fallback_text = _text_for_language(
-                language,
-                FALLBACK_RESPONSE,
-                "⚠️ I could not reach reliable information on this topic. For the most accurate information, please contact the faculty directly.",
-                "⚠️ لم أتمكن من الوصول إلى معلومات موثوقة حول هذا الموضوع. للحصول على أدق معلومة، يُنصح بالتواصل مع الكلية مباشرة.",
-            )
+            fallback_text = _fallback_text_for_query(general_query, language)
             interaction = log_interaction(original_query or normalized_query, fallback_text, [], "fallback")
             return AssistantResponse(
                 answer=fallback_text,
@@ -1507,6 +1577,54 @@ def _location_shortcut(query: str, language: str) -> ComposedAnswer | None:
     )
 
 
+def _classroom_location_shortcut(query: str, language: str) -> ComposedAnswer | None:
+    normalized = _query_key(query)
+    if not normalized:
+        return None
+    if not _is_classroom_context_query(normalized):
+        return None
+
+    for entry in NAMED_CLASSROOM_LOCATIONS:
+        if any(_query_key(term) in normalized for term in entry["terms"]):
+            return ComposedAnswer(
+                text=_text_for_language(language, entry["tr"], entry["en"], entry["ar"]),
+                sources=[],
+            )
+
+    codes = set(re.findall(r"\b(?:101|102|103|104|105|106|107|108|201|202|203|204|205|206|207|208|301)\b", normalized))
+    for entry in CLASSROOM_LOCATION_GROUPS:
+        if codes.intersection(entry["codes"]):
+            return ComposedAnswer(
+                text=_text_for_language(language, entry["tr"], entry["en"], entry["ar"]),
+                sources=[],
+            )
+
+    if re.search(r"\b[123]\d{2}\b", normalized) or "konferans salonu" in normalized or "conference hall" in normalized:
+        return ComposedAnswer(text=_unknown_answer_text(language), sources=[])
+
+    return None
+
+
+def _is_classroom_context_query(normalized_query: str) -> bool:
+    return any(
+        term in normalized_query
+        for term in (
+            "derslik",
+            "sinif",
+            "sınıf",
+            "classroom",
+            "classrooms",
+            "konferans salonu",
+            "conference hall",
+            "salon",
+            "nerede",
+            "konum",
+            "kat",
+            "katta",
+        )
+    )
+
+
 def _memory_saved_shortcut(memory_update, language: str, user_memory: dict[str, object]) -> ComposedAnswer:
     display_name = user_display_name(user_memory)
     saved_labels: list[str] = []
@@ -1643,8 +1761,8 @@ def _general_memory_context(user_memory: dict[str, object], language: str) -> st
         return ""
     return _text_for_language(
         language,
-        f"Kullanıcı hakkında daha önce paylaşılan bilgiler: {summary}. Uygun olduğunda doğal biçimde dikkate alınabilir.",
-        f"Previously shared information about the user: {summary}. Use it naturally when helpful.",
+        f"Kullanıcı hakkında daha önce paylaşılan bilgiler: {summary}. Gerekmedikçe kullanıcıya adıyla hitap edilmemeli; bu bilgi yalnızca bağlam için kullanılmalı.",
+        f"Previously shared information about the user: {summary}. Do not address the user by name unless explicitly requested; use this only as context.",
     )
 
 
@@ -2288,23 +2406,22 @@ def _is_academic_staff_query(query: str) -> bool:
 
 def _smalltalk_response(query: str, language: str, user_memory: dict[str, object] | None = None) -> str:
     normalized = _query_key(query)
-    display_name = user_display_name(user_memory or {})
     for pattern, response in SMALLTALK_RESPONSES.items():
         if pattern in normalized:
-            base_response = response.get(language, response.get("en", response["tr"]))
-            return f"{display_name}, {base_response}" if display_name else base_response
-    fallback_response = _text_for_language(
+            return response.get(language, response.get("en", response["tr"]))
+    return _text_for_language(
         language,
         "😊 Elbette, sohbet edilebilir. İstenirse günlük bir konuya ya da bilgi sorusuna birlikte devam edilebilir.",
         "😊 Of course, we can chat. If you'd like, we can continue with a casual topic or an information question.",
         "😊 بالطبع، يمكننا الدردشة. وإذا رغبت، يمكننا المتابعة في موضوع يومي أو سؤال معلوماتي.",
     )
-    return f"{display_name}, {fallback_response}" if display_name else fallback_response
 
 
 def _composition_shortcut(query: str, language: str) -> ComposedAnswer | None:
     normalized = _query_key(query)
     if not _is_composition_request(query):
+        return None
+    if _looks_like_code_request(query):
         return None
 
     if "mail" in normalized or "e posta" in normalized or "email" in normalized:
@@ -2415,21 +2532,51 @@ def _compose_petition_draft(query: str, language: str) -> str:
         "the related matter",
         "الموضوع المطلوب",
     )
+    topic = clean_text(payload).strip(" .")
+    if language == "tr":
+        if topic.endswith("için"):
+            body = f"{topic} gerekli işlemin yapılmasını arz ederim."
+        elif topic.endswith(("hakkında", "konusunda")):
+            body = f"{topic} gereğinin yapılmasını arz ederim."
+        else:
+            body = f"{topic} konusunda gereğinin yapılmasını arz ederim."
+        return (
+            "✅ Dilekçe taslağı:\n"
+            "İlgili Makama,\n"
+            f"{body}\n"
+            "Bilgilerinize sunarım.\n"
+            "[Ad Soyad]"
+        )
+
+    if language == "en":
+        body = (
+            f"I respectfully request the necessary action regarding {topic}."
+            if topic != "the related matter"
+            else "I respectfully request the necessary action regarding the related matter."
+        )
+        return (
+            "✅ Petition draft:\n"
+            "To the Relevant Authority,\n"
+            f"{body}\n"
+            "Submitted for your consideration.\n"
+            "[Your Name]"
+        )
+
     return _text_for_language(
         language,
         "✅ Dilekçe taslağı:\n"
         "İlgili Makama,\n"
-        f"{payload} hakkında gereğinin yapılmasını arz ederim.\n"
+        f"{topic or payload} konusunda gereğinin yapılmasını arz ederim.\n"
         "Bilgilerinize sunarım.\n"
         "[Ad Soyad]",
         "✅ Petition draft:\n"
         "To the Relevant Authority,\n"
-        f"I respectfully request the necessary action regarding {payload}.\n"
+        f"I respectfully request the necessary action regarding {topic or payload}.\n"
         "Submitted for your consideration.\n"
         "[Your Name]",
         "✅ مسودة طلب:\n"
         "إلى الجهة المختصة،\n"
-        f"أرجو اتخاذ اللازم بخصوص {payload}.\n"
+        f"أرجو اتخاذ اللازم بخصوص {topic or payload}.\n"
         "وتفضلوا بقبول الاحترام.\n"
         "[الاسم]",
     )
@@ -2505,6 +2652,13 @@ def _extract_task_payload(query: str) -> str:
         if len(lines) >= 2:
             return lines[-1]
     command_patterns = (
+        r"(?i)^(?:bu\s+)?kodu?\s+d[üu]zelt[:\s-]*",
+        r"(?i)^kodu?\s+iyilestir[:\s-]*",
+        r"(?i)^kodu?\s+geli[sş]tir[:\s-]*",
+        r"(?i)^mail\s+yaz[:\s-]*",
+        r"(?i)^e[-\s]?posta\s+yaz[:\s-]*",
+        r"(?i)^mesaj\s+yaz[:\s-]*",
+        r"(?i)^dilek[çc]e(?:\s+olustur|\s+olu[sş]tur|\s+hazirla|\s+yaz)?[:\s-]*",
         r"(?i)^(?:bu\s+)?metni\s+d[üu]zelt[:\s-]*",
         r"(?i)^yaz[ıi]m(?:\s+ve\s+noktalama)?\s+hatalar[ıi]n[ıi]\s+d[üu]zelt[:\s-]*",
         r"(?i)^noktalama(?:\s+isaretleri| işaretleri)?(?:ni)?\s+d[üu]zelt[:\s-]*",
@@ -2520,6 +2674,36 @@ def _extract_task_payload(query: str) -> str:
         if stripped and stripped != cleaned:
             return stripped
     return ""
+
+
+def _looks_like_code_request(query: str) -> bool:
+    normalized = _query_key(query)
+    if is_coding_query(query):
+        return True
+    if "```" in query:
+        return True
+    if any(
+        term in normalized
+        for term in (
+            "syntaxerror",
+            "typeerror",
+            "valueerror",
+            "traceback",
+            "exception",
+            "kod",
+            "code",
+            "hata veriyor",
+            "calismiyor",
+        )
+    ):
+        return True
+    return bool(
+        re.search(
+            r"\b(def|class|return|import|from|print\s*\(|console\.log|function|const|let|var|if\s*\(|for\s*\(|while\s*\()",
+            query,
+            flags=re.IGNORECASE,
+        )
+    )
 
 
 def _infer_subject(payload: str, language: str) -> str:
@@ -3033,6 +3217,26 @@ def _capitalize_sentences(text: str) -> str:
             continue
         rebuilt.append(piece[:1].upper() + piece[1:] if piece else piece)
     return "".join(rebuilt).strip()
+
+
+def _unknown_answer_text(language: str) -> str:
+    return _text_for_language(
+        language,
+        "⚠️ Bu sorunun yanıtını henüz bilmiyorum. Daha net bilgi veya farklı bir ifade ile yeniden sorulursa tekrar yardımcı olabilirim.",
+        "⚠️ I do not know the answer to this question yet. If it is asked with clearer details or a different phrasing, I can try again.",
+        "⚠️ لا أعرف إجابة هذا السؤال بعد. إذا تمت إعادة صياغته بشكل أوضح، يمكنني المحاولة مرة أخرى.",
+    )
+
+
+def _fallback_text_for_query(query: str, language: str) -> str:
+    if _should_answer_with_general_knowledge(query) or _looks_like_code_request(query):
+        return _unknown_answer_text(language)
+    return _text_for_language(
+        language,
+        FALLBACK_RESPONSE,
+        "⚠️ I could not reach reliable information on this topic. For the most accurate information, please contact the faculty directly.",
+        "⚠️ لم أتمكن من الوصول إلى معلومات موثوقة حول هذا الموضوع. للحصول على أدق معلومة، يُنصح بالتواصل مع الكلية مباشرة.",
+    )
 
 
 def _should_answer_with_general_knowledge(query: str) -> bool:

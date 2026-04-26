@@ -255,6 +255,20 @@ class AnswerBehaviorTests(unittest.TestCase):
 
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_classroom_location_shortcut_uses_defined_layout(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("201 nolu derslik nerede?")
+        hall_response = assistant.answer_with_context("Hüseyin Aytemiz Konferans Salonu nerede?")
+
+        self.assertEqual(response.status, "direct_answer")
+        self.assertIn("2. katta", response.answer)
+        self.assertIn("Yönetim Bilişim Sistemleri", response.answer)
+        self.assertEqual(hall_response.status, "direct_answer")
+        self.assertIn("3. katta", hall_response.answer)
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
     def test_basic_math_is_solved(self, _log_query, _log_interaction) -> None:
         assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
 
@@ -394,6 +408,18 @@ class AnswerBehaviorTests(unittest.TestCase):
         self.assertIn("bugün", response.answer.lower())
         self.assertIn("gelemedim", response.answer.lower())
 
+    @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Sorun `print(name)` satırında; `name` tanımlanmadan kullanılıyor. Önce değişkeni tanımlayın.")
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_code_fix_request_uses_general_coding_flow(self, _log_query, _log_interaction, _general_answer) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("Bu python kodunu düzelt: print(name)")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("name", response.answer)
+        self.assertNotIn("Düzeltilmiş metin", response.answer)
+
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
     def test_explicit_date_query_returns_weekday(self, _log_query, _log_interaction) -> None:
@@ -523,6 +549,16 @@ class AnswerBehaviorTests(unittest.TestCase):
         self.assertEqual(response.status, "general")
         self.assertIn("Kars", response.answer)
         self.assertTrue(any("wttr.in" in source.chunk.url for source in response.sources))
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_unknown_general_questions_return_unknown_fallback(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("kuantum gergedanı neden görünmez olur")
+
+        self.assertEqual(response.status, "fallback")
+        self.assertIn("henüz bilmiyorum", response.answer.lower())
 
 
 if __name__ == "__main__":
