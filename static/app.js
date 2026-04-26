@@ -308,6 +308,9 @@
   var quickPromptsShell = document.getElementById("quickPromptsShell");
   var statusBadge = document.getElementById("statusBadge");
   var typingRow = document.getElementById("typingRow");
+  var cursorLayer = document.getElementById("cursorLayer");
+  var cursorRing = document.getElementById("cursorRing");
+  var cursorDot = document.getElementById("cursorDot");
   var chips = document.querySelectorAll(".query-chip");
   var brandLogo = document.getElementById("brandLogo");
   var brandFacultyLogo = document.getElementById("brandFacultyLogo");
@@ -335,6 +338,7 @@
 
   var audioState = {
     context: null,
+    primed: false,
   };
   var runtimeBranding = {
     chatLogoUrl: initialChatLogo ? initialChatLogo.getAttribute("src") : null,
@@ -955,6 +959,50 @@
     return audioState.context;
   }
 
+  function withReadyAudio(callback) {
+    var context = getAudioContext();
+    if (!context || typeof callback !== "function") {
+      return;
+    }
+
+    function run() {
+      audioState.primed = true;
+      callback(context);
+    }
+
+    if (context.state === "suspended") {
+      context
+        .resume()
+        .then(run)
+        .catch(function () {
+          return;
+        });
+      return;
+    }
+
+    run();
+  }
+
+  function primeAudio() {
+    if (audioState.primed) {
+      return;
+    }
+
+    withReadyAudio(function (context) {
+      var oscillator = context.createOscillator();
+      var gain = context.createGain();
+      var now = context.currentTime + 0.001;
+
+      gain.gain.setValueAtTime(0.00001, now);
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(180, now);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.012);
+    });
+  }
+
   function scheduleTone(context, frequency, startTime, duration, type, peakGain) {
     var oscillator = context.createOscillator();
     var gain = context.createGain();
@@ -972,84 +1020,80 @@
   }
 
   function playTone(kind) {
-    var context;
     var now;
 
     try {
-      context = getAudioContext();
-      if (!context) {
-        return;
-      }
+      withReadyAudio(function (context) {
+        now = context.currentTime + 0.01;
 
-      now = context.currentTime + 0.01;
+        if (kind === "send") {
+          scheduleTone(context, 620, now, 0.08, "triangle", 0.022);
+          scheduleTone(context, 840, now + 0.07, 0.11, "triangle", 0.021);
+          scheduleTone(context, 980, now + 0.14, 0.08, "sine", 0.018);
+          return;
+        }
 
-      if (kind === "send") {
-        scheduleTone(context, 620, now, 0.08, "triangle", 0.022);
-        scheduleTone(context, 840, now + 0.07, 0.11, "triangle", 0.021);
-        scheduleTone(context, 980, now + 0.14, 0.08, "sine", 0.018);
-        return;
-      }
+        if (kind === "receive") {
+          scheduleTone(context, 500, now, 0.08, "sine", 0.018);
+          scheduleTone(context, 660, now + 0.08, 0.1, "sine", 0.02);
+          scheduleTone(context, 780, now + 0.18, 0.12, "triangle", 0.02);
+          return;
+        }
 
-      if (kind === "receive") {
-        scheduleTone(context, 500, now, 0.08, "sine", 0.018);
-        scheduleTone(context, 660, now + 0.08, 0.1, "sine", 0.02);
-        scheduleTone(context, 780, now + 0.18, 0.12, "triangle", 0.02);
-        return;
-      }
+        if (kind === "new-chat") {
+          scheduleTone(context, 460, now, 0.07, "triangle", 0.018);
+          scheduleTone(context, 620, now + 0.06, 0.09, "triangle", 0.018);
+          scheduleTone(context, 860, now + 0.13, 0.12, "sine", 0.016);
+          return;
+        }
 
-      if (kind === "new-chat") {
-        scheduleTone(context, 460, now, 0.07, "triangle", 0.018);
-        scheduleTone(context, 620, now + 0.06, 0.09, "triangle", 0.018);
-        scheduleTone(context, 860, now + 0.13, 0.12, "sine", 0.016);
-        return;
-      }
+        if (kind === "history") {
+          scheduleTone(context, 560, now, 0.07, "sine", 0.012);
+          scheduleTone(context, 480, now + 0.05, 0.06, "sine", 0.01);
+          return;
+        }
 
-      if (kind === "history") {
-        scheduleTone(context, 560, now, 0.07, "sine", 0.012);
-        scheduleTone(context, 480, now + 0.05, 0.06, "sine", 0.01);
-        return;
-      }
+        if (kind === "theme") {
+          scheduleTone(context, 720, now, 0.07, "sine", 0.013);
+          scheduleTone(context, 940, now + 0.05, 0.1, "triangle", 0.013);
+          return;
+        }
 
-      if (kind === "theme") {
-        scheduleTone(context, 720, now, 0.07, "sine", 0.013);
-        scheduleTone(context, 940, now + 0.05, 0.1, "triangle", 0.013);
-        return;
-      }
+        if (kind === "share") {
+          scheduleTone(context, 680, now, 0.05, "triangle", 0.012);
+          scheduleTone(context, 860, now + 0.04, 0.08, "triangle", 0.012);
+          return;
+        }
 
-      if (kind === "share") {
-        scheduleTone(context, 680, now, 0.05, "triangle", 0.012);
-        scheduleTone(context, 860, now + 0.04, 0.08, "triangle", 0.012);
-        return;
-      }
+        if (kind === "voice-start") {
+          scheduleTone(context, 520, now, 0.06, "sine", 0.014);
+          scheduleTone(context, 720, now + 0.05, 0.08, "triangle", 0.014);
+          return;
+        }
 
-      if (kind === "voice-start") {
-        scheduleTone(context, 520, now, 0.06, "sine", 0.014);
-        scheduleTone(context, 720, now + 0.05, 0.08, "triangle", 0.014);
-        return;
-      }
+        if (kind === "voice-stop") {
+          scheduleTone(context, 640, now, 0.05, "triangle", 0.012);
+          scheduleTone(context, 420, now + 0.05, 0.08, "sine", 0.012);
+          return;
+        }
 
-      if (kind === "voice-stop") {
-        scheduleTone(context, 640, now, 0.05, "triangle", 0.012);
-        scheduleTone(context, 420, now + 0.05, 0.08, "sine", 0.012);
-        return;
-      }
+        if (kind === "clear") {
+          scheduleTone(context, 540, now, 0.06, "triangle", 0.013);
+          scheduleTone(context, 680, now + 0.05, 0.08, "triangle", 0.013);
+          return;
+        }
 
-      if (kind === "clear") {
-        scheduleTone(context, 540, now, 0.06, "triangle", 0.013);
-        scheduleTone(context, 680, now + 0.05, 0.08, "triangle", 0.013);
-        return;
-      }
+        if (kind === "delete") {
+          scheduleTone(context, 360, now, 0.08, "sawtooth", 0.013);
+          scheduleTone(context, 240, now + 0.08, 0.1, "sawtooth", 0.012);
+          return;
+        }
 
-      if (kind === "delete") {
-        scheduleTone(context, 360, now, 0.08, "sawtooth", 0.013);
-        scheduleTone(context, 240, now + 0.08, 0.1, "sawtooth", 0.012);
-        return;
-      }
-
-      if (kind === "error") {
-        scheduleTone(context, 320, now, 0.12, "sawtooth", 0.014);
-        scheduleTone(context, 220, now + 0.1, 0.12, "sawtooth", 0.012);
-      }
+        if (kind === "error") {
+          scheduleTone(context, 320, now, 0.12, "sawtooth", 0.014);
+          scheduleTone(context, 220, now + 0.1, 0.12, "sawtooth", 0.012);
+        }
+      });
     } catch (error) {
       return;
     }
@@ -1182,6 +1226,48 @@
     if (quickPromptsShell) {
       quickPromptsShell.hidden = hasUserMessages;
     }
+  }
+
+  function supportsEnhancedCursor() {
+    return !!(window.matchMedia && window.matchMedia("(pointer:fine)").matches && cursorLayer && cursorRing && cursorDot);
+  }
+
+  function bindCustomCursor() {
+    if (!supportsEnhancedCursor()) {
+      return;
+    }
+
+    document.documentElement.classList.add("cursor-enhanced");
+
+    function setCursorPosition(x, y) {
+      cursorRing.style.left = x + "px";
+      cursorRing.style.top = y + "px";
+      cursorDot.style.left = x + "px";
+      cursorDot.style.top = y + "px";
+    }
+
+    document.addEventListener(
+      "pointermove",
+      function (event) {
+        var target = event.target && typeof event.target.closest === "function"
+          ? event.target.closest("a, button, textarea, input, select, .query-chip, .quick-link, .highlight-link, .history-action, .history-main")
+          : null;
+        setCursorPosition(event.clientX, event.clientY);
+        document.documentElement.classList.toggle("cursor-hover", !!target);
+      },
+      { passive: true }
+    );
+
+    document.addEventListener("pointerdown", function () {
+      document.documentElement.classList.add("cursor-pressed");
+    });
+    document.addEventListener("pointerup", function () {
+      document.documentElement.classList.remove("cursor-pressed");
+    });
+    document.addEventListener("pointerleave", function () {
+      document.documentElement.classList.remove("cursor-hover");
+      document.documentElement.classList.remove("cursor-pressed");
+    });
   }
 
   function toTitle(text) {
@@ -1978,6 +2064,17 @@
   }
 
   function bindEvents() {
+    document.addEventListener(
+      "pointerdown",
+      function () {
+        primeAudio();
+      },
+      { passive: true }
+    );
+    document.addEventListener("keydown", function () {
+      primeAudio();
+    });
+
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       submitQuestion();
@@ -2053,6 +2150,7 @@
   function init() {
     document.body.classList.add("js-ready");
     loadTheme();
+    bindCustomCursor();
     state.clientId = ensureClientId();
     ensureConversationState();
     loadPreferredLanguage();

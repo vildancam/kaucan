@@ -4,10 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KAÜCAN | Kafkas Üniversitesi Dijital Asistanı</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260426f" />
+    <link rel="stylesheet" href="/static/styles.css?v=20260426g" />
   </head>
   <body data-theme="light">
     <div class="history-backdrop" id="historyBackdrop" hidden></div>
+    <div class="cursor-layer" id="cursorLayer" aria-hidden="true">
+      <span class="cursor-ring" id="cursorRing"></span>
+      <span class="cursor-dot" id="cursorDot"></span>
+    </div>
 
     <aside class="history-panel" id="historyPanel" aria-label="Konuşma geçmişi">
       <div class="history-header">
@@ -53,7 +57,7 @@
           </button>
 
           <div class="brand-home">
-            <div class="brand-logos">
+            <div class="brand-logos brand-badge">
               <a
                 class="logo-link"
                 href="https://www.kafkas.edu.tr"
@@ -61,7 +65,7 @@
                 rel="noopener noreferrer"
                 title="Kafkas Üniversitesi sitesini aç"
               >
-                <div class="logo-frame">
+                <div class="logo-frame logo-frame-merged">
                   <img
                     id="brandLogo"
                     class="brand-logo"
@@ -80,7 +84,7 @@
                 rel="noopener noreferrer"
                 title="İİBF sitesini aç"
               >
-                <div class="logo-frame logo-frame-secondary">
+                <div class="logo-frame logo-frame-secondary logo-frame-merged">
                   <img
                     id="brandFacultyLogo"
                     class="brand-logo"
@@ -272,6 +276,6 @@
       </footer>
     </div>
 
-    <script defer src="/static/app.js?v=20260426f"></script>
+    <script defer src="/static/app.js?v=20260426g"></script>
   </body>
 </html>

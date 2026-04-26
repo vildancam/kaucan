@@ -352,6 +352,79 @@ SPECIAL_DAY_BUILDERS = {
     "ogretmenler gunu": lambda year: date(year, 11, 24),
     "teachers day": lambda year: date(year, 11, 24),
 }
+SPECIAL_DAY_DEFINITIONS = (
+    {"key": "new_year", "labels": {"tr": "Yılbaşı", "en": "New Year's Day"}, "aliases": ("yilbasi", "new year", "new year's day"), "builder": lambda year: date(year, 1, 1)},
+    {"key": "world_braille_day", "labels": {"tr": "Dünya Braille Günü", "en": "World Braille Day"}, "aliases": ("braille gunu", "world braille day"), "builder": lambda year: date(year, 1, 4)},
+    {"key": "world_cancer_day", "labels": {"tr": "Dünya Kanser Günü", "en": "World Cancer Day"}, "aliases": ("kanser gunu", "world cancer day"), "builder": lambda year: date(year, 2, 4)},
+    {"key": "women_in_science_day", "labels": {"tr": "Bilimde Kadınlar ve Kız Çocukları Günü", "en": "International Day of Women and Girls in Science"}, "aliases": ("bilimde kadinlar", "women and girls in science", "science day for women"), "builder": lambda year: date(year, 2, 11)},
+    {"key": "valentines_day", "labels": {"tr": "Sevgililer Günü", "en": "Valentine's Day"}, "aliases": ("sevgililer gunu", "valentine", "valentines day"), "builder": lambda year: date(year, 2, 14)},
+    {"key": "social_justice_day", "labels": {"tr": "Dünya Sosyal Adalet Günü", "en": "World Day of Social Justice"}, "aliases": ("sosyal adalet gunu", "world day of social justice"), "builder": lambda year: date(year, 2, 20)},
+    {"key": "world_wildlife_day", "labels": {"tr": "Dünya Yaban Hayatı Günü", "en": "World Wildlife Day"}, "aliases": ("yaban hayati gunu", "world wildlife day"), "builder": lambda year: date(year, 3, 3)},
+    {"key": "womens_day", "labels": {"tr": "Dünya Kadınlar Günü", "en": "International Women's Day"}, "aliases": ("8 mart", "kadinlar gunu", "dunya kadinlar gunu", "women's day", "womens day"), "builder": lambda year: date(year, 3, 8)},
+    {"key": "pi_day", "labels": {"tr": "Pi Günü", "en": "Pi Day"}, "aliases": ("pi gunu", "pi day"), "builder": lambda year: date(year, 3, 14)},
+    {"key": "canakkale_victory", "labels": {"tr": "Çanakkale Zaferi", "en": "Canakkale Victory and Martyrs' Memorial Day"}, "aliases": ("18 mart", "canakkale zaferi"), "builder": lambda year: date(year, 3, 18)},
+    {"key": "happiness_day", "labels": {"tr": "Uluslararası Mutluluk Günü", "en": "International Day of Happiness"}, "aliases": ("mutluluk gunu", "international day of happiness"), "builder": lambda year: date(year, 3, 20)},
+    {"key": "forests_day", "labels": {"tr": "Dünya Ormancılık Günü", "en": "International Day of Forests"}, "aliases": ("orman gunu", "ormancilik gunu", "international day of forests"), "builder": lambda year: date(year, 3, 21)},
+    {"key": "poetry_day", "labels": {"tr": "Dünya Şiir Günü", "en": "World Poetry Day"}, "aliases": ("siir gunu", "world poetry day"), "builder": lambda year: date(year, 3, 21)},
+    {"key": "racial_discrimination_day", "labels": {"tr": "Irk Ayrımcılığı ile Mücadele Günü", "en": "International Day for the Elimination of Racial Discrimination"}, "aliases": ("irk ayrimciligi", "racial discrimination day"), "builder": lambda year: date(year, 3, 21)},
+    {"key": "down_syndrome_day", "labels": {"tr": "Dünya Down Sendromu Günü", "en": "World Down Syndrome Day"}, "aliases": ("down sendromu gunu", "world down syndrome day"), "builder": lambda year: date(year, 3, 21)},
+    {"key": "water_day", "labels": {"tr": "Dünya Su Günü", "en": "World Water Day"}, "aliases": ("su gunu", "world water day"), "builder": lambda year: date(year, 3, 22)},
+    {"key": "meteorological_day", "labels": {"tr": "Dünya Meteoroloji Günü", "en": "World Meteorological Day"}, "aliases": ("meteoroloji gunu", "world meteorological day"), "builder": lambda year: date(year, 3, 23)},
+    {"key": "autism_day", "labels": {"tr": "Dünya Otizm Farkındalık Günü", "en": "World Autism Awareness Day"}, "aliases": ("otizm gunu", "autism day"), "builder": lambda year: date(year, 4, 2)},
+    {"key": "health_day", "labels": {"tr": "Dünya Sağlık Günü", "en": "World Health Day"}, "aliases": ("saglik gunu", "world health day"), "builder": lambda year: date(year, 4, 7)},
+    {"key": "national_sovereignty_day", "labels": {"tr": "Ulusal Egemenlik ve Çocuk Bayramı", "en": "National Sovereignty and Children's Day"}, "aliases": ("23 nisan", "ulusal egemenlik ve cocuk bayrami"), "builder": lambda year: date(year, 4, 23)},
+    {"key": "book_day", "labels": {"tr": "Dünya Kitap ve Telif Hakkı Günü", "en": "World Book and Copyright Day"}, "aliases": ("kitap gunu", "world book day"), "builder": lambda year: date(year, 4, 23)},
+    {"key": "labour_day", "labels": {"tr": "Emek ve Dayanışma Günü", "en": "International Workers' Day"}, "aliases": ("1 mayis", "emek ve dayanisma gunu", "labour day", "workers day"), "builder": lambda year: date(year, 5, 1)},
+    {"key": "red_cross_day", "labels": {"tr": "Dünya Kızılay ve Kızılhaç Günü", "en": "World Red Cross and Red Crescent Day"}, "aliases": ("kizilay gunu", "red cross day"), "builder": lambda year: date(year, 5, 8)},
+    {"key": "mothers_day", "labels": {"tr": "Anneler Günü", "en": "Mother's Day"}, "aliases": ("anneler gunu", "mother's day", "mothers day"), "builder": lambda year: _nth_weekday_of_month(year, 5, 6, 2)},
+    {"key": "families_day", "labels": {"tr": "Uluslararası Aile Günü", "en": "International Day of Families"}, "aliases": ("aile gunu", "day of families"), "builder": lambda year: date(year, 5, 15)},
+    {"key": "telecommunication_day", "labels": {"tr": "Dünya Telekomünikasyon ve Bilgi Toplumu Günü", "en": "World Telecommunication and Information Society Day"}, "aliases": ("telekomunikasyon gunu", "bilgi toplumu gunu"), "builder": lambda year: date(year, 5, 17)},
+    {"key": "museum_day", "labels": {"tr": "Uluslararası Müzeler Günü", "en": "International Museum Day"}, "aliases": ("muzeler gunu", "museum day"), "builder": lambda year: date(year, 5, 18)},
+    {"key": "youth_and_sports_day", "labels": {"tr": "Atatürk'ü Anma, Gençlik ve Spor Bayramı", "en": "Commemoration of Atatürk, Youth and Sports Day"}, "aliases": ("19 mayis", "genclik ve spor bayrami", "ataturk u anma genclik ve spor bayrami"), "builder": lambda year: date(year, 5, 19)},
+    {"key": "bee_day", "labels": {"tr": "Dünya Arı Günü", "en": "World Bee Day"}, "aliases": ("ari gunu", "world bee day"), "builder": lambda year: date(year, 5, 20)},
+    {"key": "no_tobacco_day", "labels": {"tr": "Dünya Tütünsüz Günü", "en": "World No Tobacco Day"}, "aliases": ("tutunsuz gunu", "no tobacco day"), "builder": lambda year: date(year, 5, 31)},
+    {"key": "environment_day", "labels": {"tr": "Dünya Çevre Günü", "en": "World Environment Day"}, "aliases": ("cevre gunu", "environment day"), "builder": lambda year: date(year, 6, 5)},
+    {"key": "oceans_day", "labels": {"tr": "Dünya Okyanus Günü", "en": "World Oceans Day"}, "aliases": ("okyanus gunu", "oceans day"), "builder": lambda year: date(year, 6, 8)},
+    {"key": "child_labour_day", "labels": {"tr": "Çocuk İşçiliği ile Mücadele Günü", "en": "World Day Against Child Labour"}, "aliases": ("cocuk isciligi", "child labour day"), "builder": lambda year: date(year, 6, 12)},
+    {"key": "blood_donor_day", "labels": {"tr": "Dünya Gönüllü Kan Bağışçıları Günü", "en": "World Blood Donor Day"}, "aliases": ("kan bagiscilari gunu", "blood donor day"), "builder": lambda year: date(year, 6, 14)},
+    {"key": "fathers_day", "labels": {"tr": "Babalar Günü", "en": "Father's Day"}, "aliases": ("babalar gunu", "father's day", "fathers day"), "builder": lambda year: _nth_weekday_of_month(year, 6, 6, 3)},
+    {"key": "refugee_day", "labels": {"tr": "Dünya Mülteciler Günü", "en": "World Refugee Day"}, "aliases": ("multeciler gunu", "refugee day"), "builder": lambda year: date(year, 6, 20)},
+    {"key": "yoga_day", "labels": {"tr": "Uluslararası Yoga Günü", "en": "International Day of Yoga"}, "aliases": ("yoga gunu", "international day of yoga"), "builder": lambda year: date(year, 6, 21)},
+    {"key": "music_day", "labels": {"tr": "Dünya Müzik Günü", "en": "World Music Day"}, "aliases": ("muzik gunu", "music day"), "builder": lambda year: date(year, 6, 21)},
+    {"key": "democracy_day_tr", "labels": {"tr": "Demokrasi ve Milli Birlik Günü", "en": "Democracy and National Unity Day"}, "aliases": ("15 temmuz", "demokrasi ve milli birlik gunu"), "builder": lambda year: date(year, 7, 15)},
+    {"key": "friendship_day", "labels": {"tr": "Uluslararası Dostluk Günü", "en": "International Day of Friendship"}, "aliases": ("dostluk gunu", "friendship day"), "builder": lambda year: date(year, 7, 30)},
+    {"key": "indigenous_day", "labels": {"tr": "Dünya Yerli Halklar Günü", "en": "International Day of the World's Indigenous Peoples"}, "aliases": ("yerli halklar gunu", "indigenous peoples day"), "builder": lambda year: date(year, 8, 9)},
+    {"key": "youth_day", "labels": {"tr": "Uluslararası Gençlik Günü", "en": "International Youth Day"}, "aliases": ("genclik gunu", "international youth day"), "builder": lambda year: date(year, 8, 12)},
+    {"key": "humanitarian_day", "labels": {"tr": "Dünya İnsani Yardım Günü", "en": "World Humanitarian Day"}, "aliases": ("insani yardim gunu", "humanitarian day"), "builder": lambda year: date(year, 8, 19)},
+    {"key": "victory_day_tr", "labels": {"tr": "Zafer Bayramı", "en": "Victory Day"}, "aliases": ("30 agustos", "zafer bayrami"), "builder": lambda year: date(year, 8, 30)},
+    {"key": "literacy_day", "labels": {"tr": "Dünya Okuryazarlık Günü", "en": "International Literacy Day"}, "aliases": ("okuryazarlik gunu", "literacy day"), "builder": lambda year: date(year, 9, 8)},
+    {"key": "democracy_day", "labels": {"tr": "Uluslararası Demokrasi Günü", "en": "International Day of Democracy"}, "aliases": ("demokrasi gunu", "day of democracy"), "builder": lambda year: date(year, 9, 15)},
+    {"key": "peace_day", "labels": {"tr": "Dünya Barış Günü", "en": "International Day of Peace"}, "aliases": ("baris gunu", "peace day"), "builder": lambda year: date(year, 9, 21)},
+    {"key": "tourism_day", "labels": {"tr": "Dünya Turizm Günü", "en": "World Tourism Day"}, "aliases": ("turizm gunu", "world tourism day"), "builder": lambda year: date(year, 9, 27)},
+    {"key": "older_persons_day", "labels": {"tr": "Dünya Yaşlılar Günü", "en": "International Day of Older Persons"}, "aliases": ("yaslilar gunu", "older persons day"), "builder": lambda year: date(year, 10, 1)},
+    {"key": "animal_day", "labels": {"tr": "Dünya Hayvanları Koruma Günü", "en": "World Animal Day"}, "aliases": ("hayvanlari koruma gunu", "animal day"), "builder": lambda year: date(year, 10, 4)},
+    {"key": "teachers_day_world", "labels": {"tr": "Dünya Öğretmenler Günü", "en": "World Teachers' Day"}, "aliases": ("dunya ogretmenler gunu", "world teachers day"), "builder": lambda year: date(year, 10, 5)},
+    {"key": "mental_health_day", "labels": {"tr": "Dünya Ruh Sağlığı Günü", "en": "World Mental Health Day"}, "aliases": ("ruh sagligi gunu", "mental health day"), "builder": lambda year: date(year, 10, 10)},
+    {"key": "girl_child_day", "labels": {"tr": "Dünya Kız Çocukları Günü", "en": "International Day of the Girl Child"}, "aliases": ("kiz cocuklari gunu", "girl child day"), "builder": lambda year: date(year, 10, 11)},
+    {"key": "food_day", "labels": {"tr": "Dünya Gıda Günü", "en": "World Food Day"}, "aliases": ("gida gunu", "food day"), "builder": lambda year: date(year, 10, 16)},
+    {"key": "republic_day", "labels": {"tr": "Cumhuriyet Bayramı", "en": "Republic Day"}, "aliases": ("29 ekim", "cumhuriyet bayrami"), "builder": lambda year: date(year, 10, 29)},
+    {"key": "halloween", "labels": {"tr": "Cadılar Bayramı", "en": "Halloween"}, "aliases": ("cadilar bayrami", "halloween"), "builder": lambda year: date(year, 10, 31)},
+    {"key": "science_day", "labels": {"tr": "Bilim Günü", "en": "World Science Day for Peace and Development"}, "aliases": ("bilim gunu", "world science day"), "builder": lambda year: date(year, 11, 10)},
+    {"key": "ataturk_memorial_day", "labels": {"tr": "Atatürk'ü Anma Günü", "en": "Ataturk Memorial Day"}, "aliases": ("10 kasim", "ataturk u anma"), "builder": lambda year: date(year, 11, 10)},
+    {"key": "kindness_day", "labels": {"tr": "Dünya İyilik Günü", "en": "World Kindness Day"}, "aliases": ("iyilik gunu", "kindness day"), "builder": lambda year: date(year, 11, 13)},
+    {"key": "tolerance_day", "labels": {"tr": "Uluslararası Hoşgörü Günü", "en": "International Day for Tolerance"}, "aliases": ("hosgoru gunu", "tolerance day"), "builder": lambda year: date(year, 11, 16)},
+    {"key": "mens_day", "labels": {"tr": "Dünya Erkekler Günü", "en": "International Men's Day"}, "aliases": ("erkekler gunu", "international men's day", "mens day"), "builder": lambda year: date(year, 11, 19)},
+    {"key": "toilet_day", "labels": {"tr": "Dünya Tuvalet Günü", "en": "World Toilet Day"}, "aliases": ("tuvalet gunu", "world toilet day"), "builder": lambda year: date(year, 11, 19)},
+    {"key": "childrens_day_world", "labels": {"tr": "Dünya Çocuk Günü", "en": "Universal Children's Day"}, "aliases": ("dunya cocuk gunu", "universal children's day", "universal childrens day"), "builder": lambda year: date(year, 11, 20)},
+    {"key": "violence_against_women_day", "labels": {"tr": "Kadına Yönelik Şiddete Karşı Mücadele Günü", "en": "International Day for the Elimination of Violence against Women"}, "aliases": ("kadina siddetle mucadele gunu", "violence against women day"), "builder": lambda year: date(year, 11, 25)},
+    {"key": "teachers_day_tr", "labels": {"tr": "Öğretmenler Günü", "en": "Teachers' Day in Türkiye"}, "aliases": ("24 kasim", "ogretmenler gunu", "teachers day"), "builder": lambda year: date(year, 11, 24)},
+    {"key": "disability_day", "labels": {"tr": "Dünya Engelliler Günü", "en": "International Day of Persons with Disabilities"}, "aliases": ("engelliler gunu", "disability day"), "builder": lambda year: date(year, 12, 3)},
+    {"key": "volunteer_day", "labels": {"tr": "Dünya Gönüllüler Günü", "en": "International Volunteer Day"}, "aliases": ("gonulluler gunu", "volunteer day"), "builder": lambda year: date(year, 12, 5)},
+    {"key": "human_rights_day", "labels": {"tr": "İnsan Hakları Günü", "en": "Human Rights Day"}, "aliases": ("insan haklari gunu", "human rights day"), "builder": lambda year: date(year, 12, 10)},
+    {"key": "migrants_day", "labels": {"tr": "Uluslararası Göçmenler Günü", "en": "International Migrants Day"}, "aliases": ("gocmenler gunu", "migrants day"), "builder": lambda year: date(year, 12, 18)},
+    {"key": "christmas_eve", "labels": {"tr": "Noel Arifesi", "en": "Christmas Eve"}, "aliases": ("noel arifesi", "christmas eve"), "builder": lambda year: date(year, 12, 24)},
+    {"key": "christmas", "labels": {"tr": "Noel", "en": "Christmas Day"}, "aliases": ("noel", "christmas", "christmas day"), "builder": lambda year: date(year, 12, 25)},
+)
 MATH_BINARY_OPERATORS = {
     ast.Add: operator.add,
     ast.Sub: operator.sub,
@@ -2326,32 +2399,38 @@ def _datetime_shortcut(query: str, language: str) -> ComposedAnswer | None:
         return None
 
     now = datetime.now(ISTANBUL_TZ)
-    target_special_day = _resolve_special_day(query, now.year)
     explicit_date = _parse_explicit_date(query, now.year)
+    relative_target = _resolve_relative_date(normalized, now.date())
+    target_special_days = _resolve_special_days(query, now.year)
+    special_day_listing_query = _is_special_day_listing_query(query)
+    day_name_query = _is_day_name_query(query)
 
-    if target_special_day is not None:
-        label = _special_day_label(query)
-        formatted = _format_date_with_weekday(target_special_day, language)
+    if target_special_days:
+        return _build_special_day_response(target_special_days, language)
+
+    if special_day_listing_query:
+        target_date = explicit_date or relative_target or now.date()
+        same_day_specials = _special_days_on_date(target_date)
+        if same_day_specials:
+            return _build_special_day_listing_response(target_date, same_day_specials, language)
         return ComposedAnswer(
             text=_text_for_language(
                 language,
-                f"📅 {label} {target_special_day.year} yılında {formatted} gününe denk geliyor.",
-                f"📅 {label} in {target_special_day.year} falls on {formatted}.",
-                f"📅 {label} في عام {target_special_day.year} يوافق {formatted}.",
+                f"📅 {_format_date_with_weekday(target_date, language)} tarihinde katalogda eşleşen özel gün bulunmuyor.",
+                f"📅 No matching special day is listed in the catalog for {_format_date_with_weekday(target_date, language)}.",
+                f"📅 لا يوجد يوم خاص مطابق في القائمة بتاريخ {_format_date_with_weekday(target_date, language)}.",
             ),
             sources=[],
         )
 
-    if explicit_date is not None and any(
-        term in normalized for term in ("hangi gun", "hangi gün", "what day", "day of week", "gunu", "günü")
-    ):
+    if explicit_date is not None and day_name_query:
         formatted = _format_date_with_weekday(explicit_date, language)
         return ComposedAnswer(
             text=_text_for_language(
                 language,
-                f"📅 {formatted} tarihine denk geliyor.",
+                f"📅 {formatted} gününe denk geliyor.",
                 f"📅 It falls on {formatted}.",
-                f"📅 يوافق التاريخ {formatted}.",
+                f"📅 يوافق {formatted}.",
             ),
             sources=[],
         )
@@ -2367,16 +2446,24 @@ def _datetime_shortcut(query: str, language: str) -> ComposedAnswer | None:
             sources=[],
         )
 
-    relative_target = _resolve_relative_date(normalized, now.date())
     if relative_target is not None:
-        prefix = _text_for_language(language, "📅", "📅", "📅")
-        label = _relative_date_label(normalized, language)
         return ComposedAnswer(
             text=_text_for_language(
                 language,
-                f"{prefix} {label} {_format_date_with_weekday(relative_target, language)}.",
-                f"{prefix} {label} {_format_date_with_weekday(relative_target, language)}.",
-                f"{prefix} {label} {_format_date_with_weekday(relative_target, language)}.",
+                f"📅 {_relative_date_label(normalized, language)} {_format_date_with_weekday(relative_target, language)}.",
+                f"📅 {_relative_date_label(normalized, language)} {_format_date_with_weekday(relative_target, language)}.",
+                f"📅 {_relative_date_label(normalized, language)} {_format_date_with_weekday(relative_target, language)}.",
+            ),
+            sources=[],
+        )
+
+    if day_name_query:
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"📅 Bugün günlerden {WEEKDAY_NAMES['tr'][now.date().weekday()]}.",
+                f"📅 Today is {WEEKDAY_NAMES['en'][now.date().weekday()]}.",
+                f"📅 اليوم هو {WEEKDAY_NAMES['ar'][now.date().weekday()]}.",
             ),
             sources=[],
         )
@@ -2420,6 +2507,8 @@ def _is_datetime_query(query: str) -> bool:
             "günlerden ne",
             "hangi gun",
             "hangi gün",
+            "hangi gun bugun",
+            "hangi gün bugün",
             "what day",
             "what date",
             "what time",
@@ -2440,7 +2529,10 @@ def _is_datetime_query(query: str) -> bool:
 
 def _is_special_day_query(query: str) -> bool:
     normalized = _query_key(query)
-    return any(term in normalized for term in SPECIAL_DAY_BUILDERS)
+    return _is_special_day_listing_query(query) or any(
+        any(alias in normalized for alias in entry["aliases"])
+        for entry in SPECIAL_DAY_DEFINITIONS
+    )
 
 
 def _resolve_relative_date(normalized_query: str, reference: date) -> date | None:
@@ -2481,59 +2573,75 @@ def _parse_explicit_date(query: str, default_year: int) -> date | None:
     return None
 
 
-def _resolve_special_day(query: str, default_year: int) -> date | None:
+def _resolve_special_days(query: str, default_year: int) -> list[tuple[dict, date]]:
     normalized = _query_key(query)
     year = _extract_requested_year(query) or default_year
-    for alias, builder in SPECIAL_DAY_BUILDERS.items():
-        if alias in normalized:
-            try:
-                return builder(year)
-            except ValueError:
-                return None
-    return None
+    matches: list[tuple[dict, date]] = []
+    seen: set[str] = set()
+    for entry in SPECIAL_DAY_DEFINITIONS:
+        if not any(alias in normalized for alias in entry["aliases"]):
+            continue
+        if entry["key"] in seen:
+            continue
+        try:
+            target_date = entry["builder"](year)
+        except ValueError:
+            continue
+        matches.append((entry, target_date))
+        seen.add(entry["key"])
+    return matches
 
 
-def _special_day_label(query: str) -> str:
+def _is_special_day_listing_query(query: str) -> bool:
     normalized = _query_key(query)
-    labels = {
-        "yilbasi": "Yılbaşı",
-        "new year": "New Year",
-        "sevgililer gunu": "Sevgililer Günü",
-        "valentine": "Valentine's Day",
-        "8 mart": "8 Mart Dünya Kadınlar Günü",
-        "kadinlar gunu": "Dünya Kadınlar Günü",
-        "dunya kadinlar gunu": "Dünya Kadınlar Günü",
-        "18 mart": "18 Mart Çanakkale Zaferi",
-        "canakkale zaferi": "Çanakkale Zaferi",
-        "23 nisan": "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı",
-        "ulusal egemenlik ve cocuk bayrami": "Ulusal Egemenlik ve Çocuk Bayramı",
-        "1 mayis": "1 Mayıs Emek ve Dayanışma Günü",
-        "emek ve dayanisma gunu": "Emek ve Dayanışma Günü",
-        "anneler gunu": "Anneler Günü",
-        "mother's day": "Mother's Day",
-        "mothers day": "Mother's Day",
-        "19 mayis": "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı",
-        "ataturk u anma genclik ve spor bayrami": "Atatürk'ü Anma, Gençlik ve Spor Bayramı",
-        "genclik ve spor bayrami": "Gençlik ve Spor Bayramı",
-        "babalar gunu": "Babalar Günü",
-        "father's day": "Father's Day",
-        "fathers day": "Father's Day",
-        "15 temmuz": "15 Temmuz Demokrasi ve Milli Birlik Günü",
-        "demokrasi ve milli birlik gunu": "Demokrasi ve Milli Birlik Günü",
-        "30 agustos": "30 Ağustos Zafer Bayramı",
-        "zafer bayrami": "Zafer Bayramı",
-        "29 ekim": "29 Ekim Cumhuriyet Bayramı",
-        "cumhuriyet bayrami": "Cumhuriyet Bayramı",
-        "10 kasim": "10 Kasım Atatürk'ü Anma Günü",
-        "ataturk u anma": "Atatürk'ü Anma Günü",
-        "24 kasim": "24 Kasım Öğretmenler Günü",
-        "ogretmenler gunu": "Öğretmenler Günü",
-        "teachers day": "Teachers' Day",
-    }
-    for alias in SPECIAL_DAY_BUILDERS:
-        if alias in normalized:
-            return labels.get(alias, alias.title())
-    return "Özel gün"
+    return any(
+        term in normalized
+        for term in (
+            "ozel gun",
+            "özel gün",
+            "ozel gunler",
+            "özel günler",
+            "ne gunu",
+            "ne günü",
+            "hangi ozel gunler",
+            "hangi özel günler",
+            "bugun hangi ozel gunler var",
+            "bugün hangi özel günler var",
+            "bugun hangi gunler kutlaniyor",
+            "bugün hangi günler kutlanıyor",
+            "special day",
+            "special days",
+            "international day",
+            "world day",
+            "observance",
+            "observances",
+            "what is celebrated",
+            "hangi kutlama",
+            "what special day",
+            "what special days",
+            "ما هي المناسبات",
+            "اليوم العالمي",
+        )
+    )
+
+
+def _is_day_name_query(query: str) -> bool:
+    normalized = _query_key(query)
+    return any(
+        term in normalized
+        for term in (
+            "hangi gun",
+            "hangi gün",
+            "bugun hangi gun",
+            "bugün hangi gün",
+            "gunlerden ne",
+            "günlerden ne",
+            "what day",
+            "what day is today",
+            "day of week",
+            "اي يوم",
+        )
+    )
 
 
 def _extract_requested_year(query: str) -> int | None:
@@ -2541,6 +2649,67 @@ def _extract_requested_year(query: str) -> int | None:
     if not match:
         return None
     return int(match.group(1))
+
+
+def _special_days_on_date(target_date: date) -> list[dict]:
+    matches: list[dict] = []
+    for entry in SPECIAL_DAY_DEFINITIONS:
+        try:
+            special_date = entry["builder"](target_date.year)
+        except ValueError:
+            continue
+        if special_date == target_date:
+            matches.append(entry)
+    return matches
+
+
+def _special_day_display_name(entry: dict, language: str) -> str:
+    labels = entry.get("labels", {})
+    if language == "ar":
+        return clean_text(labels.get("ar", labels.get("en", labels.get("tr", ""))))
+    if language == "en":
+        return clean_text(labels.get("en", labels.get("tr", "")))
+    return clean_text(labels.get("tr", labels.get("en", "")))
+
+
+def _build_special_day_response(entries: list[tuple[dict, date]], language: str) -> ComposedAnswer:
+    if len(entries) == 1:
+        entry, target_date = entries[0]
+        label = _special_day_display_name(entry, language)
+        formatted = _format_date_with_weekday(target_date, language)
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"📅 {label} {target_date.year} yılında {formatted} gününe denk geliyor.",
+                f"📅 {label} in {target_date.year} falls on {formatted}.",
+                f"📅 {label} في عام {target_date.year} يوافق {formatted}.",
+            ),
+            sources=[],
+        )
+
+    rows = [f"• {_special_day_display_name(entry, language)} - {_format_date_with_weekday(target_date, language)}" for entry, target_date in entries]
+    return ComposedAnswer(
+        text=_text_for_language(
+            language,
+            "📅 Eşleşen özel günler:\n" + "\n".join(rows),
+            "📅 Matching special days:\n" + "\n".join(rows),
+            "📅 الأيام الخاصة المطابقة:\n" + "\n".join(rows),
+        ),
+        sources=[],
+    )
+
+
+def _build_special_day_listing_response(target_date: date, entries: list[dict], language: str) -> ComposedAnswer:
+    rows = [f"• {_special_day_display_name(entry, language)}" for entry in entries]
+    return ComposedAnswer(
+        text=_text_for_language(
+            language,
+            f"📅 {_format_date_with_weekday(target_date, language)} tarihinde öne çıkan özel günler:\n" + "\n".join(rows),
+            f"📅 The highlighted special days on {_format_date_with_weekday(target_date, language)} are:\n" + "\n".join(rows),
+            f"📅 الأيام الخاصة البارزة بتاريخ {_format_date_with_weekday(target_date, language)} هي:\n" + "\n".join(rows),
+        ),
+        sources=[],
+    )
 
 
 def _format_date_with_weekday(target: date, language: str) -> str:

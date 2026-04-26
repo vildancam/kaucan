@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import unittest
+from datetime import datetime
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from kau_can_bot.answer import WELCOME_MESSAGE, WebsiteGroundedAssistant, _sanitize_answer_text
+from kau_can_bot.answer import ISTANBUL_TZ, WEEKDAY_NAMES, WELCOME_MESSAGE, WebsiteGroundedAssistant, _sanitize_answer_text
 from kau_can_bot.config import Settings
 from kau_can_bot.live_support import LiveSupportResult
 from kau_can_bot.models import Chunk, SearchResult
@@ -402,6 +403,38 @@ class AnswerBehaviorTests(unittest.TestCase):
 
         self.assertEqual(response.status, "general")
         self.assertIn("Perşembe", response.answer)
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_today_day_name_query_uses_current_istanbul_weekday(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("Bugün hangi gün?")
+        expected_weekday = WEEKDAY_NAMES["tr"][datetime.now(ISTANBUL_TZ).date().weekday()]
+
+        self.assertEqual(response.status, "general")
+        self.assertIn(expected_weekday, response.answer)
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_special_day_listing_returns_all_matching_days(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("21 Mart 2026 özel günler neler?")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("Dünya Ormancılık Günü", response.answer)
+        self.assertIn("Dünya Şiir Günü", response.answer)
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_named_special_day_returns_its_date(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("Öğretmenler günü ne zaman?")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("24 Kasım", response.answer)
 
     @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value="Resmi ve kısa bir e-posta taslağı hazırlanmıştır.")
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
