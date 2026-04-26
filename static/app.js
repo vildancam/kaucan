@@ -323,6 +323,7 @@
   var quickPromptsShell = document.getElementById("quickPromptsShell");
   var statusBadge = document.getElementById("statusBadge");
   var typingRow = document.getElementById("typingRow");
+  var ambientCanvas = document.getElementById("ambientCanvas");
   var cursorLayer = document.getElementById("cursorLayer");
   var cursorRing = document.getElementById("cursorRing");
   var cursorDot = document.getElementById("cursorDot");
@@ -387,6 +388,23 @@
       longitude: null,
       updatedAt: 0,
       permission: "prompt",
+    },
+  };
+  var ambientState = {
+    canvas: ambientCanvas,
+    context: null,
+    width: 0,
+    height: 0,
+    dpr: 1,
+    particles: [],
+    animationFrame: 0,
+    pointer: {
+      x: 0,
+      y: 0,
+      active: false,
+      down: false,
+      vx: 0,
+      vy: 0,
     },
   };
   var toastElement = null;
@@ -826,6 +844,193 @@
     toastTimer = window.setTimeout(function () {
       toast.classList.remove("visible");
     }, 1800);
+  }
+
+  function truncateText(text, limit) {
+    var value = String(text || "").replace(/\s+/g, " ").trim();
+    if (!value || value.length <= limit) {
+      return value;
+    }
+    return value.slice(0, Math.max(0, limit - 1)).trim() + "…";
+  }
+
+  function supportsAmbientScene() {
+    return !!(ambientState.canvas && ambientState.canvas.getContext);
+  }
+
+  function resizeAmbientScene() {
+    var canvas = ambientState.canvas;
+    var context;
+    var density;
+    var symbols;
+    var targetCount;
+    var index;
+
+    if (!supportsAmbientScene()) {
+      return;
+    }
+
+    context = ambientState.context || ambientState.canvas.getContext("2d");
+    if (!context) {
+      return;
+    }
+
+    ambientState.context = context;
+    ambientState.dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+    ambientState.width = window.innerWidth;
+    ambientState.height = window.innerHeight;
+    canvas.width = Math.floor(ambientState.width * ambientState.dpr);
+    canvas.height = Math.floor(ambientState.height * ambientState.dpr);
+    context.setTransform(ambientState.dpr, 0, 0, ambientState.dpr, 0, 0);
+
+    density = Math.max(36, Math.min(ambientState.width / 24, 96));
+    symbols = ["0", "1", "A", "T", "G", "C", "U", "</>", "{}", "RNA", "DNA", "[]"];
+    targetCount = Math.round(density);
+
+    if (ambientState.particles.length > targetCount) {
+      ambientState.particles.length = targetCount;
+    }
+
+    for (index = ambientState.particles.length; index < targetCount; index += 1) {
+      ambientState.particles.push({
+        x: Math.random() * ambientState.width,
+        y: Math.random() * ambientState.height,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8,
+        size: 12 + Math.random() * 12,
+        alpha: 0.22 + Math.random() * 0.4,
+        symbol: symbols[index % symbols.length],
+        spin: (Math.random() - 0.5) * 0.01,
+        angle: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+
+  function updateAmbientPointer(event) {
+    var nextX = event.clientX;
+    var nextY = event.clientY;
+    ambientState.pointer.vx = nextX - ambientState.pointer.x;
+    ambientState.pointer.vy = nextY - ambientState.pointer.y;
+    ambientState.pointer.x = nextX;
+    ambientState.pointer.y = nextY;
+    ambientState.pointer.active = true;
+  }
+
+  function drawAmbientScene() {
+    var context = ambientState.context;
+    var pointer = ambientState.pointer;
+    var width = ambientState.width;
+    var height = ambientState.height;
+    var particles = ambientState.particles;
+    var index;
+    var otherIndex;
+
+    if (!context || !width || !height) {
+      return;
+    }
+
+    context.clearRect(0, 0, width, height);
+
+    for (index = 0; index < particles.length; index += 1) {
+      var particle = particles[index];
+      var dx;
+      var dy;
+      var distance;
+      var influence;
+
+      if (pointer.active) {
+        dx = pointer.x - particle.x;
+        dy = pointer.y - particle.y;
+        distance = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (distance < 180) {
+          influence = (1 - distance / 180) * (pointer.down ? 0.32 : 0.12);
+          particle.vx += (dx / distance) * influence + pointer.vx * 0.0035 * influence;
+          particle.vy += (dy / distance) * influence + pointer.vy * 0.0035 * influence;
+        }
+        if (distance < 42) {
+          particle.vx -= (dx / distance) * 0.24;
+          particle.vy -= (dy / distance) * 0.24;
+        }
+      }
+
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      particle.vx *= 0.985;
+      particle.vy *= 0.985;
+      particle.angle += particle.spin;
+
+      if (particle.x < -20 || particle.x > width + 20) {
+        particle.vx *= -1;
+        particle.x = Math.max(0, Math.min(width, particle.x));
+      }
+      if (particle.y < -20 || particle.y > height + 20) {
+        particle.vy *= -1;
+        particle.y = Math.max(0, Math.min(height, particle.y));
+      }
+
+      context.save();
+      context.translate(particle.x, particle.y);
+      context.rotate(particle.angle);
+      context.font = "600 " + particle.size + "px Aptos, Segoe UI, sans-serif";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillStyle = document.body.getAttribute("data-theme") === "dark"
+        ? "rgba(146, 199, 255, " + particle.alpha + ")"
+        : "rgba(0, 91, 170, " + particle.alpha + ")";
+      context.fillText(particle.symbol, 0, 0);
+      context.restore();
+    }
+
+    context.lineWidth = 1;
+    for (index = 0; index < particles.length; index += 1) {
+      var from = particles[index];
+      for (otherIndex = index + 1; otherIndex < particles.length; otherIndex += 1) {
+        var to = particles[otherIndex];
+        var lineDx = from.x - to.x;
+        var lineDy = from.y - to.y;
+        var lineDistance = Math.sqrt(lineDx * lineDx + lineDy * lineDy);
+        if (lineDistance > 110) {
+          continue;
+        }
+        context.strokeStyle = document.body.getAttribute("data-theme") === "dark"
+          ? "rgba(142, 199, 255, " + (0.12 * (1 - lineDistance / 110)) + ")"
+          : "rgba(0, 91, 170, " + (0.09 * (1 - lineDistance / 110)) + ")";
+        context.beginPath();
+        context.moveTo(from.x, from.y);
+        context.lineTo(to.x, to.y);
+        context.stroke();
+      }
+    }
+
+    ambientState.animationFrame = window.requestAnimationFrame(drawAmbientScene);
+  }
+
+  function bindAmbientScene() {
+    if (!supportsAmbientScene()) {
+      return;
+    }
+
+    resizeAmbientScene();
+    window.addEventListener("resize", resizeAmbientScene);
+    document.addEventListener(
+      "pointermove",
+      function (event) {
+        updateAmbientPointer(event);
+      },
+      { passive: true }
+    );
+    document.addEventListener("pointerdown", function (event) {
+      ambientState.pointer.down = true;
+      updateAmbientPointer(event);
+    });
+    document.addEventListener("pointerup", function () {
+      ambientState.pointer.down = false;
+    });
+    document.addEventListener("pointerleave", function () {
+      ambientState.pointer.active = false;
+      ambientState.pointer.down = false;
+    });
+    drawAmbientScene();
   }
 
   function copyText(text) {
@@ -2065,13 +2270,13 @@
     var fallback = HIGHLIGHT_FALLBACKS[topic];
     var data = item || fallback;
     var imageUrl = data.image_url || runtimeBranding.chatLogoUrl || "/static/assets/iibf_logo.png?v=20260426a";
-    var title = escapeHtml(data.title || fallback.title);
+    var title = escapeHtml(truncateText(data.title || fallback.title, 92));
     var meta = [data.date || "", data.category || ""]
       .filter(function (value) {
         return !!value;
       })
       .join(" • ");
-    var summary = escapeHtml(data.summary || fallback.summary || "");
+    var summary = escapeHtml(truncateText(data.summary || fallback.summary || "", 132));
 
     return (
       '<a class="highlight-link" href="' +
@@ -2265,6 +2470,7 @@
   function init() {
     document.body.classList.add("js-ready");
     loadTheme();
+    bindAmbientScene();
     bindCustomCursor();
     state.clientId = ensureClientId();
     ensureConversationState();

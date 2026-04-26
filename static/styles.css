@@ -99,6 +99,8 @@ a {
   display: flex;
   flex-direction: column;
   overflow: visible;
+  position: relative;
+  z-index: 1;
 }
 
 body.js-ready .app-shell {
@@ -117,6 +119,21 @@ body.js-ready .app-shell {
   background: var(--surface);
   box-shadow: var(--shadow);
   backdrop-filter: blur(14px);
+}
+
+.ambient-scene {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.9;
 }
 
 .topbar-start,
@@ -344,7 +361,7 @@ body[data-theme="dark"] .status {
   width: min(1460px, calc(100% - 28px));
   margin: 18px auto 18px;
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.58fr);
+  grid-template-columns: minmax(0, 1.82fr) minmax(320px, 0.54fr);
   gap: 14px;
   flex: 0 0 auto;
   min-height: 0;
@@ -370,11 +387,13 @@ body[data-theme="dark"] .status {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto auto;
   overflow: hidden;
+  position: sticky;
+  top: 18px;
 }
 
 .highlights-panel {
   display: grid;
-  grid-template-rows: repeat(3, minmax(0, 248px));
+  grid-template-rows: repeat(3, minmax(0, 214px));
   gap: 10px;
   min-height: auto;
   overflow: hidden;
@@ -714,9 +733,8 @@ body[data-theme="dark"] .highlight-meta {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 0;
   flex: 1 1 auto;
-  min-height: 420px;
+  min-height: 0;
   height: auto;
   overflow: hidden;
   isolation: isolate;
@@ -1112,11 +1130,11 @@ body[data-theme="dark"] .voice-button {
 .highlight-link {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 8px;
+  gap: 7px;
   width: 100%;
   height: 100%;
   min-height: 0;
-  padding: 11px;
+  padding: 10px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: linear-gradient(180deg, var(--surface-strong) 0%, var(--blue-softer) 100%);
@@ -1127,14 +1145,14 @@ body[data-theme="dark"] .voice-button {
 .highlight-body {
   display: grid;
   align-content: start;
-  gap: 8px;
+  gap: 6px;
   min-height: 0;
 }
 
 .highlight-image {
   width: 100%;
-  aspect-ratio: 16 / 6.2;
-  border-radius: 14px;
+  aspect-ratio: 16 / 5.2;
+  border-radius: 12px;
   overflow: hidden;
   background: var(--surface-soft);
 }
@@ -1148,23 +1166,27 @@ body[data-theme="dark"] .voice-button {
 
 .highlight-meta {
   color: var(--blue-main);
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 760;
 }
 
 .highlight-link h3 {
-  font-size: 0.94rem;
-  line-height: 1.38;
+  font-size: 0.92rem;
+  line-height: 1.34;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .highlight-summary {
   color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.5;
+  font-size: 0.82rem;
+  line-height: 1.42;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
 }
 
 .highlight-empty {
@@ -1409,6 +1431,11 @@ body::-webkit-scrollbar-thumb {
     overflow-y: auto;
   }
 
+  .chat-panel {
+    position: static;
+    top: auto;
+  }
+
   .highlights-panel {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     grid-template-rows: none;
@@ -1460,6 +1487,7 @@ body::-webkit-scrollbar-thumb {
     min-height: 72vh;
     height: auto;
     max-height: none;
+    position: static;
   }
 
   .voice-button {
