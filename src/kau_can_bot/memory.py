@@ -217,14 +217,14 @@ def user_role_name(user_memory: dict[str, Any], language: str) -> str:
     return _role_for_language(role_key, language)
 
 
-def build_user_summary(user_memory: dict[str, Any], language: str) -> str:
+def build_user_summary(user_memory: dict[str, Any], language: str, include_name: bool = False) -> str:
     name = user_display_name(user_memory)
     department = user_department_name(user_memory, language)
     role = user_role_name(user_memory, language)
     facts = user_memory.get("facts", [])
 
     parts: list[str] = []
-    if name:
+    if include_name and name:
         parts.append(name)
     if department and role:
         parts.append(

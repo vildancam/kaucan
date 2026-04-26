@@ -1865,31 +1865,22 @@ def _is_classroom_context_query(normalized_query: str) -> bool:
 
 
 def _memory_saved_shortcut(memory_update, language: str, user_memory: dict[str, object]) -> ComposedAnswer:
-    display_name = user_display_name(user_memory)
     saved_labels: list[str] = []
-    profile_label_map = {
-        "name": _text_for_language(language, "ad", "name"),
-        "preferred_name": _text_for_language(language, "hitap adı", "preferred name"),
-        "department": _text_for_language(language, "bölüm", "department"),
-        "role": _text_for_language(language, "rol", "role"),
-    }
-    for key in ("name", "preferred_name", "department", "role"):
-        value = clean_text(memory_update.profile_updates.get(key, ""))
-        if value:
-            saved_labels.append(f"{profile_label_map[key]}: {value}")
+    if clean_text(memory_update.profile_updates.get("name", "")):
+        saved_labels.append(_text_for_language(language, "ad bilgisi", "name information"))
+    if clean_text(memory_update.profile_updates.get("preferred_name", "")):
+        saved_labels.append(_text_for_language(language, "hitap tercihi", "preferred address"))
+    if department_value := clean_text(memory_update.profile_updates.get("department", "")):
+        saved_labels.append(
+            f"{_text_for_language(language, 'bölüm', 'department')}: {department_value}"
+        )
+    if role_value := clean_text(memory_update.profile_updates.get("role", "")):
+        saved_labels.append(
+            f"{_text_for_language(language, 'rol', 'role')}: {role_value}"
+        )
 
     saved_labels.extend(memory_update.facts[:2])
     summary = ", ".join(saved_labels[:3])
-
-    if display_name:
-        return ComposedAnswer(
-            text=_text_for_language(
-                language,
-                f"✅ Tamam {display_name}, bu bilgi belleğe kaydedildi." + (f" {summary}" if summary else ""),
-                f"✅ Alright {display_name}, I saved that to memory." + (f" {summary}" if summary else ""),
-            ),
-            sources=[],
-        )
 
     return ComposedAnswer(
         text=_text_for_language(
@@ -1953,8 +1944,17 @@ def _memory_recall_shortcut(
         )
 
     if any(term in normalized for term in ("beni taniyor musun", "ben kimim", "do you know me", "who am i", "do you remember me")):
-        if not summary:
+        if not summary and not display_name:
             return _missing_memory_answer(language)
+        if not summary:
+            return ComposedAnswer(
+                text=_text_for_language(
+                    language,
+                    "😊 Evet, daha önce paylaşılan kişisel bilgiler bellekte kayıtlı.",
+                    "😊 Yes, previously shared personal information is stored in memory.",
+                ),
+                sources=[],
+            )
         return ComposedAnswer(
             text=_text_for_language(
                 language,

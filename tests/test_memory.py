@@ -36,7 +36,8 @@ class MemoryBehaviorTests(unittest.TestCase):
         recalled = assistant.answer_with_context("Adım ne?", client_id="user-1")
 
         self.assertEqual(saved.status, "memory_saved")
-        self.assertIn("Ayşe", saved.answer)
+        self.assertNotIn("Ayşe", saved.answer)
+        self.assertIn("ad bilgisi", saved.answer.lower())
         self.assertEqual(recalled.status, "memory_recall")
         self.assertIn("Ayşe", recalled.answer)
 
@@ -76,6 +77,20 @@ class MemoryBehaviorTests(unittest.TestCase):
         self.assertNotIn("Vildan", response.answer)
         self.assertEqual(greeting.status, "greeting")
         self.assertNotIn("Vildan", greeting.answer)
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_memory_save_and_generic_recall_do_not_echo_name(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex(), settings=self.settings)
+
+        saved = assistant.answer_with_context("Benim adım Mustafa", client_id="user-5")
+        recalled = assistant.answer_with_context("Beni tanıyor musun?", client_id="user-5")
+
+        self.assertEqual(saved.status, "memory_saved")
+        self.assertNotIn("Mustafa", saved.answer)
+        self.assertIn("belle", saved.answer.lower())
+        self.assertIn(recalled.status, {"memory_recall", "memory_fact"})
+        self.assertNotIn("Mustafa", recalled.answer)
 
 
 if __name__ == "__main__":
