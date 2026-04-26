@@ -61,9 +61,9 @@ html.cursor-enhanced [role="button"] {
 
 body {
   margin: 0;
-  height: 100vh;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background:
     radial-gradient(circle at top left, rgba(0, 91, 170, 0.18), transparent 28%),
     radial-gradient(circle at bottom right, rgba(0, 59, 115, 0.12), transparent 26%),
@@ -95,11 +95,10 @@ a {
 }
 
 .app-shell {
-  height: 100vh;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 body.js-ready .app-shell {
@@ -203,9 +202,9 @@ body[data-theme="dark"] .logo-frame-merged {
 }
 
 body[data-theme="dark"] .brand-badge {
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(240, 247, 255, 0.97) 100%);
+  border-color: rgba(206, 226, 245, 0.9);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.14);
 }
 
 .brand-logo,
@@ -243,6 +242,10 @@ body[data-theme="dark"] .brand-badge {
 .brand-mark {
   margin: 0;
   color: var(--blue-main);
+}
+
+body[data-theme="dark"] .brand-mark {
+  color: #ffffff;
 }
 
 .beta-pill {
@@ -341,12 +344,12 @@ body[data-theme="dark"] .status {
   width: min(1460px, calc(100% - 28px));
   margin: 18px auto 18px;
   display: grid;
-  grid-template-columns: minmax(0, 1.16fr) minmax(360px, 0.84fr);
-  gap: 18px;
-  flex: 1;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.58fr);
+  gap: 14px;
+  flex: 0 0 auto;
   min-height: 0;
-  align-items: stretch;
-  overflow: hidden;
+  align-items: start;
+  overflow: visible;
 }
 
 .chat-panel,
@@ -361,25 +364,27 @@ body[data-theme="dark"] .status {
 
 .chat-panel {
   min-height: 0;
-  height: 100%;
-  max-height: 100%;
+  height: min(82vh, 980px);
+  min-height: 780px;
+  max-height: 980px;
   display: grid;
-  grid-template-rows: auto auto minmax(220px, 1fr) auto auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
   overflow: hidden;
 }
 
 .highlights-panel {
   display: grid;
-  grid-template-rows: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  min-height: 0;
+  grid-template-rows: repeat(3, minmax(0, 248px));
+  gap: 10px;
+  min-height: auto;
   overflow: hidden;
+  align-content: start;
 }
 
 .aside-card {
   display: grid;
-  gap: 14px;
-  padding: 16px;
+  gap: 10px;
+  padding: 12px;
 }
 
 .history-backdrop {
@@ -711,7 +716,7 @@ body[data-theme="dark"] .highlight-meta {
   flex-direction: column;
   min-height: 0;
   flex: 1 1 auto;
-  min-height: 260px;
+  min-height: 420px;
   height: auto;
   overflow: hidden;
   isolation: isolate;
@@ -970,22 +975,29 @@ body[data-theme="dark"] .feedback-actions button.selected {
 
 .typing-row {
   display: grid;
-  grid-template-columns: 46px auto;
-  gap: 12px;
-  padding: 0 20px 16px;
+  grid-template-columns: 38px auto;
+  gap: 10px;
+  padding: 0 20px 12px;
   animation: message-in 0.32s ease;
+}
+
+.typing-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
 }
 
 .typing-bubble {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   width: fit-content;
+  padding: 12px 14px;
 }
 
 .typing-bubble span {
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
   background: rgba(0, 91, 170, 0.42);
   animation: typing-bounce 1s ease infinite;
@@ -1100,11 +1112,11 @@ body[data-theme="dark"] .voice-button {
 .highlight-link {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   height: 100%;
   min-height: 0;
-  padding: 12px;
+  padding: 11px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: linear-gradient(180deg, var(--surface-strong) 0%, var(--blue-softer) 100%);
@@ -1115,14 +1127,14 @@ body[data-theme="dark"] .voice-button {
 .highlight-body {
   display: grid;
   align-content: start;
-  gap: 10px;
+  gap: 8px;
   min-height: 0;
 }
 
 .highlight-image {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 16px;
+  aspect-ratio: 16 / 6.2;
+  border-radius: 14px;
   overflow: hidden;
   background: var(--surface-soft);
 }
@@ -1136,17 +1148,23 @@ body[data-theme="dark"] .voice-button {
 
 .highlight-meta {
   color: var(--blue-main);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 760;
+}
+
+.highlight-link h3 {
+  font-size: 0.94rem;
+  line-height: 1.38;
 }
 
 .highlight-summary {
   color: var(--muted);
-  line-height: 1.55;
+  font-size: 0.88rem;
+  line-height: 1.5;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
 }
 
 .highlight-empty {
@@ -1368,6 +1386,21 @@ body[data-theme="dark"] .cursor-ring {
 
 body[data-theme="dark"] .cursor-dot {
   background: linear-gradient(135deg, #8ec7ff 0%, #3a8fe0 100%);
+}
+
+body::-webkit-scrollbar {
+  width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+  background: rgba(0, 91, 170, 0.06);
+}
+
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(0, 91, 170, 0.7) 0%, rgba(0, 59, 115, 0.82) 100%);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 @media (max-width: 1100px) {

@@ -37,7 +37,7 @@
       newChat: "Yeni Sohbet",
       deleteAll: "Tümünü Sil",
       chatEyebrow: "Sohbet",
-      chatTitle: "KAÜCAN Beta",
+      chatTitle: "KAÜCAN CHATBOT",
       clear: "Temizle",
       quickPromptsTitle: "Hızlı Sorular",
       chips: {
@@ -129,7 +129,7 @@
       newChat: "New Chat",
       deleteAll: "Delete All",
       chatEyebrow: "Chat",
-      chatTitle: "KAUCAN Beta",
+      chatTitle: "KAUCAN CHATBOT",
       clear: "Clear",
       quickPromptsTitle: "Quick Questions",
       chips: {
@@ -221,7 +221,7 @@
       newChat: "دردشة جديدة",
       deleteAll: "حذف الكل",
       chatEyebrow: "المحادثة",
-      chatTitle: "KAÜCAN Beta",
+      chatTitle: "KAÜCAN CHATBOT",
       clear: "مسح",
       quickPromptsTitle: "أسئلة سريعة",
       chips: {
