@@ -217,6 +217,28 @@ class AnswerBehaviorTests(unittest.TestCase):
 
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
     @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_library_faq_shortcut_returns_hours(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("Kütüphane hangi saatlerde açık?")
+
+        self.assertEqual(response.status, "direct_answer")
+        self.assertIn("08:00-20:00", response.answer)
+        self.assertTrue(any("kddb" in source.chunk.url.lower() for source in response.sources))
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_faculty_form_shortcut_returns_forms_page(self, _log_query, _log_interaction) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("Kayıt dondurma başvuru formu")
+
+        self.assertEqual(response.status, "direct_answer")
+        self.assertIn("Kayıt Dondurma Başvuru Formu", response.answer)
+        self.assertTrue(any("sayfaYeni17988" in source.chunk.url for source in response.sources))
+
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
     def test_smalltalk_is_supported(self, _log_query, _log_interaction) -> None:
         assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
 

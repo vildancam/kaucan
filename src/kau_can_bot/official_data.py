@@ -21,6 +21,58 @@ FACULTY_EVENTS_URL = "https://www.kafkas.edu.tr/iibf/tr/tumEtkinlikler2"
 FACULTY_ROOT_URL = "https://www.kafkas.edu.tr/iibf"
 SENATE_URL = "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
 FACULTY_PLACEHOLDER_IMAGE = "https://www.kafkas.edu.tr/imgs/haber.png"
+FACULTY_DEPARTMENT_ROOT_OVERRIDES = {
+    "iktisat": "https://www.kafkas.edu.tr/iibfikt#",
+    "isletme": "https://www.kafkas.edu.tr/iibfisletme",
+    "sbky": "https://www.kafkas.edu.tr/iibfsbky",
+    "sbui": "https://www.kafkas.edu.tr/iibfsbui/tr/sayfaYeni16932",
+    "utl": "https://www.kafkas.edu.tr/iibfutl",
+    "sosyal-hizmet": "https://www.kafkas.edu.tr/iibfsh",
+    "ybs": "https://www.kafkas.edu.tr/iibfybs",
+    "ety": "https://www.kafkas.edu.tr/iibfety",
+}
+FACULTY_MANUAL_NAVIGATION = (
+    {"title": "Dekanımızın Mesajı", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18044"},
+    {"title": "Tanıtım", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17978"},
+    {"title": "Misyon & Vizyon", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17979"},
+    {"title": "Dekanlarımız", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18031"},
+    {"title": "Yönetim", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17980"},
+    {"title": "Organizasyon Şeması", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17981"},
+    {"title": "Ders Programları", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17986"},
+    {"title": "Sıkça Sorulan Sorular (SSS)", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17990"},
+    {"title": "Akademik Personel", "url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"},
+    {"title": "İdari Personel", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17993"},
+    {"title": "Görev Tanımları", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17994"},
+    {"title": "Fakülte Kurulu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17996"},
+    {"title": "Fakülte Yönetim Kurulu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17997"},
+    {"title": "Fakülte Danışma Kurulu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18045"},
+    {"title": "Akademik Gelişim Komisyonu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18047"},
+    {"title": "Sınav ve Ders Programı Komisyonu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18048"},
+    {"title": "Kurumsal İletişim Komisyonu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18049"},
+    {"title": "Dijital Dönüşüm Komisyonu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18050"},
+    {"title": "Hukuk İşleri Komisyonu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18051"},
+    {"title": "Kültür-Sanat Komisyonu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18052"},
+    {"title": "Spor ve Sağlık Komisyonu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18053"},
+    {"title": "Mezun Takip Komisyonu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18054"},
+    {"title": "Fakülte Yönetim Kurulu Kararları", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18035"},
+    {"title": "Fakülte Kurulu Kararları", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18036"},
+    {"title": "KAÜİİBF Dergisi", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18063"},
+    {"title": "Fakülte Bülteni", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18180"},
+    {"title": "Birim Faaliyet Raporu", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18001"},
+    {"title": "İş Akış Süreçleri", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18002"},
+    {"title": "Öğrenci Disiplin Soruşturma Formları", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18064"},
+    {"title": "Formlar", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17988"},
+    {"title": "Dekana Sor", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18817"},
+    {"title": "İletişim", "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18034"},
+    {"title": "İktisat", "url": "https://www.kafkas.edu.tr/iibfikt#"},
+    {"title": "İşletme", "url": "https://www.kafkas.edu.tr/iibfisletme"},
+    {"title": "Siyaset Bilimi ve Kamu Yönetimi", "url": "https://www.kafkas.edu.tr/iibfsbky"},
+    {"title": "Siyaset Bilimi ve Uluslararası İlişkiler", "url": "https://www.kafkas.edu.tr/iibfsbui/tr/sayfaYeni16932"},
+    {"title": "Uluslararası Ticaret ve Lojistik", "url": "https://www.kafkas.edu.tr/iibfutl"},
+    {"title": "Sosyal Hizmet", "url": "https://www.kafkas.edu.tr/iibfsh"},
+    {"title": "Yönetim Bilişim Sistemleri", "url": "https://www.kafkas.edu.tr/iibfybs"},
+    {"title": "Elektronik Ticaret ve Yönetimi", "url": "https://www.kafkas.edu.tr/iibfety"},
+)
 
 CACHE_PATH = DATA_DIR / "official_snapshot.json"
 FILE_TTL_SECONDS = 60 * 60 * 6
@@ -433,7 +485,7 @@ def _parse_faculty_navigation(soup: BeautifulSoup, source_url: str) -> list[dict
             }
         )
         seen_urls.add(url)
-    return entries
+    return _merge_manual_navigation(entries)
 
 
 def _looks_navigation_candidate(title: str, url: str) -> bool:
@@ -867,6 +919,10 @@ def _hydrate_snapshot(snapshot: dict) -> dict:
             changed = True
         except requests.RequestException:
             snapshot.setdefault("faculty_navigation", [])
+    merged_navigation = _merge_manual_navigation(snapshot.get("faculty_navigation", []))
+    if len(merged_navigation) != len(snapshot.get("faculty_navigation", [])):
+        snapshot["faculty_navigation"] = merged_navigation
+        changed = True
 
     for key, department in KNOWN_DEPARTMENTS.items():
         if key not in departments:
@@ -875,8 +931,11 @@ def _hydrate_snapshot(snapshot: dict) -> dict:
                 "name_tr": department["name_tr"],
                 "name_en": department["name_en"],
                 "aliases": list(department["aliases"]),
-                "root_url": f"https://www.kafkas.edu.tr/{department['root_slug']}",
-                "important_links": _default_department_links(f"https://www.kafkas.edu.tr/{department['root_slug']}", key),
+                "root_url": FACULTY_DEPARTMENT_ROOT_OVERRIDES.get(key, f"https://www.kafkas.edu.tr/{department['root_slug']}"),
+                "important_links": _default_department_links(
+                    FACULTY_DEPARTMENT_ROOT_OVERRIDES.get(key, f"https://www.kafkas.edu.tr/{department['root_slug']}"),
+                    key,
+                ),
                 "overview": "",
                 "personnel": [],
                 "announcements": [],
@@ -897,6 +956,7 @@ def _hydrate_snapshot(snapshot: dict) -> dict:
 def _hydrate_department(snapshot: dict, key: str, department_snapshot: dict) -> bool:
     changed = False
     reference = KNOWN_DEPARTMENTS.get(key, {})
+    manual_root_url = FACULTY_DEPARTMENT_ROOT_OVERRIDES.get(key, "")
 
     department_snapshot.setdefault("key", key)
     if not department_snapshot.get("name_tr") and reference.get("name_tr"):
@@ -908,13 +968,20 @@ def _hydrate_department(snapshot: dict, key: str, department_snapshot: dict) -> 
     if not department_snapshot.get("aliases"):
         department_snapshot["aliases"] = list(reference.get("aliases", ()))
         changed = True
-    if not department_snapshot.get("root_url") and reference.get("root_slug"):
+    if manual_root_url and department_snapshot.get("root_url") != manual_root_url:
+        department_snapshot["root_url"] = manual_root_url
+        changed = True
+    elif not department_snapshot.get("root_url") and reference.get("root_slug"):
         department_snapshot["root_url"] = f"https://www.kafkas.edu.tr/{reference['root_slug']}"
         changed = True
+    expected_links = _default_department_links(department_snapshot["root_url"], key) if department_snapshot.get("root_url") else {}
     if not department_snapshot.get("important_links"):
-        department_snapshot["important_links"] = _default_department_links(department_snapshot["root_url"], key)
+        department_snapshot["important_links"] = expected_links
         changed = True
-    if not department_snapshot.get("overview"):
+    elif expected_links and department_snapshot.get("important_links") != expected_links:
+        department_snapshot["important_links"] = expected_links
+        changed = True
+    if changed or not department_snapshot.get("overview"):
         department_snapshot["overview"] = _build_department_overview(
             department_snapshot.get("name_tr", reference.get("name_tr", "Bölüm")),
             department_snapshot.get("important_links", {}),
@@ -944,6 +1011,41 @@ def _persist_snapshot(snapshot: dict) -> None:
     CACHE_PATH.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2), encoding="utf-8")
     _memory_snapshot = snapshot
     _memory_loaded_at = time.time()
+
+
+def _merge_manual_navigation(entries: list[dict]) -> list[dict]:
+    merged: list[dict] = []
+    seen_urls: set[str] = set()
+
+    for entry in entries:
+        url = clean_text(entry.get("url", ""))
+        title = clean_text(entry.get("title", ""))
+        if not url or not title or url in seen_urls:
+            continue
+        merged.append(
+            {
+                "title": title,
+                "url": url,
+                "normalized_title": normalize_for_matching(entry.get("normalized_title") or title),
+            }
+        )
+        seen_urls.add(url)
+
+    for entry in FACULTY_MANUAL_NAVIGATION:
+        url = clean_text(entry.get("url", ""))
+        title = clean_text(entry.get("title", ""))
+        if not url or not title or url in seen_urls:
+            continue
+        merged.append(
+            {
+                "title": title,
+                "url": url,
+                "normalized_title": normalize_for_matching(title),
+            }
+        )
+        seen_urls.add(url)
+
+    return merged
 
 
 def _looks_rate_limited(text: str, final_url: str = "") -> bool:

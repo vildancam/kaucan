@@ -142,6 +142,144 @@ DIRECT_SERVICE_LINKS = (
         "terms": ("telefon rehberi", "rehber", "telefon listesi", "phone directory", "directory"),
     },
 )
+LIBRARY_URL = "https://www.kafkas.edu.tr/kddb/TR/default.aspx"
+FACULTY_FORMS_URL = "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17988"
+LIBRARY_FAQ_ENTRIES = (
+    {
+        "terms": ("kutuphane hangi saatlerde acik", "kütüphane hangi saatlerde açık", "kutuphane saat", "library hours"),
+        "tr": "📚 Kütüphane eğitim-öğretim döneminde hafta içi 08:00-20:00, yaz tatili döneminde hafta içi 08:00-17:00 saatleri arasında açıktır.",
+        "en": "📚 The library is open on weekdays from 08:00 to 20:00 during the academic term and from 08:00 to 17:00 during the summer break.",
+        "ar": "📚 تكون المكتبة مفتوحة في أيام الأسبوع من 08:00 إلى 20:00 خلال الفصل الدراسي، ومن 08:00 إلى 17:00 خلال العطلة الصيفية.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("kutuphane telefon", "kutuphane e posta", "kutuphane email", "library phone", "library email"),
+        "tr": "📞 Kütüphanedeki telefon numaraları ve ilgili birimlerin e-posta adresleri için resmi kütüphane sayfasındaki iletişim bilgileri kullanılabilir.",
+        "en": "📞 The official library page can be used to review the phone numbers and email addresses of the relevant units.",
+        "ar": "📞 يمكن مراجعة أرقام الهاتف وعناوين البريد الإلكتروني للوحدات المعنية عبر الصفحة الرسمية للمكتبة.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("kutuphaneyi kullanabilir miyim", "ogrencisi degilim", "mensubu degilim", "not a student", "not university member"),
+        "tr": "📚 Kafkas Üniversitesi mensubu veya öğrencisi olmayan kişiler kütüphane içinde kaynakları kullanabilir; ancak ödünç alma hizmetinden yararlanamaz.",
+        "en": "📚 A person who is not a member or student of Kafkas University may use the resources inside the library, but cannot use the borrowing service.",
+        "ar": "📚 يمكن لغير منتسبي أو طلاب جامعة قفقاس استخدام المصادر داخل المكتبة، لكن لا يمكنهم الاستفادة من خدمة الإعارة.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("aradigim kitabi yerinde bulamazsam", "kitabi bulamazsam", "book not on shelf", "cannot find book"),
+        "tr": "📚 Katalog taramasındaki “durum” alanından kitabın rafta mı yoksa ödünçte mi olduğu kontrol edilebilir. Kitap rafta görünüp bulunamıyorsa, yeni iade edilmiş ve yerleştirme sürecinde olabilir; bu durumda Ödünç Verme Bölümü’ne başvurulmalıdır.",
+        "en": "📚 The “status” field in the catalog shows whether the book is on the shelf or on loan. If it appears on the shelf but cannot be found, it may be in the shelving process and the Circulation Desk should be contacted.",
+        "ar": "📚 يمكن التحقق من حالة الكتاب عبر خانة “الحالة” في الفهرس. وإذا ظهر على الرف ولم يُعثر عليه، فقد يكون في مرحلة إعادة الترتيب، وعندها ينبغي مراجعة قسم الإعارة.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("kimde oldugunu ogrenebilir miyim", "kimin uzerinde", "who borrowed the book"),
+        "tr": "📚 Hayır. Kütüphanedeki ödünç bilgileri üçüncü kişilerle paylaşılmaz.",
+        "en": "📚 No. Borrowing information is not shared with third parties.",
+        "ar": "📚 لا. معلومات الإعارة لا تُشارك مع أطراف ثالثة.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("en fazla kac kitap", "odunc limiti", "kaç kitap ödünç", "loan limit", "borrow limit"),
+        "tr": "📚 Ödünç sınırları şöyledir: akademik personel 10 kitap 30 gün, idari personel 10 kitap 30 gün, doktora öğrencileri 5 kitap 15 gün, yüksek lisans öğrencileri 5 kitap 15 gün, lisans ve önlisans öğrencileri 5 kitap 15 gün.",
+        "en": "📚 Loan limits are: academic staff 10 books for 30 days, administrative staff 10 books for 30 days, PhD students 5 books for 15 days, master's students 5 books for 15 days, and undergraduate/associate students 5 books for 15 days.",
+        "ar": "📚 حدود الإعارة هي: 10 كتب لمدة 30 يومًا لأعضاء الهيئة الأكاديمية، و10 كتب لمدة 30 يومًا للموظفين الإداريين، و5 كتب لمدة 15 يومًا لطلبة الدكتوراه والماجستير والبكالوريوس والمعاهد.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("baskasi benim adima kitap odunc alabilir mi", "kimligimi versem", "borrow with my id"),
+        "tr": "📚 Hayır. Ödünç işlemi sırasında kütüphane kimliği gösterilmelidir; kimlik başka birine aitse ödünç verilmez.",
+        "en": "📚 No. The library ID must be shown during borrowing; if the ID belongs to someone else, the loan is not issued.",
+        "ar": "📚 لا. يجب إبراز هوية المكتبة عند الإعارة، وإذا كانت الهوية تخص شخصًا آخر فلن تتم الإعارة.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("kac kitap odunc aldim", "iade tarihlerini nasil ogrenir", "uzerimdekiler", "loaned books", "due dates"),
+        "tr": "📚 Kütüphanedeyken ödünç verme bankosundan bilgi alınabilir. Kütüphane dışındayken katalog tarama bölümünde özel oturum açıp “üzerimdekiler” alanından ödünçteki kitaplar ve iade tarihleri görülebilir.",
+        "en": "📚 This can be learned at the circulation desk in person, or by signing in to the catalog and checking the “items on loan” section.",
+        "ar": "📚 يمكن معرفة ذلك من مكتب الإعارة داخل المكتبة، أو عبر تسجيل الدخول إلى الفهرس ومراجعة قسم “المواد المعارة”.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("sure uzatabilir miyim", "uzatma islemi", "renew book", "extend due date"),
+        "tr": "📚 Evet. Katalog tarama bölümünden özel oturum açılarak kitabın yanındaki uzatma butonuyla süre uzatılabilir. Ancak iade tarihine 2 gün kala uzatma butonu aktif olmaz ve gecikmiş kitap varsa diğerleri de uzatılamaz.",
+        "en": "📚 Yes. After signing in to the catalog, the renewal button next to the item can be used. However, it is not active within the last 2 days before the due date, and overdue items block other renewals.",
+        "ar": "📚 نعم. يمكن تمديد المدة من خلال تسجيل الدخول إلى الفهرس واستخدام زر التمديد، لكن الزر لا يكون نشطًا قبل يومين من موعد الإعادة، كما أن وجود مادة متأخرة يمنع تمديد المواد الأخرى.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("sureli yayinlar referans kaynaklari haritalar odunc", "haritalari odunc alabilir miyim", "reference materials", "periodicals"),
+        "tr": "📚 Süreli yayınlar, haritalar ve referans kaynakları ödünç verilmez. Bu kaynaklar kütüphane içinde kullanılabilir ve gerekli bölümlerin fotokopisi alınabilir.",
+        "en": "📚 Periodicals, maps, and reference sources are not loaned. They can be used inside the library and the needed sections may be photocopied.",
+        "ar": "📚 لا تُعار الدوريات والخرائط والمصادر المرجعية. يمكن استخدامها داخل المكتبة ويمكن تصوير الأجزاء المطلوبة.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("gecmiste odunc alip iade ettigim", "iadelerim", "past loans", "returned books history"),
+        "tr": "📚 Kütüphane web sitesindeki katalog tarama bölümünden oturum açıldıktan sonra “iadelerim” alanından geçmişte ödünç alınıp iade edilen kitaplar görülebilir.",
+        "en": "📚 After signing in to the catalog on the library website, past borrowed and returned books can be seen in the “my returns” section.",
+        "ar": "📚 بعد تسجيل الدخول إلى الفهرس في موقع المكتبة، يمكن الاطلاع على الكتب التي أُعيرت وأُعيدت سابقًا من قسم “إعاداتي”.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("bulamadigim kitaba nasil ulasabilirim", "makaleye nasil ulasabilirim", "ill", "kutuphaneler arasi odunc", "inter library loan"),
+        "tr": "📚 KAÜ Kütüphanesi, Kütüphaneler Arası Ödünç Servisi (ILL) ile aranan materyali diğer üniversite ve araştırma kütüphanelerinden getirtebilmektedir.",
+        "en": "📚 KAU Library can request the needed material from other university and research libraries through the Inter Library Loan (ILL) service.",
+        "ar": "📚 تستطيع مكتبة الجامعة طلب المادة المطلوبة من مكتبات الجامعات والبحث الأخرى عبر خدمة الإعارة بين المكتبات (ILL).",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("iade tarihi gecmis kayip materyal", "kaybedilmis materyal", "overdue lost material"),
+        "tr": "📚 İade tarihi geçmiş veya kaybedilmiş materyaller için Kütüphane ve Dokümantasyon Daire Başkanlığı Yönergesinin ilgili maddeleri uygulanır.",
+        "en": "📚 For overdue or lost materials, the relevant provisions of the Library and Documentation Department Directive are applied.",
+        "ar": "📚 بالنسبة للمواد المتأخرة أو المفقودة، تُطبق المواد ذات الصلة من توجيه رئاسة دائرة المكتبة والتوثيق.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("elektronik kaynaklarda arastirma yapmayi nasil ogrenebilirim", "veritabani yardim", "database help", "research in electronic resources"),
+        "tr": "📚 İlgili veritabanının sayfasındaki “yardım” alanından kullanım kılavuzuna erişilebilir. Daha ayrıntılı bilgi ve erişilemeyen makale/literatürler için Uzman Abayet AKBAYIR’a başvurulabilir.",
+        "en": "📚 The guide can be opened from the “help” section of the related database page. For more detailed support and inaccessible articles or literature, Specialist Abayet AKBAYIR can be contacted.",
+        "ar": "📚 يمكن الوصول إلى الدليل من قسم “المساعدة” في صفحة قاعدة البيانات المعنية. وللدعم الأكثر تفصيلًا أو للمقالات والمراجع غير المتاحة يمكن مراجعة الأخصائي أبايت أكباير.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("kutuphanede bilgisayar var mi", "kablosuz internet", "fotokopi", "library computers", "wifi in library"),
+        "tr": "📚 Girişte ödünç verme bankosunun yanındaki bilgisayarlar katalog tarama için ayrılmıştır. Kütüphanede kablosuz internet erişimi vardır; taşınabilir bilgisayarlar kullanılabilir. İnternet kafe ve fotokopi hizmeti de sunulmaktadır.",
+        "en": "📚 The computers near the circulation desk are reserved for catalog search. Wireless internet is available, personal laptops can be used, and internet cafe and photocopy services are also available.",
+        "ar": "📚 الحواسيب الموجودة بجانب مكتب الإعارة مخصصة للبحث في الفهرس. كما تتوفر خدمة الإنترنت اللاسلكي، ويمكن استخدام الحواسيب المحمولة، إضافة إلى خدمة الإنترنت كافيه والتصوير.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("yiyecek icecek getirebilir miyim", "kutuphaneye yiyecek", "food in library", "drink in library"),
+        "tr": "📚 Kütüphaneye şişe suyu dışında yiyecek ve içecek getirmek yasaktır.",
+        "en": "📚 Bringing food or drinks other than bottled water into the library is prohibited.",
+        "ar": "📚 يُمنع إدخال المأكولات والمشروبات إلى المكتبة باستثناء المياه المعبأة.",
+        "sources": (("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),),
+    },
+    {
+        "terms": ("fikri haklar", "copyright", "eserlerin kullanimi", "u.s. copyright office", "mevzuat"),
+        "tr": "📚 Uluslararası elektronik kaynaklar için U.S. Copyright Office, Türkiye’de üretilmiş eserler için ise ilgili mevzuat bağlantısı esas alınabilir.",
+        "en": "📚 For international electronic resources, the U.S. Copyright Office can be used; for works produced in Türkiye, the relevant legislation link should be consulted.",
+        "ar": "📚 بالنسبة للمصادر الإلكترونية الدولية يمكن الرجوع إلى U.S. Copyright Office، أما الأعمال المنتجة في تركيا فيُرجع فيها إلى رابط التشريع ذي الصلة.",
+        "sources": (
+            ("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL),
+            ("U.S. Copyright Office", "https://www.copyright.gov/"),
+            ("Fikir ve Sanat Eserleri Mevzuatı", "http://www.mevzuat.adalet.gov.tr/html/957.html"),
+        ),
+    },
+)
+FACULTY_FORM_ENTRIES = (
+    ("Yaz Okulunda Başka Üniversitede Ders Alma Başvuru Formu", ("yaz okulunda baska universitede ders alma", "yaz okulu formu")),
+    ("Sınav Notu İtiraz Formu", ("sinav notu itiraz", "not itiraz formu")),
+    ("Yatay Geçiş Yapmada Engel Yoktur Formu", ("yatay gecis yapmada engel yoktur", "engel yoktur formu")),
+    ("Mazeret Sınavı Başvuru Formu", ("mazeret sinavi basvuru", "mazeret sınavı başvuru")),
+    ("Kredi Transferi ve İntibak Başvuru Formu", ("kredi transferi", "intibak basvuru")),
+    ("Kayıt Silme Talep Formu", ("kayit silme", "kayıt silme talep")),
+    ("Kayıt Dondurma Başvuru Formu", ("kayit dondurma", "kayıt dondurma başvuru")),
+    ("Taahhütname (Ek Madde-1 ile daha yatay geçiş yapmadığına dair)", ("taahhutname", "ek madde 1", "taahhütname")),
+    ("Mazeret Nedeni ile Ders Kaydı Yapma Dilekçesi", ("mazeret nedeni ile ders kaydi", "ders kaydi yapma dilekcesi", "ders kaydı yapma dilekçesi")),
+)
 CLASSROOM_LOCATION_GROUPS = (
     {
         "codes": ("101", "102", "103", "104"),
@@ -824,6 +962,36 @@ class WebsiteGroundedAssistant:
                 sources=location_response.sources,
                 interaction_id=interaction.id,
                 status="direct_link",
+            )
+
+        library_response = _library_faq_shortcut(original_query or normalized_query, language)
+        if library_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                library_response.text,
+                library_response.sources,
+                "direct_answer",
+            )
+            return AssistantResponse(
+                answer=library_response.text,
+                sources=library_response.sources,
+                interaction_id=interaction.id,
+                status="direct_answer",
+            )
+
+        form_response = _faculty_form_shortcut(original_query or normalized_query, language)
+        if form_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                form_response.text,
+                form_response.sources,
+                "direct_answer",
+            )
+            return AssistantResponse(
+                answer=form_response.text,
+                sources=form_response.sources,
+                interaction_id=interaction.id,
+                status="direct_answer",
             )
 
         datetime_response = _datetime_shortcut(original_query or normalized_query, language)
@@ -1575,6 +1743,77 @@ def _location_shortcut(query: str, language: str) -> ComposedAnswer | None:
         ),
         sources=_build_link_sources([MAPS_LINK]),
     )
+
+
+def _library_faq_shortcut(query: str, language: str) -> ComposedAnswer | None:
+    normalized = _query_key(query)
+    if not any(term in normalized for term in ("kutuphane", "kütüphane", "library")):
+        return None
+
+    for entry in LIBRARY_FAQ_ENTRIES:
+        if any(_query_key(term) in normalized for term in entry["terms"]):
+            return ComposedAnswer(
+                text=_text_for_language(language, entry["tr"], entry["en"], entry["ar"]),
+                sources=_build_link_sources(list(entry["sources"])),
+            )
+
+    if any(term in normalized for term in ("sss", "sikca sorulan sorular", "sıkça sorulan sorular", "faq")):
+        rows = [
+            "• Açılış saatleri",
+            "• Ödünç sınırları ve süreler",
+            "• Uzatma işlemi",
+            "• Kütüphaneler arası ödünç (ILL)",
+            "• Bilgisayar, internet ve fotokopi",
+            "• Yiyecek-içecek kuralları",
+        ]
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                "📚 Kütüphane SSS kapsamında öne çıkan başlıklar şöyledir:\n" + "\n".join(rows),
+                "📚 The highlighted topics in the library FAQ are:\n" + "\n".join(rows),
+                "📚 الموضوعات البارزة في الأسئلة الشائعة للمكتبة هي:\n" + "\n".join(rows),
+            ),
+            sources=_build_link_sources([("Kafkas Üniversitesi Kütüphanesi", LIBRARY_URL)]),
+        )
+
+    return None
+
+
+def _faculty_form_shortcut(query: str, language: str) -> ComposedAnswer | None:
+    normalized = _query_key(query)
+    if not normalized:
+        return None
+
+    matched_titles = [
+        title
+        for title, aliases in FACULTY_FORM_ENTRIES
+        if any(_query_key(alias) in normalized for alias in aliases) or _query_key(title) in normalized
+    ]
+    if matched_titles:
+        title = matched_titles[0]
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                f"📄 {title}, İİBF formlar sayfasında yer almaktadır.",
+                f"📄 {title} is available on the official FEAS forms page.",
+                f"📄 النموذج {title} متاح في صفحة نماذج الكلية الرسمية.",
+            ),
+            sources=_build_link_sources([(title, FACULTY_FORMS_URL)]),
+        )
+
+    if _query_targets_iibf(query) and ("formlar" in normalized or "form" in normalized):
+        rows = [f"• {title}" for title, _ in FACULTY_FORM_ENTRIES]
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                "📄 İİBF form sayfasında erişilebilen başlıca formlar şunlardır:\n" + "\n".join(rows),
+                "📄 The main forms available on the FEAS forms page are:\n" + "\n".join(rows),
+                "📄 النماذج الرئيسية المتاحة في صفحة نماذج الكلية هي:\n" + "\n".join(rows),
+            ),
+            sources=_build_link_sources([("İİBF Formlar", FACULTY_FORMS_URL)]),
+        )
+
+    return None
 
 
 def _classroom_location_shortcut(query: str, language: str) -> ComposedAnswer | None:
