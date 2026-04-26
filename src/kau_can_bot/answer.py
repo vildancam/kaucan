@@ -37,6 +37,7 @@ from .official_data import (
     ensure_faculty_content,
     get_official_snapshot,
 )
+from .live_support import build_live_support
 from .query_normalizer import (
     is_arabic_query,
     is_coding_query,
@@ -438,6 +439,21 @@ class WebsiteGroundedAssistant:
                 status="general",
             )
 
+        live_support = build_live_support(general_query, language)
+        if live_support is not None and live_support.prefer_direct:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                live_support.answer,
+                _build_link_sources(live_support.sources),
+                "general",
+            )
+            return AssistantResponse(
+                answer=live_support.answer,
+                sources=_build_link_sources(live_support.sources),
+                interaction_id=interaction.id,
+                status="general",
+            )
+
         if is_smalltalk_query(normalized_query):
             answer = _smalltalk_response(normalized_query, language, user_memory)
             interaction = log_interaction(
@@ -464,12 +480,20 @@ class WebsiteGroundedAssistant:
                 status="general",
             )
 
-        if _should_answer_with_general_knowledge(general_query):
-            general_answer = self._generate_general_with_llm(general_query, user_memory, preferred_language=language)
+        if _should_answer_with_general_knowledge(general_query) or live_support is not None:
+            general_answer = self._generate_general_with_llm(
+                general_query,
+                user_memory,
+                preferred_language=language,
+                support_context=live_support.context if live_support is not None else "",
+            )
             if general_answer:
                 answer = _sanitize_answer_text(general_answer)
                 if answer:
-                    general_sources = _general_support_sources(original_query or normalized_query, language)
+                    general_sources = _merge_source_results(
+                        _build_link_sources(live_support.sources) if live_support is not None else [],
+                        _general_support_sources(original_query or normalized_query, language),
+                    )
                     interaction = log_interaction(original_query or normalized_query, answer, general_sources, "general")
                     return AssistantResponse(
                         answer=answer,
@@ -477,6 +501,19 @@ class WebsiteGroundedAssistant:
                         interaction_id=interaction.id,
                         status="general",
                     )
+
+        if live_support is not None and live_support.answer:
+            live_sources = _merge_source_results(
+                _build_link_sources(live_support.sources),
+                _general_support_sources(original_query or normalized_query, language, include_google=False),
+            )
+            interaction = log_interaction(original_query or normalized_query, live_support.answer, live_sources, "general")
+            return AssistantResponse(
+                answer=live_support.answer,
+                sources=live_sources,
+                interaction_id=interaction.id,
+                status="general",
+            )
 
         if is_ambiguous(normalized_query) and not looks_actionable(normalized_query):
             answer = _text_for_language(
@@ -564,30 +601,35 @@ class WebsiteGroundedAssistant:
         )
 
     def _generate_with_llm(self, query: str, results: list[SearchResult]) -> str | None:
-        generator = _generator_for_settings(self.settings)
-        if not generator.is_configured:
-            return None
-
-        try:
-            return generator.generate(query, results)
-        except Exception:
-            return None
+        for generator in _grounded_generators_for_settings(self.settings):
+            if not generator.is_configured:
+                continue
+            try:
+                answer = generator.generate(query, results)
+            except Exception:
+                continue
+            if answer:
+                return answer
+        return None
 
     def _generate_general_with_llm(
         self,
         query: str,
         user_memory: dict[str, object] | None = None,
         preferred_language: str | None = None,
+        support_context: str = "",
     ) -> str | None:
-        generator = _general_generator_for_settings(self.settings)
-        if not generator.is_configured:
-            return None
-
-        try:
-            memory_context = _general_memory_context(user_memory or {}, _response_language(query, preferred_language))
-            return generator.generate_general(query, memory_context=memory_context)
-        except Exception:
-            return None
+        memory_context = _general_memory_context(user_memory or {}, _response_language(query, preferred_language))
+        for generator in _general_generators_for_settings(self.settings):
+            if not generator.is_configured:
+                continue
+            try:
+                answer = generator.generate_general(query, memory_context=memory_context, support_context=support_context)
+            except Exception:
+                continue
+            if answer:
+                return answer
+        return None
 
 
 def _build_local_answer(query: str, results: list[SearchResult], language: str) -> ComposedAnswer:
@@ -863,6 +905,13 @@ def _build_link_sources(entries: list[tuple[str, str]]) -> list[SearchResult]:
 def _general_support_sources(query: str, language: str, include_google: bool = True) -> list[SearchResult]:
     normalized = _query_key(query)
     entries: list[tuple[str, str]] = []
+
+    if any(term in normalized for term in ("hava", "weather", "forecast", "sicaklik", "sıcaklık", "طقس", "الطقس")):
+        entries.append(("wttr.in Weather", f"https://wttr.in/{quote_plus(query)}?format=j1"))
+
+    if any(term in normalized for term in ("makale", "article", "paper", "research", "tez", "thesis", "بحث", "مقال", "اطروحة")):
+        entries.append(("Crossref Works", f"https://api.crossref.org/works?query.bibliographic={quote_plus(query)}"))
+        entries.append(("YÖK Ulusal Tez Merkezi", "https://tez.yok.gov.tr/UlusalTezMerkezi/"))
 
     if is_coding_query(query):
         if "python" in normalized:
@@ -1786,62 +1835,201 @@ def _composition_shortcut(query: str, language: str) -> ComposedAnswer | None:
 
     if "mail" in normalized or "e posta" in normalized or "email" in normalized:
         return ComposedAnswer(
-            text=_text_for_language(
-                language,
-                "✅ Kısa resmi e-posta taslağı:\n"
-                "Konu: Bilgi Talebi\n"
-                "Sayın Yetkili,\n"
-                "İlgili konu hakkında bilgi paylaşılmasını rica ederim.\n"
-                "İyi çalışmalar dilerim.",
-                "✅ Short formal email draft:\n"
-                "Subject: Information Request\n"
-                "Dear Sir/Madam,\n"
-                "I kindly request information regarding the related matter.\n"
-                "Best regards.",
-                "✅ مسودة بريد رسمي قصيرة:\n"
-                "الموضوع: طلب معلومات\n"
-                "السادة الكرام،\n"
-                "أرجو التكرم بمشاركة المعلومات المتعلقة بالموضوع.\n"
-                "مع خالص التقدير.",
-            ),
+            text=_compose_email_draft(query, language),
             sources=[],
         )
 
     if "dilekce" in normalized or "dilekçe" in normalized or "petition" in normalized:
         return ComposedAnswer(
-            text=_text_for_language(
-                language,
-                "✅ Kısa dilekçe taslağı:\n"
-                "İlgili makama,\n"
-                "Aşağıda belirtilen konuda gereğinin yapılmasını arz ederim.\n"
-                "Bilgilerinize sunarım.",
-                "✅ Short petition draft:\n"
-                "To the relevant authority,\n"
-                "I respectfully request the necessary action regarding the matter stated below.\n"
-                "Submitted for your consideration.",
-                "✅ مسودة طلب قصيرة:\n"
-                "إلى الجهة المختصة،\n"
-                "أرجو اتخاذ اللازم بخصوص الموضوع الموضح أدناه.\n"
-                "وتفضلوا بقبول الاحترام.",
-            ),
+            text=_compose_petition_draft(query, language),
             sources=[],
         )
 
     if "mesaj" in normalized or "message" in normalized:
         return ComposedAnswer(
-            text=_text_for_language(
-                language,
-                "✅ Kısa mesaj taslağı:\n"
-                "Merhaba, ilgili konu hakkında kısa bir bilgilendirme rica ediyorum. Uygun olduğunuzda dönüş sağlayabilir misiniz?",
-                "✅ Short message draft:\n"
-                "Hello, I would appreciate a brief update on the related matter. Could you get back to me when convenient?",
-                "✅ مسودة رسالة قصيرة:\n"
-                "مرحبًا، أرجو تزويدي بإفادة مختصرة حول الموضوع. هل يمكنكم الرد عند توفر الوقت؟",
-            ),
+            text=_compose_message_draft(query, language),
             sources=[],
         )
 
+    if any(term in normalized for term in ("duzelt", "düzelt", "rewrite", "improve text", "metni duzelt", "metni düzelt", "اصلح", "حسن")):
+        corrected_text = _compose_corrected_text(query, language)
+        if corrected_text:
+            return ComposedAnswer(text=corrected_text, sources=[])
+
     return None
+
+
+def _compose_email_draft(query: str, language: str) -> str:
+    normalized = _query_key(query)
+    payload = _extract_task_payload(query)
+
+    if language == "en":
+        if "internship" in normalized:
+            return (
+                "✅ Email draft:\n"
+                "Subject: Internship Information Request\n"
+                "Hello,\n"
+                "I would like to request information about current internship opportunities and the application process. "
+                "If possible, could you please share the requirements and available dates?\n"
+                "Best regards,\n"
+                "[Your Name]"
+            )
+        subject = _infer_subject(payload, language)
+        body = payload or "I would like to request information regarding the related matter."
+        return (
+            "✅ Email draft:\n"
+            f"Subject: {subject}\n"
+            "Hello,\n"
+            f"I would like to ask for support regarding {body.lower().rstrip('.')}.\n"
+            "Thank you for your time.\n"
+            "Best regards,\n"
+            "[Your Name]"
+        )
+
+    if language == "ar":
+        subject = _infer_subject(payload, language)
+        body = payload or "الموضوع المطلوب"
+        return (
+            "✅ مسودة بريد إلكتروني:\n"
+            f"الموضوع: {subject}\n"
+            "مرحبًا،\n"
+            f"أرغب في طلب إفادة بخصوص {body}.\n"
+            "شاكرًا تعاونكم.\n"
+            "مع خالص التحية،\n"
+            "[الاسم]"
+        )
+
+    if any(term in normalized for term in ("toplanti", "meeting")):
+        greeting = "Merhaba Hocam," if any(term in normalized for term in ("hocam", "danisman", "danışman")) else "Merhaba,"
+        return (
+            "✅ E-posta taslağı:\n"
+            "Konu: Toplantı Talebi\n"
+            f"{greeting}\n"
+            "Yarın uygun olduğunuz bir saatte kısa bir toplantı gerçekleştirmek isterim. "
+            "Müsait olduğunuz saat aralığını paylaşabilirseniz memnun olurum.\n"
+            "İyi çalışmalar dilerim.\n"
+            "[Ad Soyad]"
+        )
+
+    if "staj" in normalized:
+        return (
+            "✅ E-posta taslağı:\n"
+            "Konu: Staj Bilgisi Talebi\n"
+            "Merhaba,\n"
+            "Staj olanakları ve başvuru süreci hakkında bilgi rica ediyorum. "
+            "Uygun koşullar ve tarih aralıkları paylaşılabilirse memnun olurum.\n"
+            "İyi çalışmalar dilerim.\n"
+            "[Ad Soyad]"
+        )
+
+    subject = _infer_subject(payload, language)
+    body = payload or "ilgili konu hakkında bilgi talebi"
+    return (
+        "✅ E-posta taslağı:\n"
+        f"Konu: {subject}\n"
+        "Merhaba,\n"
+        f"{body} konusunda bilgi rica ediyorum.\n"
+        "İyi çalışmalar dilerim.\n"
+        "[Ad Soyad]"
+    )
+
+
+def _compose_petition_draft(query: str, language: str) -> str:
+    payload = _extract_task_payload(query) or _text_for_language(
+        language,
+        "ilgili konu",
+        "the related matter",
+        "الموضوع المطلوب",
+    )
+    return _text_for_language(
+        language,
+        "✅ Dilekçe taslağı:\n"
+        "İlgili Makama,\n"
+        f"{payload} hakkında gereğinin yapılmasını arz ederim.\n"
+        "Bilgilerinize sunarım.\n"
+        "[Ad Soyad]",
+        "✅ Petition draft:\n"
+        "To the Relevant Authority,\n"
+        f"I respectfully request the necessary action regarding {payload}.\n"
+        "Submitted for your consideration.\n"
+        "[Your Name]",
+        "✅ مسودة طلب:\n"
+        "إلى الجهة المختصة،\n"
+        f"أرجو اتخاذ اللازم بخصوص {payload}.\n"
+        "وتفضلوا بقبول الاحترام.\n"
+        "[الاسم]",
+    )
+
+
+def _compose_message_draft(query: str, language: str) -> str:
+    payload = _extract_task_payload(query)
+    return _text_for_language(
+        language,
+        "✅ Mesaj taslağı:\n"
+        + (f"Merhaba, {payload} konusunda kısa bir dönüş rica ediyorum. Uygun olduğunuzda bilgi verebilir misiniz?" if payload else "Merhaba, ilgili konu hakkında kısa bir dönüş rica ediyorum. Uygun olduğunuzda bilgi verebilir misiniz?"),
+        "✅ Message draft:\n"
+        + (f"Hello, I would appreciate a short update regarding {payload}. Could you please respond when convenient?" if payload else "Hello, I would appreciate a short update on the related matter. Could you please respond when convenient?"),
+        "✅ مسودة رسالة:\n"
+        + (f"مرحبًا، أرجو إفادة مختصرة بخصوص {payload}. هل يمكنكم الرد عند توفر الوقت؟" if payload else "مرحبًا، أرجو إفادة مختصرة حول الموضوع. هل يمكنكم الرد عند توفر الوقت؟"),
+    )
+
+
+def _compose_corrected_text(query: str, language: str) -> str:
+    payload = _extract_task_payload(query)
+    if not payload:
+        return ""
+
+    corrected = payload.strip()
+    if language == "tr":
+        replacements = {
+            " bugun ": " bugün ",
+            " cunku ": " çünkü ",
+            " hastaym ": " hastayım ",
+            " gelemedm ": " gelemedim ",
+            " gelmedm ": " gelemedim ",
+            " okla ": " okula ",
+            " oklaa ": " okula ",
+            " yarin ": " yarın ",
+            " hocamlaa ": " hocamla ",
+        }
+        corrected = f" {corrected.lower()} "
+        for old, new in replacements.items():
+            corrected = corrected.replace(old, new)
+        corrected = corrected.strip()
+        corrected = corrected[:1].upper() + corrected[1:] if corrected else corrected
+        if corrected and corrected[-1] not in ".!?":
+            corrected += "."
+        return "✅ Düzeltilmiş metin:\n" + corrected
+
+    if language == "en":
+        corrected = corrected.strip()
+        corrected = corrected[:1].upper() + corrected[1:] if corrected else corrected
+        if corrected and corrected[-1] not in ".!?":
+            corrected += "."
+        return "✅ Corrected text:\n" + corrected
+
+    corrected = re.sub(r"\s+", " ", corrected).strip()
+    return "✅ النص المصحح:\n" + corrected
+
+
+def _extract_task_payload(query: str) -> str:
+    cleaned = clean_text(query)
+    if ":" in cleaned:
+        return clean_text(cleaned.split(":", 1)[1])
+    if "\n" in cleaned:
+        lines = [clean_text(line) for line in cleaned.splitlines() if clean_text(line)]
+        if len(lines) >= 2:
+            return lines[-1]
+    return ""
+
+
+def _infer_subject(payload: str, language: str) -> str:
+    normalized = _query_key(payload)
+    if any(term in normalized for term in ("toplanti", "meeting", "اجتماع")):
+        return _text_for_language(language, "Toplantı Talebi", "Meeting Request", "طلب اجتماع")
+    if any(term in normalized for term in ("staj", "internship", "تدريب")):
+        return _text_for_language(language, "Staj Bilgisi Talebi", "Internship Information Request", "طلب معلومات عن التدريب")
+    return _text_for_language(language, "Bilgi Talebi", "Information Request", "طلب معلومات")
 
 
 def _should_answer_with_general_knowledge(query: str) -> bool:
@@ -2121,6 +2309,19 @@ def _dedupe_results_by_url(results: list[SearchResult]) -> list[SearchResult]:
     return deduped
 
 
+def _merge_source_results(*groups: list[SearchResult]) -> list[SearchResult]:
+    merged: list[SearchResult] = []
+    seen_urls: set[str] = set()
+    for group in groups:
+        for result in group:
+            url = result.chunk.url
+            if not url or url in seen_urls:
+                continue
+            merged.append(result)
+            seen_urls.add(url)
+    return merged
+
+
 def _generator_for_settings(settings: Settings):
     if settings.llm_provider == "ollama":
         return OllamaAnswerGenerator(settings)
@@ -2136,15 +2337,30 @@ def _general_generator_for_settings(settings: Settings):
     return _generator_for_settings(settings)
 
 
-def _general_generators_for_settings(settings: Settings):
+def _grounded_generators_for_settings(settings: Settings):
     generators = []
+    primary_generator = _generator_for_settings(settings)
+    if primary_generator.is_configured:
+        generators.append(primary_generator)
+
     openai_generator = OpenAIAnswerGenerator(settings)
-    if openai_generator.is_configured:
+    if openai_generator.is_configured and not any(type(generator) is type(openai_generator) for generator in generators):
         generators.append(openai_generator)
 
+    if not generators:
+        generators.append(LocalOnlyGenerator())
+    return generators
+
+
+def _general_generators_for_settings(settings: Settings):
+    generators = []
     primary_generator = _generator_for_settings(settings)
-    if not any(type(generator) is type(primary_generator) for generator in generators):
+    if primary_generator.is_configured:
         generators.append(primary_generator)
+
+    openai_generator = OpenAIAnswerGenerator(settings)
+    if openai_generator.is_configured and not any(type(generator) is type(openai_generator) for generator in generators):
+        generators.append(openai_generator)
 
     if not generators:
         generators.append(LocalOnlyGenerator())

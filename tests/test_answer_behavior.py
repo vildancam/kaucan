@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from kau_can_bot.answer import WELCOME_MESSAGE, WebsiteGroundedAssistant, _sanitize_answer_text
 from kau_can_bot.config import Settings
+from kau_can_bot.live_support import LiveSupportResult
 from kau_can_bot.models import Chunk, SearchResult
 from kau_can_bot.utils import stable_id
 
@@ -18,6 +19,20 @@ class DummyIndex:
     def search(self, query: str, top_k: int = 3) -> list[SearchResult]:
         self.searched_query = query
         return self.results
+
+
+class BrokenGenerator:
+    is_configured = True
+
+    def generate_general(self, query: str, memory_context: str = "", support_context: str = "") -> str | None:
+        raise RuntimeError("broken")
+
+
+class GoodGenerator:
+    is_configured = True
+
+    def generate_general(self, query: str, memory_context: str = "", support_context: str = "") -> str | None:
+        return "Python, genel amaçlı bir programlama dilidir."
 
 
 def build_result(title: str, url: str, text: str, score: float = 0.35) -> SearchResult:
@@ -331,6 +346,39 @@ class AnswerBehaviorTests(unittest.TestCase):
         )
 
         self.assertEqual(_sanitize_answer_text(raw), "Fakülte duyuruları günceldir.")
+
+    @patch("kau_can_bot.answer._general_generators_for_settings", return_value=[BrokenGenerator(), GoodGenerator()])
+    def test_general_generator_chain_falls_back_to_next_provider(self, _generators) -> None:
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        answer = assistant._generate_general_with_llm("python nedir")
+
+        self.assertIn("programlama dilidir", answer)
+
+    @patch("kau_can_bot.answer.build_live_support")
+    @patch("kau_can_bot.answer.WebsiteGroundedAssistant._generate_general_with_llm", return_value=None)
+    @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))
+    @patch("kau_can_bot.answer.log_query", return_value=None)
+    def test_live_support_answers_when_llm_is_unavailable(
+        self,
+        _log_query,
+        _log_interaction,
+        _general_answer,
+        mock_live_support,
+    ) -> None:
+        mock_live_support.return_value = LiveSupportResult(
+            answer="🌤️ Kars için güncel hava açık, sıcaklık 12°C.",
+            context="Current weather data for Kars.",
+            sources=[("wttr.in Weather", "https://wttr.in/Kars?format=j1")],
+            prefer_direct=True,
+        )
+        assistant = WebsiteGroundedAssistant(index=DummyIndex([]), settings=self.settings)
+
+        response = assistant.answer_with_context("Kars hava durumu")
+
+        self.assertEqual(response.status, "general")
+        self.assertIn("Kars", response.answer)
+        self.assertTrue(any("wttr.in" in source.chunk.url for source in response.sources))
 
 
 if __name__ == "__main__":

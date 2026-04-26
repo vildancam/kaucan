@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import os
 
-from .config import FALLBACK_RESPONSE, POLITE_LANGUAGE_RESPONSE, Settings
+from .config import FALLBACK_RESPONSE, Settings
 from .models import SearchResult
-from .query_normalizer import is_arabic_query, is_coding_query, is_english_query
+from .query_normalizer import is_arabic_query, is_coding_query, is_english_query, normalize_for_matching
 
 
 SYSTEM_PROMPT = f"""
@@ -28,8 +28,6 @@ Zorunlu kurallar:
 - URL veya kaynak listesi üretme; kaynaklar arayüzde ayrıca gösterilecektir.
 - Gereksiz uzunluk, argo veya dağınık cümle kullanma.
 - Gerekirse en fazla 3 kısa madde kullan.
-- Kullanıcı uygunsuz dil kullandıysa aynen şu metni döndür:
-{POLITE_LANGUAGE_RESPONSE}
 """.strip()
 
 GENERAL_SYSTEM_PROMPT = f"""
@@ -37,17 +35,30 @@ Bu sistem Türkçe, İngilizce ve Arapça konuşabilen; kurumsal ama samimi bir 
 
 Zorunlu kurallar:
 - Kullanıcının mesaj diline göre Türkçe, İngilizce veya Arapça yanıt ver.
+- Eğer ek canlı destek bağlamı verilirse önce o bağlamdaki güncel bilgiyi kullan.
 - Kullanıcı günlük sohbet etmek isterse kısa, sıcak ve doğal karşılık ver.
 - Kullanıcı matematik, tarih, yazılım veya genel bilgi sorarsa doğru ve anlaşılır biçimde yanıtla.
 - Kullanıcı kod veya yazılım sorusu sorarsa hatayı açıkla, mümkünse düzeltilmiş veya geliştirilmiş kısa bir çözüm öner.
-- Kullanıcı emir kipinde yazsa da görevi yerine getir; araştırma, yazma, düzeltme, geliştirme, özetleme, dilekçe, e-posta veya mesaj oluşturma isteklerini doğrudan karşıla.
+- Kullanıcı emir kipinde yazsa da görevi yerine getir; araştırma, yazma, düzeltme, geliştirme, özetleme, çeviri, dilekçe, e-posta, mesaj veya konu planı oluşturma isteklerini doğrudan karşıla.
+- Metin düzeltme ve yeniden yazma taleplerinde doğrudan düzeltilmiş metni ver.
 - Kod örneği gerekiyorsa kısa bir kod bloğu kullanılabilir.
 - Tarih, sayı veya teknik bilgi konusunda emin olunmayan ayrıntıları uydurma; gerekiyorsa belirsizlik açıkça belirtilsin.
 - Yanıtlar kısa ve hızlı olsun; çoğu durumda 2-4 cümle veya en fazla 4 kısa madde kullan.
-- Uygunsuz dil kullanılırsa aynen şu metni döndür:
-{POLITE_LANGUAGE_RESPONSE}
 - Gerekirse uygun emojilerden ölçülü biçimde yararlan.
 - Teknik meta alanlar, markdown başlıkları ve kaynak etiketleri yazma.
+""".strip()
+
+COMPOSITION_SYSTEM_PROMPT = """
+Bu sistem Türkçe, İngilizce ve Arapça yazım desteği sunan pratik bir asistandır.
+
+Zorunlu kurallar:
+- Kullanıcının yazdığı dilde yanıt ver.
+- Kullanıcı bir e-posta, mesaj, dilekçe, özet, çeviri veya düzeltilmiş metin istiyorsa doğrudan nihai çıktıyı üret.
+- Kullanıcı bir metin verdiyse önce onu düzelt; gereksiz açıklama ekleme.
+- Kullanıcı mail veya mesaj istiyorsa kısa, doğal ve kullanılabilir bir taslak yaz.
+- Kullanıcı “düzelt”, “iyileştir”, “yeniden yaz” diyorsa sonuç metnini temiz biçimde ver.
+- Gereksiz teori, meta açıklama, güvenlik uyarısı veya teknik etiket yazma.
+- Yanıt kısa, anlamlı ve hatasız olsun.
 """.strip()
 
 CODING_SYSTEM_PROMPT = f"""
@@ -61,8 +72,6 @@ Zorunlu kurallar:
 - Kullanıcı isterse kodu düzelt, yeniden yaz, iyileştir veya sadeleştir.
 - Uzun teoriye girme; doğrudan çözüm odaklı ol ve kısa kal.
 - Emin olunmayan ayrıntıları uydurma.
-- Uygunsuz dil kullanılırsa aynen şu metni döndür:
-{POLITE_LANGUAGE_RESPONSE}
 - Teknik meta alanlar, markdown başlıkları ve kaynak etiketleri yazma.
 """.strip()
 
@@ -97,7 +106,7 @@ class OpenAIAnswerGenerator:
         answer = (response.output_text or "").strip()
         return answer or None
 
-    def generate_general(self, query: str, memory_context: str = "") -> str | None:
+    def generate_general(self, query: str, memory_context: str = "", support_context: str = "") -> str | None:
         if not self.is_configured:
             return None
 
@@ -108,13 +117,13 @@ class OpenAIAnswerGenerator:
 
         client = OpenAI(
             api_key=self.settings.openai_api_key,
-            timeout=min(self.settings.openai_timeout, 4.5),
+            timeout=min(self.settings.openai_timeout, 5.5),
         )
         response = client.responses.create(
             model=self.settings.openai_model,
             instructions=_general_prompt_for_query(query),
-            input=_general_input(query, memory_context),
-            max_output_tokens=min(self.settings.openai_max_output_tokens, 220),
+            input=_general_input(query, memory_context, support_context),
+            max_output_tokens=min(self.settings.openai_max_output_tokens, 240),
         )
         answer = (response.output_text or "").strip()
         return answer or None
@@ -153,7 +162,7 @@ class OllamaAnswerGenerator:
         answer = response.message.content.strip()
         return answer or None
 
-    def generate_general(self, query: str, memory_context: str = "") -> str | None:
+    def generate_general(self, query: str, memory_context: str = "", support_context: str = "") -> str | None:
         if not self.is_configured:
             return None
 
@@ -167,12 +176,12 @@ class OllamaAnswerGenerator:
             model=self.settings.ollama_model,
             messages=[
                 {"role": "system", "content": _general_prompt_for_query(query)},
-                {"role": "user", "content": _general_input(query, memory_context)},
+                {"role": "user", "content": _general_input(query, memory_context, support_context)},
             ],
             options={
-                "temperature": 0.15,
-                "top_p": 0.7,
-                "num_predict": min(self.settings.openai_max_output_tokens, 180),
+                "temperature": 0.12,
+                "top_p": 0.65,
+                "num_predict": min(self.settings.openai_max_output_tokens, 150),
             },
         )
         answer = response.message.content.strip()
@@ -195,6 +204,8 @@ def _build_user_input(query: str, results: list[SearchResult]) -> str:
 def _general_prompt_for_query(query: str) -> str:
     if is_coding_query(query):
         return CODING_SYSTEM_PROMPT
+    if _is_writing_task(query):
+        return COMPOSITION_SYSTEM_PROMPT
     if is_arabic_query(query):
         return GENERAL_SYSTEM_PROMPT + "\n- Give the final answer naturally and concisely in Arabic."
     if is_english_query(query):
@@ -202,10 +213,14 @@ def _general_prompt_for_query(query: str) -> str:
     return GENERAL_SYSTEM_PROMPT
 
 
-def _general_input(query: str, memory_context: str) -> str:
-    if not memory_context:
-        return query
-    return f"{memory_context}\n\nUser question:\n{query}"
+def _general_input(query: str, memory_context: str, support_context: str = "") -> str:
+    parts = []
+    if memory_context:
+        parts.append(memory_context)
+    if support_context:
+        parts.append(f"Helpful live context:\n{support_context}")
+    parts.append(f"User question:\n{query}")
+    return "\n\n".join(parts)
 
 
 def _format_source(index: int, result: SearchResult) -> str:
@@ -217,4 +232,35 @@ def _format_source(index: int, result: SearchResult) -> str:
         f"Başlık: {result.chunk.title}\n"
         f"URL: {result.chunk.url}\n"
         f"Metin: {text}"
+    )
+
+
+def _is_writing_task(query: str) -> bool:
+    normalized = normalize_for_matching(query)
+    return any(
+        term in normalized
+        for term in (
+            "mail yaz",
+            "e posta yaz",
+            "email yaz",
+            "mesaj yaz",
+            "dilekce",
+            "dilekçe",
+            "duzelt",
+            "düzelt",
+            "yeniden yaz",
+            "rewrite",
+            "write a",
+            "draft",
+            "summarize",
+            "ozetle",
+            "özetle",
+            "translate",
+            "cevir",
+            "çevir",
+            "اكتب",
+            "لخص",
+            "ترجم",
+            "اصلح النص",
+        )
     )
