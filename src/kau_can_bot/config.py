@@ -19,6 +19,9 @@ QUERY_LOG_PATH = LOG_DIR / "queries.jsonl"
 INTERACTION_LOG_PATH = LOG_DIR / "interactions.jsonl"
 FEEDBACK_LOG_PATH = LOG_DIR / "feedback.jsonl"
 USER_MEMORY_PATH = DATA_DIR / "user_memory.json"
+SESSION_STATE_PATH = DATA_DIR / "user_sessions.json"
+DOCUMENT_CATALOG_PATH = DATA_DIR / "document_catalog.json"
+CHATBOT_LOG_PATH = LOG_DIR / "chatbot.log"
 
 FALLBACK_RESPONSE = (
     "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte "
@@ -31,9 +34,9 @@ POLITE_LANGUAGE_RESPONSE = (
 )
 
 WELCOME_MESSAGE = (
-    "👋 Merhaba, ben KAÜCAN Beta - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında "
-    "duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü ve "
-    "diğer konularda yardımcı olabilirim."
+    "👋 Merhaba, ben KAÜCAN Beta - Kafkas Üniversitesi Dijital Asistanı. "
+    "Üniversite, Kars, öğrenci yaşamı, yurtlar, ulaşım, belgeler, yazım desteği "
+    "ve genel sorularda yardımcı olabilirim."
 )
 
 

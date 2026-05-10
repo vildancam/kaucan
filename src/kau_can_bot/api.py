@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import requests
 from fastapi import FastAPI, HTTPException
@@ -13,12 +13,14 @@ from .answer import WebsiteGroundedAssistant
 from .branding import prepare_branding_assets
 from .config import INDEX_PATH, ROOT_DIR, Settings
 from .learning import learning_summary, log_feedback
+from .logging_utils import get_logger
 from .official_data import ensure_faculty_content, get_official_snapshot
 
 
 api = FastAPI(title="KAÜ CAN Chat Bot", version="0.1.0")
 STATIC_DIR = ROOT_DIR / "static"
 BRANDING = prepare_branding_assets(ROOT_DIR)
+LOGGER = get_logger("api")
 
 if STATIC_DIR.exists():
     api.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -48,9 +50,13 @@ class SourceItem(BaseModel):
 
 class AskResponse(BaseModel):
     answer: str
-    sources: list[SourceItem] = Field(default_factory=list)
+    sources: List[SourceItem] = Field(default_factory=list)
     interaction_id: Optional[str] = None
     status: str = "ok"
+    normalized_query: str = ""
+    actions: List[Dict[str, str]] = Field(default_factory=list)
+    cards: List[Dict[str, Any]] = Field(default_factory=list)
+    table: Dict[str, Any] = Field(default_factory=dict)
 
 
 class FeedbackRequest(BaseModel):
@@ -69,9 +75,9 @@ class HighlightItem(BaseModel):
 
 
 class HighlightsResponse(BaseModel):
-    announcements: list[HighlightItem] = Field(default_factory=list)
-    news: list[HighlightItem] = Field(default_factory=list)
-    events: list[HighlightItem] = Field(default_factory=list)
+    announcements: List[HighlightItem] = Field(default_factory=list)
+    news: List[HighlightItem] = Field(default_factory=list)
+    events: List[HighlightItem] = Field(default_factory=list)
     updated_at: str = ""
 
 
@@ -87,7 +93,7 @@ def home() -> FileResponse:
 
 
 @api.get("/health")
-def health() -> Dict[str, object]:
+def health() -> Dict[str, Any]:
     settings = Settings()
     ollama_status = _ollama_status(settings)
     return {
@@ -114,33 +120,65 @@ def ask(request: AskRequest) -> AskResponse:
         raise HTTPException(
             status_code=503,
             detail="Arama indeksi hazır değil. Önce site taranmalı ve indekslenmelidir.",
-    )
-
-    assistant = WebsiteGroundedAssistant()
-    response = assistant.answer_with_context(
-        request.question,
-        client_id=request.client_id,
-        preferred_language=request.preferred_language,
-        latitude=request.latitude,
-        longitude=request.longitude,
-    )
-    return AskResponse(
-        answer=response.answer,
-        sources=[
-            SourceItem(
-                title=result.chunk.title,
-                url=result.chunk.url,
-                score=round(result.score, 6),
-            )
-            for result in response.sources
-        ],
-        interaction_id=response.interaction_id,
-        status=response.status,
-    )
+        )
+    try:
+        assistant = WebsiteGroundedAssistant()
+        response = assistant.answer_with_context(
+            request.question,
+            client_id=request.client_id,
+            preferred_language=request.preferred_language,
+            latitude=request.latitude,
+            longitude=request.longitude,
+        )
+        return AskResponse(
+            answer=response.answer,
+            sources=[
+                SourceItem(
+                    title=result.chunk.title,
+                    url=result.chunk.url,
+                    score=round(result.score, 6),
+                )
+                for result in response.sources
+            ],
+            interaction_id=response.interaction_id,
+            status=response.status,
+            normalized_query=response.normalized_query,
+            actions=[{"label": item.label, "url": item.url, "kind": item.kind} for item in response.actions],
+            cards=[
+                {
+                    "title": item.title,
+                    "body": item.body,
+                    "meta": item.meta,
+                    "image_url": item.image_url,
+                    "alt_text": item.alt_text,
+                    "url": item.url,
+                    "actions": [
+                        {"label": action.label, "url": action.url, "kind": action.kind}
+                        for action in item.actions
+                    ],
+                }
+                for item in response.cards
+            ],
+            table=(
+                {
+                    "columns": response.table.columns,
+                    "rows": response.table.rows,
+                    "caption": response.table.caption,
+                }
+                if response.table
+                else {}
+            ),
+        )
+    except Exception as exc:
+        LOGGER.exception("Ask endpoint failed: %s", exc)
+        raise HTTPException(
+            status_code=500,
+            detail="Bu bilgiyi işlerken teknik bir sorun oluştu. Lütfen sorunuzu biraz daha farklı şekilde tekrar yazar mısınız?",
+        )
 
 
 @api.post("/feedback")
-def feedback(request: FeedbackRequest) -> Dict[str, object]:
+def feedback(request: FeedbackRequest) -> Dict[str, Any]:
     rating = request.rating.strip().lower()
     if rating not in {"up", "down"}:
         raise HTTPException(status_code=400, detail="Geçerli değerler: up, down.")
@@ -152,7 +190,8 @@ def feedback(request: FeedbackRequest) -> Dict[str, object]:
 def highlights() -> HighlightsResponse:
     try:
         snapshot = ensure_faculty_content(get_official_snapshot())
-    except Exception:
+    except Exception as exc:
+        LOGGER.warning("Highlights fetch failed: %s", exc)
         snapshot = {"faculty_content": {}, "updated_at": ""}
 
     faculty_content = snapshot.get("faculty_content", {})
@@ -190,7 +229,7 @@ def _ollama_status(settings: Settings) -> Dict[str, bool]:
     }
 
 
-def _serialize_highlights(items: list[dict]) -> list[HighlightItem]:
+def _serialize_highlights(items: List[Dict[str, Any]]) -> List[HighlightItem]:
     return [
         HighlightItem(
             title=str(item.get("title", "")),

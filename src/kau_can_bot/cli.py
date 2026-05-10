@@ -9,6 +9,8 @@ from rich.console import Console
 from .answer import WebsiteGroundedAssistant
 from .config import INDEX_PATH, PAGES_PATH, Settings, ensure_runtime_dirs
 from .indexer import SearchIndex
+from .scraper_manager import build_document_catalog_documents
+from .static_knowledge import build_local_knowledge_documents
 from .storage import load_documents, save_documents
 
 
@@ -58,6 +60,9 @@ def run_crawl(start_url: Optional[str] = None, max_pages: Optional[int] = None) 
 
 def run_index(pages_path: Path = PAGES_PATH, index_path: Path = INDEX_PATH) -> int:
     documents = load_documents(pages_path)
+    documents.extend(build_local_knowledge_documents())
+    documents.extend(build_document_catalog_documents())
+    documents = _dedupe_documents(documents)
     if not documents:
         raise typer.BadParameter(f"Belge bulunamadı: {pages_path}")
 
@@ -67,6 +72,18 @@ def run_index(pages_path: Path = PAGES_PATH, index_path: Path = INDEX_PATH) -> i
         f"[green]{len(search_index.chunks)} metin parçası indekslendi:[/green] {index_path}"
     )
     return len(search_index.chunks)
+
+
+def _dedupe_documents(documents):
+    deduped = []
+    seen = set()
+    for document in documents:
+        key = (document.url, document.title)
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(document)
+    return deduped
 
 
 @app.command()

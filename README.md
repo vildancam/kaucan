@@ -1,10 +1,27 @@
 # KAÜ CAN Chat Bot
 
-Kafkas Üniversitesi İktisadi ve İdari Bilimler Fakültesi web sitesi içeriğine dayalı, kaynak gösteren RAG chatbot uygulaması.
+Kafkas Üniversitesi için geliştirilen, kaynak gösteren hibrit dijital asistan.
+Sistem yalnızca klasik RAG yanıtı üretmez; resmi üniversite verileri, yerel
+bilgi dosyaları, belge kataloğu, güvenlik filtreleri ve görev odaklı yardımcı
+modüllerle birlikte çalışır.
 
 ## Kapsam
 
-Uygulama `https://kafkas.edu.tr/iibf` adresinden başlar ve `kafkas.edu.tr` alan adı içinde kalan bağlantıları takip eder. HTML sayfalarından başlık, paragraf, liste, tablo hücresi ve anlamlı metin bloklarını çıkarır. PDF dosyalarından metin çıkarmayı destekler; diğer ek dosyaları kaynak olarak kaydeder ancak metin çıkarımı yapmaz.
+Uygulama varsayılan olarak `https://kafkas.edu.tr/iibf` adresinden başlar ve
+`kafkas.edu.tr` alan adı içinde kalan bağlantıları takip eder. HTML
+sayfalarından başlık, paragraf, liste, tablo hücresi ve anlamlı metin bloklarını
+çıkarır. PDF dosyalarından metin çıkarmayı destekler; diğer ek dosyaları kaynak
+olarak kaydeder ancak metin çıkarımı yapmaz.
+
+Ek olarak proje içinde aşağıdaki yerel bilgi katmanları bulunur:
+
+- Kars yurt verileri
+- Kars kampüs ulaşım verileri
+- Kars şehir / turistik yer özetleri
+- Öğrenci işleri ve fakülte form katalogları
+- Hitap tercihi ve oturum temelli hafıza
+- Küfür / hakaret / zararlı niyet güvenlik filtresi
+- Matematik, kod yardımı ve belge taslağı üretimi
 
 Yanıtlar yalnızca indekslenmiş web sitesi içeriğine dayanır. Güvenilir sonuç bulunamazsa şu metin döndürülür:
 
@@ -181,7 +198,11 @@ Ayrıntılı canlıya alma notları için `docs/deployment.md` dosyasına bakın
 
 ## Önemli Notlar
 
-- Uygulama web sitesi dışındaki bilgilerle yanıt üretmez.
-- Uygunsuz dil algılanırsa `Lütfen daha uygun bir dil kullanınız.` yanıtı döndürülür.
+- Uygulama, güvenilir kaynak ve yerel bilgi dosyaları dışında uydurma yanıt
+  üretmemeye çalışır; bilgi yetersizse kontrollü fallback döndürür.
+- Uygunsuz dil, hedefli hakaret ve zararlı niyet içeren sorgular güvenlik
+  filtresinden geçirilir.
 - Çok kısa veya belirsiz sorularda açıklayıcı bir soru sorulur.
 - Güncel sonuçlar için site düzenli olarak yeniden taranmalıdır.
+- Yurt fiyatı, telefon, kontenjan, otobüs saati ve başvuru tarihleri gibi
+  değişken bilgiler kaynakla birlikte sunulur; yine de manuel teyit önerilir.

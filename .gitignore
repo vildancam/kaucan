@@ -10,6 +10,9 @@ __pycache__/
 data/*.joblib
 data/*.json
 data/*.jsonl
+!data/dormitories_kars.json
+!data/transport_kars.json
+!data/kars_city.json
 logs/*.jsonl
 logs/*.log
 logs/*.pid

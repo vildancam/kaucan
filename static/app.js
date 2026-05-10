@@ -4,9 +4,9 @@
   var CLIENT_ID_KEY = "kaucan-client-id";
   var LANGUAGE_KEY = "kaucan-language";
   var WELCOME_MESSAGES = {
-    tr: "👋 Merhaba, ben KAÜCAN Beta - Kafkas Üniversitesi Dijital Asistanı. İİBF hakkında duyurular, akademik bilgiler, personel, iletişim, sınavlar, yemek menüsü, yazım desteği ve genel konularda yardımcı olabilirim.",
-    en: "👋 Hello, I am KAUCAN Beta - the Digital Assistant of Kafkas University. I can help with announcements, academic information, staff, contact, exams, cafeteria menu, writing, and general questions.",
-    ar: "👋 مرحبًا، أنا KAÜCAN Beta، المساعد الرقمي لجامعة قفقاس. يمكنني المساعدة في الإعلانات والمعلومات الأكاديمية والكوادر والاتصال والامتحانات وقائمة الطعام والكتابة والأسئلة العامة.",
+    tr: "👋 Merhaba, ben KAÜCAN Beta. Kafkas Üniversitesi, Kars, öğrenci yaşamı, yurtlar, ulaşım, belgeler, yazım desteği ve genel sorularda yardımcı olabilirim.",
+    en: "👋 Hello, I am KAUCAN Beta. I can help with Kafkas University, Kars, student life, dormitories, transportation, documents, writing, and general questions.",
+    ar: "👋 مرحبًا، أنا KAÜCAN Beta. يمكنني المساعدة في جامعة قفقاس ومدينة قارص والحياة الطلابية والسكن والمواصلات والوثائق والكتابة والأسئلة العامة.",
   };
   var FALLBACK_MESSAGES = {
     tr: "⚠️ Bu konuda güvenilir bir bilgiye ulaşamadım. En doğru bilgi için fakülte ile iletişime geçmenizi öneririm.",
@@ -21,7 +21,7 @@
   var UI_TEXTS = {
     tr: {
       documentTitle: "KAÜCAN | Kafkas Üniversitesi Dijital Asistanı",
-      brandHeading: "Kafkas Üniversitesi İktisadi ve İdari Bilimler Fakültesi",
+      brandHeading: "Kafkas Üniversitesi Dijital Asistanı",
       languageNames: {
         tr: "Türkçe",
         en: "English",
@@ -41,7 +41,7 @@
       clear: "Temizle",
       quickPromptsTitle: "Hızlı Sorular",
       chips: {
-        announcements: "📢 Güncel duyurular nelerdir?",
+        directions: "📍 Kampüste bir yere nasıl giderim?",
         exams: "📅 Sınav programı hakkında bilgi verir misiniz?",
         staff: "👤 Akademik personel hakkında bilgi verir misiniz?",
         contact: "📞 Fakülte iletişim bilgileri nelerdir?",
@@ -113,7 +113,7 @@
     },
     en: {
       documentTitle: "KAUCAN | Kafkas University Digital Assistant",
-      brandHeading: "Kafkas University Faculty of Economics and Administrative Sciences",
+      brandHeading: "Kafkas University Digital Assistant",
       languageNames: {
         tr: "Turkish",
         en: "English",
@@ -133,7 +133,7 @@
       clear: "Clear",
       quickPromptsTitle: "Quick Questions",
       chips: {
-        announcements: "📢 What are the current announcements?",
+        directions: "📍 How do I get to a place on campus?",
         exams: "📅 Could you share the exam schedule?",
         staff: "👤 Could you provide academic staff information?",
         contact: "📞 What are the faculty contact details?",
@@ -205,7 +205,7 @@
     },
     ar: {
       documentTitle: "KAÜCAN | المساعد الرقمي لجامعة قفقاس",
-      brandHeading: "جامعة قفقاس كلية الاقتصاد والعلوم الإدارية",
+      brandHeading: "المساعد الرقمي لجامعة قفقاس",
       languageNames: {
         tr: "التركية",
         en: "الإنجليزية",
@@ -225,7 +225,7 @@
       clear: "مسح",
       quickPromptsTitle: "أسئلة سريعة",
       chips: {
-        announcements: "📢 ما هي الإعلانات الحالية؟",
+        directions: "📍 كيف أصل إلى مكان داخل الحرم؟",
         exams: "📅 هل يمكن مشاركة برنامج الامتحانات؟",
         staff: "👤 هل يمكن تقديم معلومات عن الكادر الأكاديمي؟",
         contact: "📞 ما هي معلومات التواصل مع الكلية؟",
@@ -510,8 +510,8 @@
     if (document.getElementById("quickPromptsTitle")) {
       document.getElementById("quickPromptsTitle").textContent = ui.quickPromptsTitle;
     }
-    if (document.getElementById("chipAnnouncements")) {
-      document.getElementById("chipAnnouncements").textContent = ui.chips.announcements;
+    if (document.getElementById("chipDirections")) {
+      document.getElementById("chipDirections").textContent = ui.chips.directions;
     }
     if (document.getElementById("chipExams")) {
       document.getElementById("chipExams").textContent = ui.chips.exams;
@@ -822,6 +822,140 @@
     }
 
     return wrapper;
+  }
+
+  function renderActionButtons(actions) {
+    var wrapper;
+
+    if (!Array.isArray(actions) || !actions.length) {
+      return null;
+    }
+
+    wrapper = document.createElement("div");
+    wrapper.className = "message-actions";
+
+    actions.forEach(function (action) {
+      var link;
+      if (!action || !action.url) {
+        return;
+      }
+      link = document.createElement("a");
+      link.className = "message-action-button";
+      if (action.kind === "download") {
+        link.classList.add("download");
+      }
+      link.href = action.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = action.label || "Bağlantıyı Aç";
+      wrapper.appendChild(link);
+    });
+
+    return wrapper.children.length ? wrapper : null;
+  }
+
+  function renderInfoTable(table) {
+    var wrapper;
+    var tableElement;
+    var thead;
+    var headRow;
+    var tbody;
+
+    if (!table || !Array.isArray(table.columns) || !Array.isArray(table.rows) || !table.columns.length) {
+      return null;
+    }
+
+    wrapper = document.createElement("div");
+    wrapper.className = "info-table-wrap";
+
+    if (table.caption) {
+      var caption = document.createElement("p");
+      caption.className = "info-table-caption";
+      caption.textContent = table.caption;
+      wrapper.appendChild(caption);
+    }
+
+    tableElement = document.createElement("table");
+    tableElement.className = "info-table";
+    thead = document.createElement("thead");
+    headRow = document.createElement("tr");
+    tbody = document.createElement("tbody");
+
+    table.columns.forEach(function (column) {
+      var cell = document.createElement("th");
+      cell.textContent = column;
+      headRow.appendChild(cell);
+    });
+    thead.appendChild(headRow);
+
+    table.rows.forEach(function (row) {
+      var rowElement = document.createElement("tr");
+      row.forEach(function (value) {
+        var cell = document.createElement("td");
+        cell.textContent = value || "";
+        rowElement.appendChild(cell);
+      });
+      tbody.appendChild(rowElement);
+    });
+
+    tableElement.appendChild(thead);
+    tableElement.appendChild(tbody);
+    wrapper.appendChild(tableElement);
+    return wrapper;
+  }
+
+  function renderCards(cards) {
+    var wrapper;
+
+    if (!Array.isArray(cards) || !cards.length) {
+      return null;
+    }
+
+    wrapper = document.createElement("section");
+    wrapper.className = "rich-card-grid";
+
+    cards.forEach(function (card) {
+      var article = document.createElement("article");
+      var title = document.createElement(card.url ? "a" : "h4");
+      var body = document.createElement("p");
+      var meta = document.createElement("p");
+      var actions = renderActionButtons(card.actions || []);
+
+      article.className = "rich-card";
+
+      if (card.url) {
+        title.href = card.url;
+        title.target = "_blank";
+        title.rel = "noopener noreferrer";
+      }
+      title.className = "rich-card-title";
+      title.textContent = card.title || "Bilgi Kartı";
+
+      body.className = "rich-card-body";
+      body.textContent = card.body || "";
+
+      meta.className = "rich-card-meta";
+      meta.textContent = card.meta || "";
+
+      article.appendChild(title);
+      if (card.body) {
+        article.appendChild(body);
+      }
+      if (card.meta) {
+        article.appendChild(meta);
+      }
+      if (actions) {
+        article.appendChild(actions);
+      }
+      wrapper.appendChild(article);
+    });
+
+    return wrapper;
+  }
+
+  function shouldRenderSources(meta) {
+    var status = meta && meta.status ? String(meta.status) : "";
+    return status !== "blocked_abuse" && status !== "clarification";
   }
 
   function ensureToast() {
@@ -1307,7 +1441,22 @@
     if (role === "assistant") {
       enhanceCodeBlocks(bubble);
 
-      var sourceLinks = renderSources(meta.sources || []);
+      var infoTable = renderInfoTable(meta.table);
+      if (infoTable) {
+        bubble.appendChild(infoTable);
+      }
+
+      var richCards = renderCards(meta.cards || []);
+      if (richCards) {
+        bubble.appendChild(richCards);
+      }
+
+      var actionButtons = renderActionButtons(meta.actions || []);
+      if (actionButtons) {
+        bubble.appendChild(actionButtons);
+      }
+
+      var sourceLinks = shouldRenderSources(meta) ? renderSources(meta.sources || []) : null;
       if (sourceLinks) {
         bubble.appendChild(sourceLinks);
       }
@@ -1600,6 +1749,9 @@
       sources: dedupeSources((message && message.sources) || []),
       interactionId: message && message.interactionId ? String(message.interactionId) : null,
       status: message && message.status ? String(message.status) : "",
+      actions: Array.isArray(message && message.actions) ? message.actions : [],
+      cards: Array.isArray(message && message.cards) ? message.cards : [],
+      table: message && message.table ? message.table : null,
     };
   }
 
@@ -2139,6 +2291,9 @@
       sources: dedupeSources((meta && meta.sources) || []),
       interactionId: meta && meta.interactionId ? String(meta.interactionId) : null,
       status: meta && meta.status ? String(meta.status) : "",
+      actions: Array.isArray(meta && meta.actions) ? meta.actions : [],
+      cards: Array.isArray(meta && meta.cards) ? meta.cards : [],
+      table: meta && meta.table ? meta.table : null,
     };
 
     if (!message.text) {
@@ -2284,6 +2439,9 @@
             interactionId: data.interaction_id,
             sources: data.sources || [],
             status: data.status || "",
+            actions: data.actions || [],
+            cards: data.cards || [],
+            table: data.table || null,
           },
           state.activeConversationId === conversationId
         );
@@ -2631,9 +2789,7 @@
     autoResize();
     renderHistoryList();
     renderConversation();
-    renderHighlights();
     loadHealth();
-    loadHighlights();
     scrollMessagesToBottom();
   }
 

@@ -95,7 +95,13 @@ class SearchIndex:
 
 
 def _searchable_text(chunk: Chunk) -> str:
-    return f"{chunk.title}\n{chunk.text}"
+    metadata = chunk.metadata or {}
+    metadata_text = " ".join(
+        clean_text(str(metadata.get(key, "")))
+        for key in ("source_type", "category", "fetched_at")
+        if metadata.get(key)
+    )
+    return f"{chunk.title}\n{chunk.text}\n{metadata_text}"
 
 
 def _direct_match_score(query: str, chunk: Chunk) -> float:

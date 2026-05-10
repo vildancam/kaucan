@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from functools import lru_cache
 from html import unescape
+from typing import Dict, List, Optional
 from urllib.parse import quote_plus
 from zoneinfo import ZoneInfo
 
@@ -22,6 +23,7 @@ from .config import (
 from .indexer import SearchIndex
 from .learning import expand_query, log_interaction, log_query
 from .llm import OllamaAnswerGenerator, OpenAIAnswerGenerator
+from .message_router import HybridMessageRouter
 from .memory import (
     build_user_summary,
     find_relevant_user_fact,
@@ -47,12 +49,16 @@ from .query_normalizer import (
     is_coding_query,
     is_english_query,
     is_greeting_query,
+    is_identity_query,
+    is_short_ambiguous_query,
+    is_short_iibf_query,
     is_smalltalk_query,
     looks_actionable,
     normalize_for_matching,
     normalize_query,
 )
-from .safety import has_harmful_intent, has_inappropriate_language, is_ambiguous
+from .safety import has_harmful_intent, has_inappropriate_language, has_targeted_abuse, is_ambiguous
+from .user_session import get_preferred_address, mark_address_prompted, should_prompt_for_address
 from .utils import clean_text, stable_id
 
 
@@ -483,6 +489,46 @@ SMALLTALK_RESPONSES = {
         "ar": "😊 على الرحب والسعة. يسعدني أن أساعدك في أي وقت.",
     },
 }
+ASSISTANT_IDENTITY_PATTERNS = (
+    "sen kimsin",
+    "siz kimsiniz",
+    "kimsin",
+    "adin ne",
+    "ismin ne",
+    "kendini tanit",
+    "kendini tanitir misin",
+    "biraz kendinden bahset",
+    "who are you",
+    "what are you",
+    "introduce yourself",
+    "tell me about yourself",
+    "من انت",
+    "ما انت",
+    "عرف نفسك",
+)
+ASSISTANT_CAPABILITY_PATTERNS = (
+    "ne yapabilirsin",
+    "neler yapabilirsin",
+    "ne ise yararsin",
+    "hangi konularda yardimci olursun",
+    "bana nasil yardimci olabilirsin",
+    "what can you do",
+    "how can you help",
+    "how can you assist",
+    "what do you do",
+    "ماذا تستطيع",
+    "كيف تساعد",
+)
+ASSISTANT_MEDIA_TERMS = (
+    "film",
+    "dizi",
+    "kitap",
+    "roman",
+    "sarki",
+    "song",
+    "movie",
+    "tolga cev",
+)
 ISTANBUL_TZ = ZoneInfo("Europe/Istanbul")
 FACULTY_ALIAS_MAP = {
     "iibf": (
@@ -855,10 +901,10 @@ MATH_BINARY_OPERATORS = {
 @dataclass(frozen=True)
 class ComposedAnswer:
     text: str
-    sources: list[SearchResult]
+    sources: List[SearchResult]
 
 
-def _response_language(query: str, preferred_language: str | None = None) -> str:
+def _response_language(query: str, preferred_language: Optional[str] = None) -> str:
     preferred = clean_text(preferred_language or "").lower()
     if preferred in {"tr", "en", "ar"}:
         return preferred
@@ -867,26 +913,75 @@ def _response_language(query: str, preferred_language: str | None = None) -> str
     return "en" if is_english_query(query) else "tr"
 
 
-def _text_for_language(language: str, tr_text: str, en_text: str, ar_text: str | None = None) -> str:
+def _text_for_language(language: str, tr_text: str, en_text: str, ar_text: Optional[str] = None) -> str:
     if language == "ar":
         return ar_text or en_text
     return en_text if language == "en" else tr_text
 
 
-def _welcome_message(language: str, user_memory: dict[str, object] | None = None) -> str:
-    return _text_for_language(
+def _welcome_message(
+    language: str,
+    user_memory: Optional[Dict[str, object]] = None,
+    client_id: str = "",
+) -> str:
+    base = _text_for_language(
         language,
         WELCOME_MESSAGE,
         "👋 Hello, I am KAUCAN Beta - the Digital Assistant of Kafkas University. I can help with IIBF announcements, academic information, staff, contact, exams, cafeteria menu, writing, coding, and many other topics.",
         "👋 مرحبًا، أنا KAÜCAN Beta، المساعد الرقمي لجامعة قفقاس. يمكنني المساعدة في إعلانات الكلية والمعلومات الأكاديمية والكوادر والاتصال والامتحانات وقائمة الطعام والكتابة والبرمجة وغيرها.",
+    )
+    if should_prompt_for_address(client_id, user_memory or {}):
+        mark_address_prompted(client_id)
+        return _text_for_language(
+            language,
+            f"{base}\n\nSize nasıl hitap etmemi istersiniz? 😊",
+            f"{base}\n\nHow would you like me to address you? 😊",
+            f"{base}\n\nكيف تفضل أن أخاطبك؟ 😊",
+        )
+    return base
+
+
+def _blocked_abuse_text(language: str) -> str:
+    return _text_for_language(
+        language,
+        "Bu soruyu yanıtlayamam.",
+        "I cannot answer that question.",
+        "لا يمكنني الإجابة عن هذا السؤال.",
+    )
+
+
+def _blank_query_text(language: str) -> str:
+    return _text_for_language(
+        language,
+        "Lütfen bir soru yazın; size yardımcı olayım.",
+        "Please write a question so I can help.",
+        "يرجى كتابة سؤال حتى أتمكن من المساعدة.",
+    )
+
+
+def _iibf_clarification_text(language: str) -> str:
+    return _text_for_language(
+        language,
+        "Sanırım İktisadi ve İdari Bilimler Fakültesi'ni (İİBF) kastediyorsunuz. Hangi konuda bilgi almak istersiniz? Bölümler, duyurular, iletişim, akademik kadro, dekanlık veya yol tarifi hakkında soru sorabilirsiniz.",
+        "I think you mean the Faculty of Economics and Administrative Sciences (FEAS). What would you like to learn about? You can ask about departments, announcements, contact details, academic staff, the dean's office, or directions.",
+        "أظن أنك تقصد كلية الاقتصاد والعلوم الإدارية. ما الموضوع الذي تريد معرفته؟ يمكنك السؤال عن الأقسام أو الإعلانات أو معلومات التواصل أو الكادر الأكاديمي أو العمادة أو الاتجاهات.",
+    )
+
+
+def _clarification_text(language: str) -> str:
+    return _text_for_language(
+        language,
+        "Bu konuda daha net yardımcı olabilmem için sorunuzu biraz detaylandırır mısınız? Örneğin 'İİBF dekanı kimdir?', 'İİBF bölümleri nelerdir?' veya 'İİBF iletişim bilgileri nedir?' şeklinde sorabilirsiniz.",
+        "Could you make your question a little more specific so I can help more clearly? For example, you can ask 'Who is the dean of FEAS?', 'What are the FEAS departments?', or 'What are the FEAS contact details?'.",
+        "هل يمكنك توضيح سؤالك قليلًا حتى أساعدك بشكل أدق؟ يمكنك مثلًا أن تسأل: من هو عميد الكلية؟ ما أقسام الكلية؟ أو ما معلومات التواصل الخاصة بها؟",
     )
 
 
 class WebsiteGroundedAssistant:
     def __init__(
         self,
-        index: SearchIndex | None = None,
-        settings: Settings | None = None,
+        index: Optional[SearchIndex] = None,
+        settings: Optional[Settings] = None,
     ) -> None:
         self.settings = settings or Settings()
         self.index = index or SearchIndex.load(INDEX_PATH)
@@ -894,10 +989,10 @@ class WebsiteGroundedAssistant:
     def answer(
         self,
         query: str,
-        client_id: str | None = None,
-        preferred_language: str | None = None,
-        latitude: float | None = None,
-        longitude: float | None = None,
+        client_id: Optional[str] = None,
+        preferred_language: Optional[str] = None,
+        latitude: Optional[float] = None,
+        longitude: Optional[float] = None,
     ) -> str:
         return self.answer_with_context(
             query,
@@ -910,31 +1005,46 @@ class WebsiteGroundedAssistant:
     def answer_with_context(
         self,
         query: str,
-        client_id: str | None = None,
-        preferred_language: str | None = None,
-        latitude: float | None = None,
-        longitude: float | None = None,
+        client_id: Optional[str] = None,
+        preferred_language: Optional[str] = None,
+        latitude: Optional[float] = None,
+        longitude: Optional[float] = None,
     ) -> AssistantResponse:
         original_query = clean_text(query)
-        normalized_query = normalize_query(original_query) or original_query
-        general_query = original_query or normalized_query
-        language = _response_language(general_query, preferred_language)
+        language = _response_language(original_query, preferred_language)
         client_key = clean_text(client_id or "")
         if client_key:
             touch_user(client_key)
-        memory_update = learn_from_user_message(client_key, original_query) if client_key else None
+
+        if not original_query:
+            answer = _blank_query_text(language)
+            interaction = log_interaction("", answer, [], "clarification")
+            return AssistantResponse(
+                answer=answer,
+                interaction_id=interaction.id,
+                status="clarification",
+            )
+
+        normalized_query = normalize_query(original_query) or original_query
+        general_query = original_query or normalized_query
+        language = _response_language(general_query, preferred_language)
         user_memory = get_user_memory(client_key) if client_key else {}
 
-        if has_inappropriate_language(normalized_query):
-            return AssistantResponse(
-                answer=_text_for_language(
-                    language,
-                    POLITE_LANGUAGE_RESPONSE,
-                    "⚠️ Please use academic and appropriate language. I would be glad to assist.",
-                    "⚠️ يُرجى استخدام لغة أكاديمية ومناسبة. يسعدني مساعدتك.",
-                ),
-                status="blocked_language",
+        routed_response = HybridMessageRouter().route(
+            original_query,
+            language=language,
+            client_id=client_key,
+            user_memory=user_memory,
+        )
+        if routed_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                routed_response.answer,
+                routed_response.sources,
+                routed_response.status or "router",
             )
+            routed_response.interaction_id = interaction.id
+            return routed_response
 
         if has_harmful_intent(normalized_query):
             return AssistantResponse(
@@ -947,6 +1057,80 @@ class WebsiteGroundedAssistant:
                 status="blocked_safety",
             )
 
+        if has_targeted_abuse(normalized_query):
+            return AssistantResponse(
+                answer=_blocked_abuse_text(language),
+                status="blocked_abuse",
+            )
+
+        if has_inappropriate_language(normalized_query):
+            return AssistantResponse(
+                answer=_text_for_language(
+                    language,
+                    POLITE_LANGUAGE_RESPONSE,
+                    "⚠️ Please use academic and appropriate language. I would be glad to assist.",
+                    "⚠️ يُرجى استخدام لغة أكاديمية ومناسبة. يسعدني مساعدتك.",
+                ),
+                status="blocked_language",
+            )
+
+        if is_greeting_query(normalized_query):
+            answer = _welcome_message(language, user_memory, client_key)
+            interaction = log_interaction(original_query or normalized_query, answer, [], "greeting")
+            return AssistantResponse(
+                answer=answer,
+                interaction_id=interaction.id,
+                status="greeting",
+            )
+
+        assistant_identity_response = _assistant_identity_shortcut(normalized_query, language)
+        if assistant_identity_response is not None:
+            interaction = log_interaction(
+                original_query or normalized_query,
+                assistant_identity_response.text,
+                [],
+                "smalltalk",
+            )
+            return AssistantResponse(
+                answer=assistant_identity_response.text,
+                interaction_id=interaction.id,
+                status="smalltalk",
+            )
+
+        if is_smalltalk_query(normalized_query):
+            answer = _smalltalk_response(normalized_query, language, user_memory)
+            interaction = log_interaction(
+                original_query or normalized_query,
+                answer,
+                _general_support_sources(original_query or normalized_query, language, include_google=False),
+                "smalltalk",
+            )
+            return AssistantResponse(
+                answer=answer,
+                sources=_general_support_sources(original_query or normalized_query, language, include_google=False),
+                interaction_id=interaction.id,
+                status="smalltalk",
+            )
+
+        if is_short_iibf_query(normalized_query):
+            answer = _iibf_clarification_text(language)
+            interaction = log_interaction(original_query or normalized_query, answer, [], "clarification")
+            return AssistantResponse(
+                answer=answer,
+                interaction_id=interaction.id,
+                status="clarification",
+            )
+
+        if is_short_ambiguous_query(normalized_query):
+            answer = _clarification_text(language)
+            interaction = log_interaction(original_query or normalized_query, answer, [], "clarification")
+            return AssistantResponse(
+                answer=answer,
+                interaction_id=interaction.id,
+                status="clarification",
+            )
+
+        memory_update = learn_from_user_message(client_key, original_query) if client_key else None
         memory_recall_response = _memory_recall_shortcut(original_query or normalized_query, language, user_memory, client_key)
         if memory_recall_response is not None:
             interaction = log_interaction(
@@ -974,15 +1158,6 @@ class WebsiteGroundedAssistant:
                 answer=memory_saved_response.text,
                 interaction_id=interaction.id,
                 status="memory_saved",
-            )
-
-        if is_greeting_query(normalized_query):
-            answer = _welcome_message(language, user_memory)
-            interaction = log_interaction(original_query or normalized_query, answer, [], "greeting")
-            return AssistantResponse(
-                answer=answer,
-                interaction_id=interaction.id,
-                status="greeting",
             )
 
         management_response = _management_shortcut(normalized_query, language)
@@ -1169,21 +1344,6 @@ class WebsiteGroundedAssistant:
                 status="general",
             )
 
-        if is_smalltalk_query(normalized_query):
-            answer = _smalltalk_response(normalized_query, language, user_memory)
-            interaction = log_interaction(
-                original_query or normalized_query,
-                answer,
-                _general_support_sources(original_query or normalized_query, language, include_google=False),
-                "smalltalk",
-            )
-            return AssistantResponse(
-                answer=answer,
-                sources=_general_support_sources(original_query or normalized_query, language, include_google=False),
-                interaction_id=interaction.id,
-                status="smalltalk",
-            )
-
         math_answer = _solve_basic_math(general_query, language)
         if math_answer:
             general_sources = _general_support_sources(original_query or normalized_query, language)
@@ -1319,7 +1479,7 @@ class WebsiteGroundedAssistant:
             status="local",
         )
 
-    def _generate_with_llm(self, query: str, results: list[SearchResult]) -> str | None:
+    def _generate_with_llm(self, query: str, results: List[SearchResult]) -> Optional[str]:
         for generator in _grounded_generators_for_settings(self.settings):
             if not generator.is_configured:
                 continue
@@ -1334,10 +1494,10 @@ class WebsiteGroundedAssistant:
     def _generate_general_with_llm(
         self,
         query: str,
-        user_memory: dict[str, object] | None = None,
-        preferred_language: str | None = None,
+        user_memory: Optional[Dict[str, object]] = None,
+        preferred_language: Optional[str] = None,
         support_context: str = "",
-    ) -> str | None:
+    ) -> Optional[str]:
         memory_context = _general_memory_context(user_memory or {}, _response_language(query, preferred_language))
         for generator in _general_generators_for_settings(self.settings):
             if not generator.is_configured:
@@ -1351,7 +1511,7 @@ class WebsiteGroundedAssistant:
         return None
 
 
-def _build_local_answer(query: str, results: list[SearchResult], language: str) -> ComposedAnswer:
+def _build_local_answer(query: str, results: List[SearchResult], language: str) -> ComposedAnswer:
     if _is_department_query(query):
         answer = _format_department_answer(results, language)
         if answer:
@@ -1377,7 +1537,7 @@ def _build_local_answer(query: str, results: list[SearchResult], language: str) 
     return _format_general_answer(query, results, language)
 
 
-def _format_department_answer(results: list[SearchResult], language: str) -> ComposedAnswer | None:
+def _format_department_answer(results: List[SearchResult], language: str) -> Optional[ComposedAnswer]:
     entries: list[tuple[str, str]] = []
     for result in results:
         for label, url in _extract_link_pairs(result.chunk.text):
@@ -1402,7 +1562,7 @@ def _format_department_answer(results: list[SearchResult], language: str) -> Com
     )
 
 
-def _format_contact_answer(results: list[SearchResult], language: str) -> ComposedAnswer | None:
+def _format_contact_answer(results: List[SearchResult], language: str) -> Optional[ComposedAnswer]:
     entries: list[tuple[str, str]] = []
     for result in results:
         for label, url in _extract_link_pairs(result.chunk.text):
@@ -1453,7 +1613,7 @@ def _format_contact_answer(results: list[SearchResult], language: str) -> Compos
     )
 
 
-def _format_personnel_answer(query: str, results: list[SearchResult], language: str) -> ComposedAnswer:
+def _format_personnel_answer(query: str, results: List[SearchResult], language: str) -> ComposedAnswer:
     source = _dedupe_results_by_url(results)[:1]
     profile_label = _text_for_language(
         language,
@@ -1471,7 +1631,7 @@ def _format_personnel_answer(query: str, results: list[SearchResult], language: 
     )
 
 
-def _format_announcement_answer(results: list[SearchResult], language: str) -> ComposedAnswer | None:
+def _format_announcement_answer(results: List[SearchResult], language: str) -> Optional[ComposedAnswer]:
     candidates = [
         result
         for result in _dedupe_results_by_url(results)
@@ -1492,7 +1652,7 @@ def _format_announcement_answer(results: list[SearchResult], language: str) -> C
     )
 
 
-def _format_exam_answer(results: list[SearchResult], language: str) -> ComposedAnswer | None:
+def _format_exam_answer(results: List[SearchResult], language: str) -> Optional[ComposedAnswer]:
     candidates = [
         result
         for result in _dedupe_results_by_url(results)
@@ -1512,7 +1672,7 @@ def _format_exam_answer(results: list[SearchResult], language: str) -> ComposedA
     )
 
 
-def _format_academic_calendar_answer(results: list[SearchResult], language: str) -> ComposedAnswer | None:
+def _format_academic_calendar_answer(results: List[SearchResult], language: str) -> Optional[ComposedAnswer]:
     rows = [_build_titled_row(result, language) for result in _dedupe_results_by_url(results)]
     rows = [row for row in rows if row][:MAX_SUMMARY_ITEMS]
     if not rows:
@@ -1527,7 +1687,7 @@ def _format_academic_calendar_answer(results: list[SearchResult], language: str)
     )
 
 
-def _format_general_answer(query: str, results: list[SearchResult], language: str) -> ComposedAnswer:
+def _format_general_answer(query: str, results: List[SearchResult], language: str) -> ComposedAnswer:
     lines = [_build_summary_line(result, language) for result in _dedupe_results_by_url(results)]
     lines = [line for line in lines if line][:MAX_SUMMARY_ITEMS]
     if not lines:
@@ -1602,7 +1762,7 @@ def _extract_date(text: str) -> str:
     return clean_text(match.group(0))
 
 
-def _build_link_sources(entries: list[tuple[str, str]]) -> list[SearchResult]:
+def _build_link_sources(entries: List[tuple[str, str]]) -> List[SearchResult]:
     sources: list[SearchResult] = []
     for index, (label, url) in enumerate(entries[:8], start=1):
         sources.append(
@@ -1621,7 +1781,7 @@ def _build_link_sources(entries: list[tuple[str, str]]) -> list[SearchResult]:
     return sources
 
 
-def _general_support_sources(query: str, language: str, include_google: bool = True) -> list[SearchResult]:
+def _general_support_sources(query: str, language: str, include_google: bool = True) -> List[SearchResult]:
     normalized = _query_key(query)
     entries: list[tuple[str, str]] = []
 
@@ -1664,7 +1824,7 @@ def _general_support_sources(query: str, language: str, include_google: bool = T
     return _build_link_sources(deduped[:3])
 
 
-def _match_direct_service_link(query: str, language: str) -> ComposedAnswer | None:
+def _match_direct_service_link(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     for item in DIRECT_SERVICE_LINKS:
         if any(normalize_for_matching(term) in normalized for term in item["terms"]):
@@ -1675,7 +1835,7 @@ def _match_direct_service_link(query: str, language: str) -> ComposedAnswer | No
     return None
 
 
-def _management_shortcut(query: str, language: str) -> ComposedAnswer | None:
+def _management_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if not normalized:
         return None
@@ -1737,7 +1897,7 @@ def _management_shortcut(query: str, language: str) -> ComposedAnswer | None:
     return None
 
 
-def _faculty_contact_shortcut(query: str, language: str) -> ComposedAnswer | None:
+def _faculty_contact_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if not _is_contact_query(query):
         return None
@@ -1780,7 +1940,7 @@ def _faculty_contact_shortcut(query: str, language: str) -> ComposedAnswer | Non
     )
 
 
-def _location_shortcut(query: str, language: str) -> ComposedAnswer | None:
+def _location_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if not normalized:
         return None
@@ -1828,7 +1988,7 @@ def _location_shortcut(query: str, language: str) -> ComposedAnswer | None:
     )
 
 
-def _library_faq_shortcut(query: str, language: str) -> ComposedAnswer | None:
+def _library_faq_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if not any(term in normalized for term in ("kutuphane", "kütüphane", "library")):
         return None
@@ -1862,7 +2022,7 @@ def _library_faq_shortcut(query: str, language: str) -> ComposedAnswer | None:
     return None
 
 
-def _faculty_form_shortcut(query: str, language: str) -> ComposedAnswer | None:
+def _faculty_form_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if not normalized:
         return None
@@ -1900,7 +2060,7 @@ def _faculty_form_shortcut(query: str, language: str) -> ComposedAnswer | None:
     return None
 
 
-def _classroom_location_shortcut(query: str, language: str) -> ComposedAnswer | None:
+def _classroom_location_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if not normalized:
         return None
@@ -1948,7 +2108,7 @@ def _is_classroom_context_query(normalized_query: str) -> bool:
     )
 
 
-def _memory_saved_shortcut(memory_update, language: str, user_memory: dict[str, object]) -> ComposedAnswer:
+def _memory_saved_shortcut(memory_update, language: str, user_memory: Dict[str, object]) -> ComposedAnswer:
     saved_labels: list[str] = []
     if clean_text(memory_update.profile_updates.get("name", "")):
         saved_labels.append(_text_for_language(language, "ad bilgisi", "name information"))
@@ -1979,9 +2139,9 @@ def _memory_saved_shortcut(memory_update, language: str, user_memory: dict[str, 
 def _memory_recall_shortcut(
     query: str,
     language: str,
-    user_memory: dict[str, object],
+    user_memory: Dict[str, object],
     client_id: str,
-) -> ComposedAnswer | None:
+) -> Optional[ComposedAnswer]:
     if not client_id or not user_memory:
         return None
 
@@ -2054,9 +2214,9 @@ def _memory_recall_shortcut(
 def _custom_memory_fact_shortcut(
     query: str,
     language: str,
-    user_memory: dict[str, object],
+    user_memory: Dict[str, object],
     client_id: str,
-) -> ComposedAnswer | None:
+) -> Optional[ComposedAnswer]:
     if not client_id:
         return None
 
@@ -2078,7 +2238,7 @@ def _custom_memory_fact_shortcut(
     )
 
 
-def _general_memory_context(user_memory: dict[str, object], language: str) -> str:
+def _general_memory_context(user_memory: Dict[str, object], language: str) -> str:
     summary = build_user_summary(user_memory, language)
     if not summary:
         return ""
@@ -2100,7 +2260,7 @@ def _missing_memory_answer(language: str) -> ComposedAnswer:
     )
 
 
-def _official_data_shortcut(query: str, language: str) -> ComposedAnswer | None:
+def _official_data_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if not normalized:
         return None
@@ -2163,7 +2323,7 @@ def _official_data_shortcut(query: str, language: str) -> ComposedAnswer | None:
     return None
 
 
-def _official_dean_answer(snapshot: dict, query: str, language: str) -> ComposedAnswer | None:
+def _official_dean_answer(snapshot: dict, query: str, language: str) -> Optional[ComposedAnswer]:
     dean = _find_dean_for_query(snapshot, query)
     if not dean:
         return None
@@ -2193,7 +2353,7 @@ def _official_dean_answer(snapshot: dict, query: str, language: str) -> Composed
     )
 
 
-def _official_faculty_content_answer(snapshot: dict, topic: str, language: str) -> ComposedAnswer | None:
+def _official_faculty_content_answer(snapshot: dict, topic: str, language: str) -> Optional[ComposedAnswer]:
     items = snapshot.get("faculty_content", {}).get(topic, [])
     if not items:
         label = _content_label(topic, language)
@@ -2222,8 +2382,8 @@ def _official_department_answer(
     department_key: str,
     query: str,
     language: str,
-    topic: str | None,
-) -> ComposedAnswer | None:
+    topic: Optional[str],
+) -> Optional[ComposedAnswer]:
     department = snapshot.get("departments", {}).get(department_key)
     if not department:
         return None
@@ -2256,7 +2416,7 @@ def _official_department_answer(
     return None
 
 
-def _official_faculty_heads_answer(snapshot: dict, language: str) -> ComposedAnswer | None:
+def _official_faculty_heads_answer(snapshot: dict, language: str) -> Optional[ComposedAnswer]:
     people = snapshot.get("faculty_personnel", [])
     department_heads = []
     for person in people:
@@ -2282,7 +2442,7 @@ def _official_faculty_heads_answer(snapshot: dict, language: str) -> ComposedAns
     )
 
 
-def _official_faculty_staff_answer(snapshot: dict, query: str, language: str) -> ComposedAnswer | None:
+def _official_faculty_staff_answer(snapshot: dict, query: str, language: str) -> Optional[ComposedAnswer]:
     people = snapshot.get("faculty_personnel", [])
     if not people:
         return None
@@ -2317,7 +2477,7 @@ def _official_faculty_staff_answer(snapshot: dict, query: str, language: str) ->
     )
 
 
-def _official_department_listing_answer(snapshot: dict, language: str) -> ComposedAnswer | None:
+def _official_department_listing_answer(snapshot: dict, language: str) -> Optional[ComposedAnswer]:
     ordered_keys = snapshot.get("department_order") or list(snapshot.get("departments", {}))
     rows = []
     sources = []
@@ -2343,7 +2503,7 @@ def _official_department_listing_answer(snapshot: dict, language: str) -> Compos
     )
 
 
-def _official_department_content_answer(department: dict, topic: str, language: str) -> ComposedAnswer | None:
+def _official_department_content_answer(department: dict, topic: str, language: str) -> Optional[ComposedAnswer]:
     items = department.get(topic, [])
     label = _content_label(topic, language)
     department_name = department.get("name_tr", "Bölüm")
@@ -2372,7 +2532,7 @@ def _official_department_content_answer(department: dict, topic: str, language: 
     )
 
 
-def _official_department_heads_answer(department: dict, language: str) -> ComposedAnswer | None:
+def _official_department_heads_answer(department: dict, language: str) -> Optional[ComposedAnswer]:
     people = department.get("personnel", [])
     if not people:
         return None
@@ -2411,7 +2571,7 @@ def _official_department_heads_answer(department: dict, language: str) -> Compos
     )
 
 
-def _official_department_staff_shortcut(department: dict, query: str, language: str) -> ComposedAnswer | None:
+def _official_department_staff_shortcut(department: dict, query: str, language: str) -> Optional[ComposedAnswer]:
     people = department.get("personnel", [])
     if not people:
         return None
@@ -2442,7 +2602,7 @@ def _official_department_staff_shortcut(department: dict, query: str, language: 
     )
 
 
-def _official_department_info_answer(department: dict, language: str) -> ComposedAnswer | None:
+def _official_department_info_answer(department: dict, language: str) -> Optional[ComposedAnswer]:
     name_tr = department.get("name_tr", "")
     if not name_tr:
         return None
@@ -2464,7 +2624,7 @@ def _official_department_info_answer(department: dict, language: str) -> Compose
     )
 
 
-def _official_navigation_answer(snapshot: dict, query: str, language: str) -> ComposedAnswer | None:
+def _official_navigation_answer(snapshot: dict, query: str, language: str) -> Optional[ComposedAnswer]:
     if not _query_targets_iibf(query) and not _looks_like_iibf_menu_query(query):
         return None
 
@@ -2510,7 +2670,7 @@ def _official_navigation_answer(snapshot: dict, query: str, language: str) -> Co
     )
 
 
-def _official_commission_navigation_answer(snapshot: dict, query: str, language: str) -> ComposedAnswer | None:
+def _official_commission_navigation_answer(snapshot: dict, query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if "komisyon" not in normalized:
         return None
@@ -2576,7 +2736,7 @@ def _official_item_row(item: dict) -> str:
     return f"• {title}"
 
 
-def _official_item_sources(items: list[dict], fallback_title: str) -> list[SearchResult]:
+def _official_item_sources(items: List[dict], fallback_title: str) -> List[SearchResult]:
     pairs = []
     for item in items:
         title = clean_text(item.get("title", "")) or fallback_title
@@ -2661,7 +2821,7 @@ def _display_academic_title(value: str) -> str:
     return mapping.get(normalized, clean_text(value))
 
 
-def _official_content_topic(query: str) -> str | None:
+def _official_content_topic(query: str) -> Optional[str]:
     normalized = _query_key(query)
     if any(term in normalized for term in ("duyuru", "duyurular", "announcement", "announcements")):
         return "announcements"
@@ -2784,7 +2944,7 @@ def _is_academic_staff_query(query: str) -> bool:
     return any(term in normalized for term in ("akademik kadro", "akademik personel", "academic staff"))
 
 
-def _smalltalk_response(query: str, language: str, user_memory: dict[str, object] | None = None) -> str:
+def _smalltalk_response(query: str, language: str, user_memory: Optional[Dict[str, object]] = None) -> str:
     normalized = _query_key(query)
     for pattern, response in SMALLTALK_RESPONSES.items():
         if pattern in normalized:
@@ -2797,7 +2957,36 @@ def _smalltalk_response(query: str, language: str, user_memory: dict[str, object
     )
 
 
-def _composition_shortcut(query: str, language: str) -> ComposedAnswer | None:
+def _assistant_identity_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
+    normalized = _query_key(query)
+    if not normalized:
+        return None
+    if any(term in normalized for term in ASSISTANT_MEDIA_TERMS):
+        return None
+    if is_identity_query(normalized) or any(pattern in normalized for pattern in ASSISTANT_IDENTITY_PATTERNS):
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                "👋 Ben KAÜCAN Beta. Kafkas Üniversitesi ve özellikle İİBF için geliştirilen kurumsal bir dijital asistanım. Kampüs, duyurular, akademik kadro, iletişim ve yol tarifi konularında yardımcı olabilirim.",
+                "👋 I am KAUCAN Beta, an institutional digital assistant for Kafkas University, especially FEAS. I can help with campus information, announcements, academic staff, contact details, and directions.",
+                "👋 أنا KAÜCAN Beta، مساعد رقمي مؤسسي لجامعة قفقاس وخصوصًا لكلية الاقتصاد والعلوم الإدارية. يمكنني المساعدة في الحرم الجامعي والإعلانات والكادر الأكاديمي ووسائل التواصل والاتجاهات.",
+            ),
+            sources=[],
+        )
+    if any(pattern in normalized for pattern in ASSISTANT_CAPABILITY_PATTERNS):
+        return ComposedAnswer(
+            text=_text_for_language(
+                language,
+                "✅ Ben KAÜCAN Beta'yım. Kafkas Üniversitesi ve İİBF hakkında kampüs bilgileri, duyurular, akademik kadro, iletişim ve yol tarifi gibi konularda yardımcı olabilirim.",
+                "✅ I am KAUCAN Beta. I can help with Kafkas University and FEAS topics such as campus information, announcements, academic staff, contact details, and directions.",
+                "✅ أنا KAÜCAN Beta. يمكنني المساعدة في جامعة قفقاس وكلية الاقتصاد والعلوم الإدارية في موضوعات مثل الحرم الجامعي والإعلانات والكادر الأكاديمي ووسائل التواصل والاتجاهات.",
+            ),
+            sources=[],
+        )
+    return None
+
+
+def _composition_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if not _is_composition_request(query):
         return None
@@ -3095,7 +3284,7 @@ def _infer_subject(payload: str, language: str) -> str:
     return _text_for_language(language, "Bilgi Talebi", "Information Request", "طلب معلومات")
 
 
-def _datetime_shortcut(query: str, language: str) -> ComposedAnswer | None:
+def _datetime_shortcut(query: str, language: str) -> Optional[ComposedAnswer]:
     normalized = _query_key(query)
     if _is_composition_request(query):
         return None
@@ -3255,7 +3444,7 @@ def _is_special_day_query(query: str) -> bool:
     )
 
 
-def _resolve_relative_date(normalized_query: str, reference: date) -> date | None:
+def _resolve_relative_date(normalized_query: str, reference: date) -> Optional[date]:
     if any(term in normalized_query for term in ("yarin", "yarın", "tomorrow", "غدا")):
         return reference + timedelta(days=1)
     if any(term in normalized_query for term in ("dun", "dün", "yesterday", "امس")):
@@ -3273,7 +3462,7 @@ def _relative_date_label(normalized_query: str, language: str) -> str:
     return _text_for_language(language, "Bugün", "Today is", "اليوم")
 
 
-def _parse_explicit_date(query: str, default_year: int) -> date | None:
+def _parse_explicit_date(query: str, default_year: int) -> Optional[date]:
     cleaned = clean_text(query)
 
     numeric_match = re.search(r"\b(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})\b", cleaned)
@@ -3404,7 +3593,7 @@ def _is_day_name_query(query: str) -> bool:
     )
 
 
-def _extract_requested_year(query: str) -> int | None:
+def _extract_requested_year(query: str) -> Optional[int]:
     match = re.search(r"\b(20\d{2})\b", query)
     if not match:
         return None
@@ -3568,7 +3757,7 @@ def _format_date_with_weekday(target: date, language: str) -> str:
     return f"{target.day} {month_name_tr} {target.year} {weekday_name}"
 
 
-def _safe_date(year: int, month: int, day: int) -> date | None:
+def _safe_date(year: int, month: int, day: int) -> Optional[date]:
     try:
         return date(year, month, day)
     except ValueError:
@@ -3708,7 +3897,7 @@ def _should_answer_with_general_knowledge(query: str) -> bool:
     )
 
 
-def _solve_basic_math(query: str, language: str) -> str | None:
+def _solve_basic_math(query: str, language: str) -> Optional[str]:
     expression = _math_expression_from_query(query)
     if not expression:
         return None
@@ -3837,7 +4026,7 @@ def _fetch_rector_name() -> str:
     return _normalize_person_name(match.group(1))
 
 
-def _fetch_rector_assistant_names() -> list[str]:
+def _fetch_rector_assistant_names() -> List[str]:
     try:
         html = _fetch_remote_page(RECTOR_ASSISTANTS_PAGE[1])
     except requests.RequestException:
@@ -3862,7 +4051,7 @@ def _normalize_person_name(value: str) -> str:
     return cleaned
 
 
-def _extract_link_pairs(text: str) -> list[tuple[str, str]]:
+def _extract_link_pairs(text: str) -> List[tuple[str, str]]:
     entries: list[tuple[str, str]] = []
     for match in LINK_PATTERN.finditer(text):
         label = clean_text(match.group(1))
@@ -3885,7 +4074,7 @@ def _truncate(text: str, max_chars: int) -> str:
     return text[: max_chars - 3].rstrip() + "..."
 
 
-def _dedupe_results_by_url(results: list[SearchResult]) -> list[SearchResult]:
+def _dedupe_results_by_url(results: List[SearchResult]) -> List[SearchResult]:
     deduped: list[SearchResult] = []
     seen_urls: set[str] = set()
     for result in results:
@@ -3896,7 +4085,7 @@ def _dedupe_results_by_url(results: list[SearchResult]) -> list[SearchResult]:
     return deduped
 
 
-def _merge_source_results(*groups: list[SearchResult]) -> list[SearchResult]:
+def _merge_source_results(*groups: List[SearchResult]) -> List[SearchResult]:
     merged: list[SearchResult] = []
     seen_urls: set[str] = set()
     for group in groups:
@@ -3959,10 +4148,10 @@ class LocalOnlyGenerator:
     def is_configured(self) -> bool:
         return False
 
-    def generate(self, query: str, results: list[SearchResult]) -> str | None:
+    def generate(self, query: str, results: List[SearchResult]) -> Optional[str]:
         return None
 
-    def generate_general(self, query: str, memory_context: str = "") -> str | None:
+    def generate_general(self, query: str, memory_context: str = "") -> Optional[str]:
         return None
 
 
@@ -4011,6 +4200,7 @@ def _sanitize_answer_text_for_language(answer: str, language: str) -> str:
     if canonical:
         return canonical
     sanitized = _filter_unexpected_language_segments(sanitized, language)
+    sanitized = _repair_inline_foreign_glitches(sanitized, language)
     canonical = _canonicalize_standard_response(sanitized, language)
     if canonical:
         return canonical
@@ -4045,6 +4235,21 @@ def _repair_common_text_glitches(text: str, language: str) -> str:
             (r"\bula\s*samad[ıi]m\b", "ulaşamadım"),
             (r"\bguven[ıi]l[ıi]r\b", "güvenilir"),
             (r"\biletisime\b", "iletişime"),
+        )
+        for pattern, replacement in replacements:
+            repaired = re.sub(pattern, replacement, repaired, flags=re.IGNORECASE)
+    repaired = re.sub(r"\s+([,.;:!?])", r"\1", repaired)
+    repaired = re.sub(r"([,.;:!?])([^\s])", r"\1 \2", repaired)
+    repaired = re.sub(r"\s{2,}", " ", repaired)
+    return repaired.strip()
+
+
+def _repair_inline_foreign_glitches(text: str, language: str) -> str:
+    repaired = text
+    if language == "tr":
+        replacements = (
+            (r"\bhere\s*['’]?\s*(?:dir|dır|dur|dür|tir|tır|tur|tür)\b", "buradadır"),
+            (r"\bthere\s*['’]?\s*(?:dir|dır|dur|dür|tir|tır|tur|tür)\b", "oradadır"),
         )
         for pattern, replacement in replacements:
             repaired = re.sub(pattern, replacement, repaired, flags=re.IGNORECASE)
@@ -4361,6 +4566,8 @@ def _looks_like_iibf_menu_query(query: str) -> bool:
     normalized = _query_key(query)
     if _other_faculty_requested(query):
         return False
+    if _looks_like_iibf_publication_query(query):
+        return True
     return any(
         term in normalized
         for term in (
@@ -4393,10 +4600,48 @@ def _looks_like_iibf_menu_query(query: str) -> bool:
     )
 
 
+def _looks_like_iibf_publication_query(query: str) -> bool:
+    normalized = _query_key(query)
+    if _other_faculty_requested(query):
+        return False
+    if any(
+        term in normalized
+        for term in (
+            "fakulte bulteni",
+            "faculty bulletin",
+            "birim faaliyet raporu",
+            "activity report",
+        )
+    ):
+        return True
+    if any(
+        term in normalized
+        for term in (
+            "iibf dergisi",
+            "kauiibf dergisi",
+            "faculty journal",
+        )
+    ):
+        return True
+    return _query_targets_iibf(query) and any(
+        term in normalized
+        for term in (
+            "dergi",
+            "dergisi",
+            "journal",
+            "bulletin",
+            "bulten",
+            "bülten",
+            "faaliyet raporu",
+            "report",
+        )
+    )
+
+
 def _extract_route_destination(query: str) -> str:
-    cleaned = clean_text(query)
+    cleaned = clean_text(normalize_query(query) or query)
     patterns = (
-        r"(?i)\b(.+?)\s+(?:nasil giderim|nasil gidebilirim|yol tarifi)\b",
+        r"(?i)\b(.+?)\s+(?:nasil\s+gid\w+|yol tarifi(?:\s+ver)?)\b",
         r"(?i)\bhow do i get to\s+(.+)$",
         r"(?i)\bhow can i get to\s+(.+)$",
         r"(?i)\bdirections to\s+(.+)$",
@@ -4406,12 +4651,47 @@ def _extract_route_destination(query: str) -> str:
     for pattern in patterns:
         match = re.search(pattern, cleaned)
         if match:
-            return clean_text(match.group(1).strip(" ?"))
+            return _normalize_route_destination(match.group(1).strip(" ?"), query)
 
     lowered = _query_key(query)
     if any(term in lowered for term in ("iibf", "kafkas universitesi", "kampus", "kampus", "feas")):
         return "Kafkas Üniversitesi İİBF"
     return ""
+
+
+def _normalize_route_destination(destination: str, full_query: str = "") -> str:
+    cleaned = clean_text(destination)
+    if not cleaned:
+        return ""
+
+    lowered = _query_key(cleaned)
+    full_lowered = _query_key(full_query)
+
+    if _query_targets_iibf(cleaned) or _query_targets_iibf(full_query):
+        return "Kafkas Üniversitesi İİBF"
+
+    cleaned = re.sub(
+        r"(?i)^(hayir|hayır|yani|sey|şey|ya|ee|e|hmm|lutfen|lütfen|bana|bir de|simdi|şimdi)\s+",
+        "",
+        cleaned,
+    ).strip()
+    cleaned = re.sub(
+        r"(?i)\b(lutfen|lütfen|yol tarifi ver|tarif ver|goster|göster|soyle|söyle|icin|için)\b",
+        "",
+        cleaned,
+    ).strip()
+
+    tokens = cleaned.split()
+    while tokens and _query_key(tokens[-1]) in {"ye", "ya", "e", "a"}:
+        tokens.pop()
+    cleaned = " ".join(tokens).strip(" ,.-")
+
+    if not cleaned:
+        if "kafkas universitesi" in full_lowered or "kampus" in full_lowered or "campus" in full_lowered:
+            return "Kafkas Üniversitesi"
+        return ""
+
+    return cleaned
 
 
 def _is_faculty_query(query: str) -> bool:
@@ -4554,7 +4834,9 @@ def _is_menu_query(query: str) -> bool:
 
 
 def _is_location_query(query: str) -> bool:
-    normalized = _query_key(query)
+    normalized = normalize_for_matching(normalize_query(query) or query)
+    if re.search(r"\bnasil\s+gid\w+\b", normalized):
+        return True
     return any(
         term in normalized
         for term in (
@@ -4568,6 +4850,7 @@ def _is_location_query(query: str) -> bool:
             "map",
             "nasil giderim",
             "nasil gidebilirim",
+            "nasil gidilir",
             "yol tarifi",
             "route",
             "directions",

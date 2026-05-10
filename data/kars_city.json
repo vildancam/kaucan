@@ -1,0 +1,93 @@
+{
+  "updated_at": "2026-05-10",
+  "entries": [
+    {
+      "id": "kars-history",
+      "title": "Kars Tarihçesi",
+      "category": "history",
+      "summary": "Kars'ın tarih öncesi çağlardan bu yana yerleşim merkezi olduğu ve adının Karsak boyuyla ilişkilendirildiği belirtilmektedir.",
+      "student_tip": "Şehrin tarihini anlamak için merkezdeki Baltık mimarili yapılar ve müzeler iyi bir başlangıç noktasıdır.",
+      "source_url": "https://kars.ktb.gov.tr/TR-288195/tarihce.html"
+    },
+    {
+      "id": "ani-ruins",
+      "title": "Ani Harabeleri",
+      "category": "sightseeing",
+      "summary": "Ani Ören Yeri Kars merkezin doğusunda, Ocaklı Köyü sınırlarında yer alan çok katmanlı bir arkeolojik alandır.",
+      "student_tip": "Ani geniş bir alan olduğu için rahat ayakkabı ve rüzgara uygun kıyafet tercih edilmesi iyi olur.",
+      "source_url": "https://turkishmuseums.kprod.kultur.gov.tr/museum/detail/2108-kars-archaeological-site-of-ani/2108/4"
+    },
+    {
+      "id": "kars-castle",
+      "title": "Kars Kalesi",
+      "category": "sightseeing",
+      "summary": "Kars Kalesi şehrin kuzeyindeki tepede yer alır; Kültür Portalı içeriğinde kalenin tarihinin Saltuklu dönemine uzandığı aktarılmaktadır.",
+      "student_tip": "Merkez gezisinde Taş Köprü ve Kümbet Camii ile birlikte planlanırsa kısa bir yürüyüş rotası oluşturulabilir.",
+      "source_url": "https://www.kulturportali.gov.tr/turkiye/kars/gezilecekyer/kars-kalesi"
+    },
+    {
+      "id": "cildir-lake",
+      "title": "Çıldır Gölü",
+      "category": "nature",
+      "summary": "Çıldır Gölü özellikle kış aylarında donan yüzeyi, atlı kızak deneyimi ve buzda balıkçılık ile öne çıkmaktadır.",
+      "student_tip": "Kış döneminde fotoğraf ve kısa hafta sonu kaçamağı için en çok önerilen rotalardan biridir.",
+      "source_url": "https://ardahan.ktb.gov.tr/TR-55794/cildir-golu.html"
+    },
+    {
+      "id": "sarikamis",
+      "title": "Sarıkamış",
+      "category": "nature",
+      "summary": "Sarıkamış Kayak Merkezi sarıçam ormanları, kristal kar yapısı ve kış sporları altyapısıyla Kars'ın öne çıkan turizm noktalarındandır.",
+      "student_tip": "Kış sporlarıyla ilgileniliyorsa dönem yoğunluğuna göre hafta içi ziyaret daha sakin olabilir.",
+      "source_url": "https://kars.ktb.gov.tr/TR-54882/sarikamis.html"
+    },
+    {
+      "id": "tas-kopru",
+      "title": "Taş Köprü",
+      "category": "sightseeing",
+      "summary": "Taş Köprü, Kars Çayı üzerinde yer alan ve Karahanoğlu Taş Köprüsü olarak da bilinen tarihi köprüdür.",
+      "student_tip": "Merkezde kısa yürüyüş rotasına eklenebilecek, fotoğraf çekimi için uygun duraklardan biridir.",
+      "source_url": "https://www.kulturportali.gov.tr/turkiye/kars/gezilecekyer/tas-kopru?sa=X&ved=2ahUKEwiY5Lnj67H8AhUTY8UKHT7OCVcQyK4DegQIAxAi"
+    },
+    {
+      "id": "fethiye-camii",
+      "title": "Fethiye Camii",
+      "category": "sightseeing",
+      "summary": "Fethiye Camii Kars merkezde yer alır; 19. yüzyıl sonlarında kilise olarak inşa edilmiş, 1985 yılında camiye dönüştürülmüştür.",
+      "student_tip": "Merkez içindeki gezilerde Baltık mimarisi görmek isteyen öğrenciler için dikkat çekici bir yapıdadır.",
+      "source_url": "https://www.kulturportali.gov.tr/turkiye/kars/gezilecekyer/fethye-cam369914"
+    },
+    {
+      "id": "kumbet-camii",
+      "title": "Kümbet Camii",
+      "category": "sightseeing",
+      "summary": "Kümbet Camii, Kars Kalesi'nin güney eteğinde yer alan ve On İki Havariler Kilisesi olarak da bilinen önemli tarihi yapılardan biridir.",
+      "student_tip": "Kars Kalesi çevresindeki tarihi doku ile birlikte görülmesi önerilir.",
+      "source_url": "https://www.kulturportali.gov.tr/turkiye/kars/gezilecekyer/12-havarler-klses?v=1.0.24"
+    },
+    {
+      "id": "kars-food-culture",
+      "title": "Kars Yöresi Yemek Kültürü",
+      "category": "food",
+      "summary": "Kars mutfağında un, baklagil ve hayvansal ürün temelli yemekler öne çıkar; kete, hangel, erişte pilavı ve tandırda kaz çekmesi sık anılan örneklerdir.",
+      "student_tip": "Şehri yeni tanıyan öğrenciler için yerel kahvaltı ve kaz/peynir ağırlıklı menüler güçlü bir başlangıç sunar.",
+      "source_url": "https://kars.ktb.gov.tr/TR-54860/kars-yoresi-yemek-kulturu.html"
+    },
+    {
+      "id": "kars-kasari",
+      "title": "Kars Kaşarı ve Gravyer",
+      "category": "food",
+      "summary": "Kars kaşarı ve gravyer peyniri, kentin gastronomi kimliğinde öne çıkan ürünler arasındadır; peynir kültürü için Kars Peynir Müzesi de önerilmektedir.",
+      "student_tip": "Aile ziyareti veya şehir dışına giderken Kars kaşarı ve gravyer en sık tercih edilen hediyeliklerden biridir.",
+      "source_url": "https://www.kulturportali.gov.tr/turkiye/kars/kulturatlasi/kars-kasari"
+    },
+    {
+      "id": "kaz-eti",
+      "title": "Kaz Eti",
+      "category": "food",
+      "summary": "Kars'ta tandırda kaz çekmesi, bölgenin en bilinen geleneksel et yemeklerinden biri olarak öne çıkar.",
+      "student_tip": "Kış döneminde misafir gelen öğrenciler için en çok merak edilen yerel tatlardan biridir.",
+      "source_url": "https://kulturportali.gov.tr/turkiye/kars/neyenir/tandirda-kaz-cekmes-kaz-asmasi"
+    }
+  ]
+}

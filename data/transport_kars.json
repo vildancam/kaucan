@@ -1,0 +1,45 @@
+{
+  "updated_at": "2026-05-10",
+  "warning": "Otobüs saatleri mevcut kaynakta belirtilmemiştir. Güncel sefer ve ring bilgileri için belediye veya kampüs birimlerinden ayrıca teyit alınması önerilir.",
+  "network": {
+    "route_names": [
+      "Toplu Konutlar Subatan Yolu",
+      "Kafkas Fen Edebiyat",
+      "Toki Digor Yolu",
+      "KYK Kız Yurdu",
+      "Paşaçayır"
+    ],
+    "outbound_stops": [
+      "Eski Garaj - Eski Garajlar PO Karşısı",
+      "Hz. Ali Camii Karşısı",
+      "Faikbey Caddesi - Deniz Bank Önü",
+      "İpekyolu Otel Önü, Flo yanı",
+      "Haydar Aliyev Caddesi - Kars Barosu Önü",
+      "İnönü Caddesi - Hükümet Konağı Ziraat Bankası ATM'si önü",
+      "Çıtır Kuruyemiş Önü",
+      "Mihrali Bey İÖO Önü",
+      "Ahmet Arslan Caddesi - New Gross Market Karşısı",
+      "Kampüs İçi - Davud-i Karsi Cami Karşısı",
+      "Veteriner Fakültesi - Dekanlık Önü"
+    ],
+    "inbound_stops": [
+      "Veteriner Fakültesi - Dekanlık Önü",
+      "Kampüs İçi - Davud-i Karsi Cami Karşısı",
+      "Ahmet Arslan Caddesi - New Gross Market Karşısı",
+      "Cumhuriyet Caddesi - Öğrencinin istediği yerde",
+      "GAMP Caddesi - Öğrencinin istediği yerde",
+      "Halitpaşa Caddesi - Öğrencinin istediği yerde",
+      "Eski Garaj - Öğrencinin istediği yerde"
+    ],
+    "campus_drop_points": {
+      "general": "Kampüs İçi - Davud-i Karsi Cami Karşısı",
+      "veterinary": "Veteriner Fakültesi - Dekanlık Önü",
+      "fen_edebiyat": "Kafkas Fen Edebiyat hattı kampüs/fakülte erişimi için öne çıkan hatlardan biridir."
+    },
+    "source_urls": [
+      "https://www.kars.bel.tr/kurumlar/kars.bel.tr/MECLIS/2016KARAR/2016-YILI-MECLIS.pdf",
+      "https://www.kars.bel.tr/kurumlar/kars.bel.tr/YONETMELIKLER/OZEL-HALK-OTOBUSLERI-YONETMELIGI.pdf"
+    ],
+    "validation_note": "Durak ve hat listesi, proje veri setinde sağlanan kampüs ulaşım bilgisinden derlenmiştir."
+  }
+}
