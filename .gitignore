@@ -13,6 +13,10 @@ data/*.jsonl
 !data/dormitories_kars.json
 !data/transport_kars.json
 !data/kars_city.json
+!data/manual_personnel.json
+!data/official_snapshot.json
+!data/pages.jsonl
+!data/search_index.joblib
 logs/*.jsonl
 logs/*.log
 logs/*.pid

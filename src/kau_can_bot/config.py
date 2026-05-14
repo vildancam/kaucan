@@ -10,7 +10,31 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-ROOT_DIR = Path(__file__).resolve().parents[2]
+def _looks_like_project_root(path: Path) -> bool:
+    return (
+        (path / "pyproject.toml").exists()
+        and (path / "src" / "kau_can_bot").is_dir()
+        and (path / "static").is_dir()
+        and (path / "data").is_dir()
+    )
+
+
+def _discover_root_dir() -> Path:
+    env_root = os.getenv("KAU_ROOT_DIR", "").strip()
+    if env_root:
+        env_path = Path(env_root).expanduser().resolve()
+        if _looks_like_project_root(env_path):
+            return env_path
+
+    cwd = Path.cwd().resolve()
+    for candidate in (cwd, *cwd.parents):
+        if _looks_like_project_root(candidate):
+            return candidate
+
+    return Path(__file__).resolve().parents[2]
+
+
+ROOT_DIR = _discover_root_dir()
 DATA_DIR = ROOT_DIR / "data"
 LOG_DIR = ROOT_DIR / "logs"
 PAGES_PATH = DATA_DIR / "pages.jsonl"

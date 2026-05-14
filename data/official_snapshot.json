@@ -1,0 +1,2822 @@
+{
+  "updated_at": "2026-05-12T08:54:11Z",
+  "sources": {
+    "senate": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651",
+    "faculty_personnel": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel",
+    "faculty_announcements": "https://www.kafkas.edu.tr/iibf/tr/tumduyurular2",
+    "faculty_news": "https://www.kafkas.edu.tr/iibf/tr/tumHaberler",
+    "faculty_events": "https://www.kafkas.edu.tr/iibf/tr/tumEtkinlikler2",
+    "faculty_root": "https://www.kafkas.edu.tr/iibf"
+  },
+  "faculty_dean": {
+    "name": "Prof. Dr. Deniz ÖZYAKIŞIR",
+    "designation": "İktisadi ve İdari Bilimler Fakültesi Dekanı",
+    "detail_url": "https://unis.kafkas.edu.tr/akademisyen/denizozyakisir",
+    "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/deniz%20%C3%B6zyak%C4%B1%C5%9F%C4%B1r2.png",
+    "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+  },
+  "senate_people": [
+    {
+      "name": "Prof. Dr. Hüsnü KAPU",
+      "designation": "Rektör",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/husnu.kapu",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/rektor.jpeg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Engin KILIÇ",
+      "designation": "Rektör Yardımcısı",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/engin.kilic",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/engin%20k%C4%B1l%C4%B1%C3%A71(1).jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Levent GELİBOLU",
+      "designation": "Rektör Yardımcısı",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/lgelibolu",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/levent%20gelibolu1(2).jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Selçuk URAL",
+      "designation": "Rektör Yardımcısı",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/selcuk.ural",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/selcuk_ural1(2).jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Murat TAŞDAN",
+      "designation": "Dede Korkut Eğitim Fakültesi Dekanı",
+      "detail_url": "http://unis.kafkas.edu.tr/akademisyen/murattasdan",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/murat%20ta%C5%9Fdan3.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Adem BALKAYA",
+      "designation": "Fen-Edebiyat Fakültesi Dekanı",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/adem.balkaya",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/fef/image/fef%20y%C3%B6netim/balkaya.JPG",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Mitat DURMUŞ",
+      "designation": "Güzel Sanatlar Fakültesi Dekanı",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/mitat.durmus",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/Mitat%20Durmus%CC%A71.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Deniz ÖZYAKIŞIR",
+      "designation": "İktisadi ve İdari Bilimler Fakültesi Dekanı",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/denizozyakisir",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/deniz%20%C3%B6zyak%C4%B1%C5%9F%C4%B1r2.png",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Selçuk URAL",
+      "designation": "İlahiyat Fakültesi Dekan V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/selcuk.ural",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/selcuk_ural1(2).jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Engin KILIÇ",
+      "designation": "İsmail Aytemiz Diş Hekimliği Fakültesi Dekan V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/a.vahiterdem",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/engin%20kılıç1(1).jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Taha Yasin ÖZTÜRK",
+      "designation": "Mühendislik Mimarlık Fakültesi Dekan V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/taha36100",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/taha_yasin_ozturk1.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Sevda ELİŞ YILDIZ",
+      "designation": "Sağlık Bilimleri Fakültesi Dekanı",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/sevdaelis",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/sevda%20eli%C5%9F%20y%C4%B1ld%C4%B1z1.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Feyzullah KOCA",
+      "designation": "Sarıkamış Spor Bilimleri Fakültesi Dekan V.",
+      "detail_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/feyzullah%20kkk.jpeg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Mehmet Emin KARABAYIR",
+      "designation": "Sarıkamış Turizm Fakültesi Dekan V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/karabayir",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/mehmet%20emin%20k.jpeg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Yavuz KARABAĞ",
+      "designation": "Tıp Fakültesi Dekan V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/yavuz.karabag",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/yavuz%20karaba%C4%9F.jpeg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Hüsnü KAPU",
+      "designation": "Veteriner Fakültesi Dekan V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/mete.cihan",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/rektor.jpeg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Doç. Dr. Yakup AÇAR",
+      "designation": "Devlet Konservatuvarı Müdür V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/yavuz.kafkasyali",
+      "image_url": "https://portal2.kafkas.edu.tr/abs/profilResim/23307.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Erhan DENİZ",
+      "designation": "Kağızman Uygulamalı Bilimler Yüksekokulu Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/erhan.deniz",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/Birim%20amirleri/erhan%20deniz.jpeg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Mustafa ÖZDEMİR",
+      "designation": "Yabancı Diller Yüksekokulu Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/mozdemir",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/Birim%20amirleri/mustafa%20%C3%B6zdemir.png",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Doç. Dr. Vedat ADIGÜZEL",
+      "designation": "Fen Bilimleri Enstitüsü Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/vedatnursen",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/vedat%20ad%C4%B1g%C3%BCzel.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Özgür ÇELEBİ",
+      "designation": "Sağlık Bilimler Enstitüsü Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/ozgur.celebi",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/%C3%B6zg%C3%BCr%20%C3%A7elebi.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Yaşar KOP",
+      "designation": "Sosyal Bilimler Enstitüsü Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/yasar.kop",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/ya%C5%9Far%20kop.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Akın BİNGÖL",
+      "designation": "Adalet Meslek Yüksekokulu Müdür V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/akin.bingol",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/ak%C4%B1n%20bing%C3%B6l.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Dr. Öğr. Üyesi Muhammed DENİZ",
+      "designation": "Atatürk Sağlık Hizmetleri Meslek Yüksekokulu Müdür V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/muhammed.deniz",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/Dr_%C3%96%C4%9Fr_%C3%9Cyesi%20Muhammed%20DEN%C4%B0Z.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Doç. Dr. Muhammet ARSLAN",
+      "designation": "Güzel Sanatlar Meslek Yüksekokulu Müdür V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/muhammet.arslan",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/IMG_7612.JPG",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Yunus ZENGİN",
+      "designation": "Kağızman Meslek Yüksekokulu Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/yunuszengin",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/Yunus%20ZENG%C4%B0N2(1).png",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Doç. Dr. Bedrettin SAVAŞ",
+      "designation": "Kars Meslek Yüksekokulu Müdür V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/bedrettinsavas",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/bedrettin%20sava%C5%9F21.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Şükrü İLGÜN",
+      "designation": "Kazım Kararbekir Teknik Bilimler Meslek Yüksekokulu Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/sukru.ilgun",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/%C5%9E%C3%BCkr%C3%BC%20%C4%B0LG%C3%9CN1.jpeg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Dr. Öğr. Üyesi Ömer CENGİZ",
+      "designation": "Sarıkamış Meslek Yüksekokulu Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/omer.cengiz",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/%C3%96mer%20CENG%C4%B0Z1.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Akın BİNGÖL",
+      "designation": "Sosyal Bilimler Meslek Yüksekokulu Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/akin.bingol",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/ak%C4%B1n%20bing%C3%B6l.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Kadir ÖNK",
+      "designation": "Susuz Meslek Yüksekokulu Müdürü",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/kadir.onk",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/Kadir%20%C3%96NK.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Doç. Dr. Filiz ASLAN ÇETİN",
+      "designation": "İktisadi ve İdari Bilimler Fakültesi Öğretim Üyesi",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/gokhankerse",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/Filiz%20ASLAN%20%C3%87ET%C4%B0N.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Ramazan KOCAASLAN",
+      "designation": "Tıp Fakültesi Öğretim Üyesi",
+      "detail_url": "avascript:void(0)",
+      "image_url": "https://portal2.kafkas.edu.tr/abs/profilResim/177373.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Bünyamin ÇALIK",
+      "designation": "İlahiyat Fakültesi Öğretim Üyesi",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/bunyamincalik",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/B%C3%BCnyamin%20%C3%87ALIK.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Solmaz AYDIN BEYTUR",
+      "designation": "Dede Korkut Eğitim Fakültesi Öğretim Üyesi",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/solmazaydin",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/Solmaz%20AYDIN%20BEYTUR.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. İlhami GÖK",
+      "designation": "Mühendislik Mimarlık Fakültesi Öğretim Üyesi",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/ilhami.gok",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/%C4%B0lhami%20G%C3%96K.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Doç. Dr. Eyup Sertaç AYAZ",
+      "designation": "Fen Edebiyat Fakültesi Öğretim Üyesi",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/sertacayaz",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/fef/image/fef%20y%C3%B6netim/serta%C3%A7%20hoca.jpeg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Prof. Dr. Özlem KARABULUTLU",
+      "designation": "Sağlık Bilimleri Fakültesi Öğretim Üyesi",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/okarabulutlu",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/%C3%96zlem%20KARABULUTLU.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    },
+    {
+      "name": "Öğr. Gör. Cesur ERDOĞAN",
+      "designation": "Genel Sekreter V.",
+      "detail_url": "https://unis.kafkas.edu.tr/akademisyen/cesur.erdogan",
+      "image_url": "https://www.kafkas.edu.tr/dosyalar/rektorluk/image/senato/Cesur%20ERDO%C4%9EAN.jpg",
+      "source_url": "https://www.kafkas.edu.tr/rektorluk/TR/sayfaYeni651"
+    }
+  ],
+  "faculty_personnel": [
+    {
+      "name": "DENİZ ÖZYAKIŞIR",
+      "academic_title": "Profesör",
+      "roles": [
+        "DEKAN",
+        "BÖLÜM BAŞKANI",
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ//",
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/",
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/ULUSLARARASI İKTİSAT VE İKTİSADİ GELİŞME"
+      ],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=44911",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/44911.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SEYHAN ÖZTÜRK",
+      "academic_title": "Profesör",
+      "roles": [
+        "BÖLÜM BAŞKANI",
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/",
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/MUHASEBE VE FİNANSMAN"
+      ],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=31382",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/31382.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ATIL CEM ÇİÇEK",
+      "academic_title": "Profesör",
+      "roles": [
+        "BÖLÜM BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/"
+      ],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=35633",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/35633.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ELNUR HASAN MİKAİL",
+      "academic_title": "Profesör",
+      "roles": [
+        "BÖLÜM BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE ULUSLARARASI İLİŞKİLER/"
+      ],
+      "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=2580",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/2580.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "GÖKHAN KERSE",
+      "academic_title": "Profesör",
+      "roles": [
+        "BÖLÜM BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/YÖNETİM BİLİŞİM SİSTEMLERİ/"
+      ],
+      "department": "Yönetim Bilişim Sistemleri",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=23076",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/23076.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "MEHMET EMİN KARABAYIR",
+      "academic_title": "Profesör",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/MUHASEBE VE FİNANSMAN"
+      ],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=40079",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/40079.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "FİLİZ ASLAN ÇETİN",
+      "academic_title": "Profesör",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/ÜRETİM YÖNETİMİ VE PAZARLAMA"
+      ],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=28933",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/28933.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ERKAN TOKUCU",
+      "academic_title": "Profesör",
+      "roles": [],
+      "role_paths": [],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=40977",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/40977.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "NİYAZİ SAVAŞ DEMİRCİ",
+      "academic_title": "Profesör",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=34580",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/34580.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ALPASLAN YÜCE",
+      "academic_title": "Profesör",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=39666",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/39666.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "LEVENT GELİBOLU",
+      "academic_title": "Profesör",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=45222",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/45222.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ERDOĞAN KAYGIN",
+      "academic_title": "Profesör",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=132677",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/132677.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "GÖZDE KOSA",
+      "academic_title": "Profesör",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=257855",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/257855.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "HÜSNÜ KAPU",
+      "academic_title": "Profesör",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=44871",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/44871.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SEBAHATTİN YILDIZ",
+      "academic_title": "Profesör",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=34095",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/34095.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "YUNUS ZENGİN",
+      "academic_title": "Profesör",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=132680",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/132680.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "İLYAS TOPÇU",
+      "academic_title": "Doçent",
+      "roles": [
+        "DEKAN YARDIMCISI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ//"
+      ],
+      "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=25650",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/25650.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "AYKUT AYKUTALP",
+      "academic_title": "Doçent",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI",
+        "BÖLÜM BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SOSYAL HİZMET/SOSYAL HİZMET",
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SOSYAL HİZMET/"
+      ],
+      "department": "Sosyal Hizmet",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=166160",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/166160.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "MURAT AYKIRI",
+      "academic_title": "Doçent",
+      "roles": [
+        "BÖLÜM BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/ELEKTRONİK TİCERET VE YÖNETİMİ/"
+      ],
+      "department": "Elektronik Ticaret ve Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=46430",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/46430.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SAVAŞ DURMUŞ",
+      "academic_title": "Doçent",
+      "roles": [
+        "BÖLÜM BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/ULUSLARARASI TİCARET VE LOJİSTİK/"
+      ],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=130827",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/130827.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ÖMER UĞUR BULUT",
+      "academic_title": "Doçent",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/İKTİSAT TEORİSİ"
+      ],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=277131",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/277131.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "MURAT DEMİREL",
+      "academic_title": "Doçent",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/KENTLEŞME VE ÇEVRE SORUNLARI"
+      ],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=46106",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/46106.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ADEM ÇELİK",
+      "academic_title": "Doçent",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/SİYASET VE SOSYAL BİLİMLER"
+      ],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=50601",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/50601.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "HALİT HAMZAOĞLU",
+      "academic_title": "Doçent",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE ULUSLARARASI İLİŞKİLER/SİYASİ TARİH"
+      ],
+      "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=269991",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/269991.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "EMRE HORASAN",
+      "academic_title": "Doçent",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=29065",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/29065.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "CİHAN KAYMAZ",
+      "academic_title": "Doçent",
+      "roles": [],
+      "role_paths": [],
+      "department": "Sosyal Hizmet",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=17597",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/17597.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SERHAT ÇAMKAYA",
+      "academic_title": "Doçent",
+      "roles": [],
+      "role_paths": [],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=339548",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/339548.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ALPER TAZEGÜL",
+      "academic_title": "Doçent",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=35234",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/35234.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "CEYDA YERDELEN KAYGIN",
+      "academic_title": "Doçent",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=46049",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/46049.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ÖZLEM KARADAĞ ALBAYRAK",
+      "academic_title": "Doçent",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=33656",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/33656.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "YAĞMUR KERSE",
+      "academic_title": "Doçent",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247162",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247162.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "MURAT AKÇA",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "DEKAN YARDIMCISI",
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ//",
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/İKTİSAT POLİTİKASI"
+      ],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=41642",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/41642.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "KÜBRA ÇELİK",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "BÖLÜM BAŞKAN YARDIMCISI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/ELEKTRONİK TİCERET VE YÖNETİMİ/"
+      ],
+      "department": "Elektronik Ticaret ve Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=386029",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/386029.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SELÇUK TAZEGÜL",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "BÖLÜM BAŞKAN YARDIMCISI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/ELEKTRONİK TİCERET VE YÖNETİMİ/"
+      ],
+      "department": "Elektronik Ticaret ve Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=267441",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/267441.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SEVGİ KEÇELİ ERCİYAS",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "BÖLÜM BAŞKAN YARDIMCISI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/"
+      ],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=159895",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/159895.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "MUHAMMED AKİF YENİKAYA",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "BÖLÜM BAŞKAN YARDIMCISI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/YÖNETİM BİLİŞİM SİSTEMLERİ/"
+      ],
+      "department": "Yönetim Bilişim Sistemleri",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=263033",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/263033.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "CENGİZ ERGÜN",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/HUKUK BİLİMLERİ"
+      ],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=39862",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/39862.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "CÜNEYT İPTEŞ",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/İKTİSAT TARİHİ"
+      ],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247197",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247197.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ÖMER ATALAY",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/SAYISAL YÖNTEMLER"
+      ],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=34129",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/34129.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "GÖKHAN ÇAPAR",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE ULUSLARARASI İLİŞKİLER/ULUSLARARASI HUKUK"
+      ],
+      "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=215585",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/215585.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "DUYGU DEMİROL DUYAR",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [
+        "ANABİLİM DALI BAŞKANI"
+      ],
+      "role_paths": [
+        "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/YÖNETİM BİLİMLERİ"
+      ],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=118869",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/118869.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "FATİH KALEMKUŞ",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Elektronik Ticaret ve Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=342118",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/342118.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "LEVENT ÖZŞAHİN",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=45251",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/45251.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "İSMAİL CEM ÖZKURT",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=273591",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/273591.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SAMET TOPAL",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=32204",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/32204.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SEDA AĞGÜL",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=33579",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/33579.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "DÜRİYE KORKMAZ DÜZGÜN",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=116472",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/116472.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ALİYE BİLGE CERTEL",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=36639",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/36639.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "MAHMUT ÖZDEMİRKOL",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=323264",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/323264.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "METEHAN KARAKURT",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318041",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318041.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "DAMLA KOCATEPE",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=221888",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/221888.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ABDULKADİR YAŞAR",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Sosyal Hizmet",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318587",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318587.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "İHSAN YILKAN",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Sosyal Hizmet",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=239946",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/239946.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SULTAN EBRU BULGURCUOĞLU",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Sosyal Hizmet",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318490",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318490.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SELİN AYAZ",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=42947",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/42947.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "YUNUS KUTVAL",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=315652",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/315652.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "CAVİT EMRE AYTEKİN",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247163",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247163.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "OLGUN UKŞAL",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=405927",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/405927.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "AZİZE KAHRAMANİ KOÇ",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=285359",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/285359.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "EMEL KILIÇBEY",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318048",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318048.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SEFA TOPUZ",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247632",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247632.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "HATİCE KÜBRA ALTUNSOY COŞKUN",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=32814",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/32814.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "DENİZ TANIR",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Yönetim Bilişim Sistemleri",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=279183",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/279183.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "KAMİLE MERİÇ",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Yönetim Bilişim Sistemleri",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=27716",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/27716.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ONUR OKTAYSOY",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Yönetim Bilişim Sistemleri",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=204605",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/204605.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "SEVGÜL EKİNCİ",
+      "academic_title": "Doktor Öğreti̇m Üyesi̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Yönetim Bilişim Sistemleri",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=29692",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/29692.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "TALHA CEVHER GÜL",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Elektronik Ticaret ve Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=364662",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/364662.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "AYŞEGÜL POLAT",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=370105",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/370105.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "ÖNDER BALCI",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İktisat",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=111510",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/111510.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "MEHMET DEMİR",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=114459",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/114459.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "MUHAMMET KARALI",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=302639",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/302639.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "TAYFUN YILDIRIM",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Siyaset Bilimi ve Kamu Yönetimi",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318492",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318492.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "HÜSEYİN KESKİN",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Sosyal Hizmet",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=405954",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/405954.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "RABİA KAYAALTI",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "İşletme",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=365726",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/365726.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "BAŞAK ÇELİK",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=339569",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/339569.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "NESRİN KOÇ USTALI",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Uluslararası Ticaret ve Lojistik",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247648",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247648.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "İMRAN GÜL",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Yönetim Bilişim Sistemleri",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=364797",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/364797.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    },
+    {
+      "name": "NİMET YAMAN",
+      "academic_title": "Araştirma Görevli̇si̇",
+      "roles": [],
+      "role_paths": [],
+      "department": "Yönetim Bilişim Sistemleri",
+      "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=339554",
+      "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/339554.jpg",
+      "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+    }
+  ],
+  "faculty_management": [
+    {
+      "name": "Deniz ÖZYAKIŞIR",
+      "academic_title": "Prof. Dr.",
+      "faculty": "İktisadi ve İdari Bilimler Fakültesi",
+      "department": "",
+      "unit": "",
+      "roles": [
+        "Dekan"
+      ],
+      "detail_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/akademisyen-detay/denizozyakisir",
+      "source_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/id=2_CZa_54",
+      "image_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/app_files/2025/12/Kisi_Logo_1083_43b94511.webp",
+      "work_counts": {},
+      "research_areas": [],
+      "external_links": []
+    },
+    {
+      "name": "İlyas TOPÇU",
+      "academic_title": "Doç. Dr.",
+      "faculty": "İktisadi ve İdari Bilimler Fakültesi",
+      "department": "",
+      "unit": "",
+      "roles": [
+        "Dekan Yardımcısı"
+      ],
+      "detail_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/akademisyen-detay/ilyastopcu",
+      "source_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/id=2_CZa_54",
+      "image_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/app_files/2025/12/Kisi_Logo_1340_c00202f6.webp",
+      "work_counts": {},
+      "research_areas": [],
+      "external_links": []
+    },
+    {
+      "name": "Murat AKÇA",
+      "academic_title": "Dr. Öğr. Üyesi",
+      "faculty": "İktisadi ve İdari Bilimler Fakültesi",
+      "department": "",
+      "unit": "",
+      "roles": [
+        "Dekan Yardımcısı"
+      ],
+      "detail_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/akademisyen-detay/muratakca",
+      "source_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/id=2_CZa_54",
+      "image_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/app_files/2025/12/Kisi_Logo_1487_5fe07177.webp",
+      "work_counts": {},
+      "research_areas": [],
+      "external_links": []
+    },
+    {
+      "name": "Günay YILAN",
+      "academic_title": "",
+      "faculty": "İktisadi ve İdari Bilimler Fakültesi",
+      "department": "",
+      "unit": "",
+      "roles": [
+        "Fakülte Sekreteri"
+      ],
+      "detail_url": "",
+      "source_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/id=2_CZa_54",
+      "image_url": "https://unis.kafkas.edu.tr/birim/yonetim/iktisadi-ve-idari-bilimler-fakultesi/app_files/2025/09/Kisi_Logo_2232_0d2b24b1.webp",
+      "work_counts": {},
+      "research_areas": [],
+      "external_links": []
+    }
+  ],
+  "faculty_navigation": [
+    {
+      "title": "ÜNİVERSİTEMİZ",
+      "url": "https://www.kafkas.edu.tr/iibf",
+      "normalized_title": "universitemiz"
+    },
+    {
+      "title": "Dekanımızın Mesajı",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18044",
+      "normalized_title": "dekanimizin mesaji"
+    },
+    {
+      "title": "Tanıtım",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17978",
+      "normalized_title": "tanitim"
+    },
+    {
+      "title": "Misyon & Vizyon",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17979",
+      "normalized_title": "misyon vizyon"
+    },
+    {
+      "title": "Dekanlarımız",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18031",
+      "normalized_title": "dekanlarimiz"
+    },
+    {
+      "title": "Yönetim",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17980",
+      "normalized_title": "yonetim"
+    },
+    {
+      "title": "Organizasyon Şeması",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17981",
+      "normalized_title": "organizasyon semasi"
+    },
+    {
+      "title": "İktisat",
+      "url": "https://www.kafkas.edu.tr/iibfikt",
+      "normalized_title": "iktisat"
+    },
+    {
+      "title": "İşletme",
+      "url": "https://www.kafkas.edu.tr/iibfisletme",
+      "normalized_title": "isletme"
+    },
+    {
+      "title": "Siyaset Bilimi ve Kamu Yönetimi",
+      "url": "https://www.kafkas.edu.tr/iibfsbky",
+      "normalized_title": "siyaset bilimi ve kamu yonetimi"
+    },
+    {
+      "title": "Siyaset Bilimi ve Uluslararası İlişkiler",
+      "url": "https://www.kafkas.edu.tr/iibfsbui/tr/sayfaYeni16932",
+      "normalized_title": "siyaset bilimi ve uluslararasi iliskiler"
+    },
+    {
+      "title": "Uluslararası Ticaret ve Lojistik",
+      "url": "https://www.kafkas.edu.tr/iibfutl",
+      "normalized_title": "uluslararasi ticaret ve lojistik"
+    },
+    {
+      "title": "Sosyal Hizmet",
+      "url": "https://www.kafkas.edu.tr/iibfsh",
+      "normalized_title": "sosyal hizmet"
+    },
+    {
+      "title": "Yönetim Bilişim Sistemleri",
+      "url": "http://www.kafkas.edu.tr/iibfybs",
+      "normalized_title": "yonetim bilisim sistemleri"
+    },
+    {
+      "title": "Elektronik Ticaret ve Yönetimi",
+      "url": "https://www.kafkas.edu.tr/iibfety",
+      "normalized_title": "elektronik ticaret ve yonetimi"
+    },
+    {
+      "title": "İşletme Tezli Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18019",
+      "normalized_title": "isletme tezli yuksek lisans"
+    },
+    {
+      "title": "İşletme Doktora",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18020",
+      "normalized_title": "isletme doktora"
+    },
+    {
+      "title": "İktisat Tezli Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18021",
+      "normalized_title": "iktisat tezli yuksek lisans"
+    },
+    {
+      "title": "Uluslararası Ticaret ve Lojistik Tezli Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18022",
+      "normalized_title": "uluslararasi ticaret ve lojistik tezli yuksek lisans"
+    },
+    {
+      "title": "Yönetim Bilişim Sistemleri Tezli Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18023",
+      "normalized_title": "yonetim bilisim sistemleri tezli yuksek lisans"
+    },
+    {
+      "title": "Siyaset Bilimi ve Kamu Yönetimi Tezli Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18024",
+      "normalized_title": "siyaset bilimi ve kamu yonetimi tezli yuksek lisans"
+    },
+    {
+      "title": "Siyaset Bilimi ve Uluslararası İlişkiler Tezli Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18029",
+      "normalized_title": "siyaset bilimi ve uluslararasi iliskiler tezli yuksek lisans"
+    },
+    {
+      "title": "Sosyoloji Tezli Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18025",
+      "normalized_title": "sosyoloji tezli yuksek lisans"
+    },
+    {
+      "title": "İşletme Tezsiz Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18026",
+      "normalized_title": "isletme tezsiz yuksek lisans"
+    },
+    {
+      "title": "İnsan Kaynakları Yönetimi Tezsiz Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18027",
+      "normalized_title": "insan kaynaklari yonetimi tezsiz yuksek lisans"
+    },
+    {
+      "title": "Sağlık Yönetimi (Uzaktan Eğitim) Tezsiz Yüksek Lisans",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18028",
+      "normalized_title": "saglik yonetimi uzaktan egitim tezsiz yuksek lisans"
+    },
+    {
+      "title": "Ders Programı",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17986",
+      "normalized_title": "ders programi"
+    },
+    {
+      "title": "Sınav Programı",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17987",
+      "normalized_title": "sinav programi"
+    },
+    {
+      "title": "Formlar",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17988",
+      "normalized_title": "formlar"
+    },
+    {
+      "title": "Mezunlarımız",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17989",
+      "normalized_title": "mezunlarimiz"
+    },
+    {
+      "title": "Sıkça Sorulan Sorular (SSS)",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17990",
+      "normalized_title": "sikca sorulan sorular sss"
+    },
+    {
+      "title": "Akademik Personel",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel",
+      "normalized_title": "akademik personel"
+    },
+    {
+      "title": "İdari Personel",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17993",
+      "normalized_title": "idari personel"
+    },
+    {
+      "title": "Görev Tanımları",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17994",
+      "normalized_title": "gorev tanimlari"
+    },
+    {
+      "title": "Fakülte Kurulu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17996",
+      "normalized_title": "fakulte kurulu"
+    },
+    {
+      "title": "Fakülte Yönetim Kurulu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni17997",
+      "normalized_title": "fakulte yonetim kurulu"
+    },
+    {
+      "title": "Fakülte Danışma Kurulu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18045",
+      "normalized_title": "fakulte danisma kurulu"
+    },
+    {
+      "title": "Akademik Gelişim Komisyonu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18047",
+      "normalized_title": "akademik gelisim komisyonu"
+    },
+    {
+      "title": "Sınav ve Ders Programı Komisyonu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18048",
+      "normalized_title": "sinav ve ders programi komisyonu"
+    },
+    {
+      "title": "Kurumsal İletişim Komisyonu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18049",
+      "normalized_title": "kurumsal iletisim komisyonu"
+    },
+    {
+      "title": "Dijital Dönüşüm Komisyonu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18050",
+      "normalized_title": "dijital donusum komisyonu"
+    },
+    {
+      "title": "Hukuk İşleri Komisyonu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18051",
+      "normalized_title": "hukuk isleri komisyonu"
+    },
+    {
+      "title": "Kültür-Sanat Komisyonu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18052",
+      "normalized_title": "kultur sanat komisyonu"
+    },
+    {
+      "title": "Spor ve Sağlık Komisyonu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18053",
+      "normalized_title": "spor ve saglik komisyonu"
+    },
+    {
+      "title": "Mezun Takip Komisyonu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18054",
+      "normalized_title": "mezun takip komisyonu"
+    },
+    {
+      "title": "Fakülte Yönetim Kurulu Kararları",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18035",
+      "normalized_title": "fakulte yonetim kurulu kararlari"
+    },
+    {
+      "title": "Fakülte Kurulu Kararları",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18036",
+      "normalized_title": "fakulte kurulu kararlari"
+    },
+    {
+      "title": "KAÜİİBF Dergisi",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18063",
+      "normalized_title": "kauiibf dergisi"
+    },
+    {
+      "title": "Fakülte Bülteni",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18180",
+      "normalized_title": "fakulte bulteni"
+    },
+    {
+      "title": "Birim Faaliyet Raporu",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18001",
+      "normalized_title": "birim faaliyet raporu"
+    },
+    {
+      "title": "İş Akış Süreçleri",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18002",
+      "normalized_title": "is akis surecleri"
+    },
+    {
+      "title": "Öğrenci Disiplin Soruşturma Formları",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18064",
+      "normalized_title": "ogrenci disiplin sorusturma formlari"
+    },
+    {
+      "title": "Dekana Sor",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18817",
+      "normalized_title": "dekana sor"
+    },
+    {
+      "title": "İletişim",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/sayfaYeni18034",
+      "normalized_title": "iletisim"
+    },
+    {
+      "title": "Tüm Duyurular »",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/tumduyurular2",
+      "normalized_title": "tum duyurular"
+    },
+    {
+      "title": "Tüm Haberler »",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/tumHaberler",
+      "normalized_title": "tum haberler"
+    },
+    {
+      "title": "Tüm Etkinlikler »",
+      "url": "https://www.kafkas.edu.tr/iibf/tr/tumEtkinlikler2",
+      "normalized_title": "tum etkinlikler"
+    },
+    {
+      "title": "İktisat",
+      "url": "https://www.kafkas.edu.tr/iibfikt#",
+      "normalized_title": "iktisat"
+    },
+    {
+      "title": "Yönetim Bilişim Sistemleri",
+      "url": "https://www.kafkas.edu.tr/iibfybs",
+      "normalized_title": "yonetim bilisim sistemleri"
+    },
+    {
+      "title": "YBS Bölüm Yönetimi",
+      "url": "https://www.kafkas.edu.tr/iibfybs/tr/sayfaYeni17874",
+      "normalized_title": "ybs bolum yonetimi"
+    },
+    {
+      "title": "YBS Bölüm Dergisi",
+      "url": "https://www.kafkas.edu.tr/iibfybs/tr/sayfaYeni17891",
+      "normalized_title": "ybs bolum dergisi"
+    },
+    {
+      "title": "YBS Akademik Danışmanlıklar",
+      "url": "https://www.kafkas.edu.tr/dosyalar/iibfybs/a794b8fe-ccb5-45f3-8f61-b3823c2cef48.pdf",
+      "normalized_title": "ybs akademik danismanliklar"
+    },
+    {
+      "title": "YBS Öğrenci Kulüpleri",
+      "url": "https://www.kafkas.edu.tr/iibfybs/tr/sayfaYeni17976",
+      "normalized_title": "ybs ogrenci kulupleri"
+    }
+  ],
+  "faculty_pages": {},
+  "faculty_content": {
+    "announcements": [],
+    "news": [],
+    "events": []
+  },
+  "departments": {
+    "iktisat": {
+      "key": "iktisat",
+      "name_tr": "İktisat",
+      "name_en": "Economics",
+      "aliases": [
+        "iktisat",
+        "economics"
+      ],
+      "root_url": "https://www.kafkas.edu.tr/iibfikt#",
+      "important_links": {
+        "academic_staff": "https://www.kafkas.edu.tr/iibfikt/tr/akademikpersonel",
+        "announcements": "https://www.kafkas.edu.tr/iibfikt/tr/tumduyurular2",
+        "news": "https://www.kafkas.edu.tr/iibfikt/tr/tumHaberler",
+        "events": "https://www.kafkas.edu.tr/iibfikt/tr/tumEtkinlikler2"
+      },
+      "overview": "İktisat bölüm sayfasında akademik kadro, duyurular, haberler, etkinlikler bağlantıları yer almaktadır.",
+      "personnel": [
+        {
+          "name": "DENİZ ÖZYAKIŞIR",
+          "academic_title": "Profesör",
+          "roles": [
+            "DEKAN",
+            "BÖLÜM BAŞKANI",
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ//",
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/",
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/ULUSLARARASI İKTİSAT VE İKTİSADİ GELİŞME"
+          ],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=44911",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/44911.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ERKAN TOKUCU",
+          "academic_title": "Profesör",
+          "roles": [],
+          "role_paths": [],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=40977",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/40977.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ÖMER UĞUR BULUT",
+          "academic_title": "Doçent",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/İKTİSAT TEORİSİ"
+          ],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=277131",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/277131.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SERHAT ÇAMKAYA",
+          "academic_title": "Doçent",
+          "roles": [],
+          "role_paths": [],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=339548",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/339548.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "MURAT AKÇA",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "DEKAN YARDIMCISI",
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ//",
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/İKTİSAT POLİTİKASI"
+          ],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=41642",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/41642.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "CÜNEYT İPTEŞ",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İKTİSAT/İKTİSAT TARİHİ"
+          ],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247197",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247197.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "LEVENT ÖZŞAHİN",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=45251",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/45251.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "İSMAİL CEM ÖZKURT",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=273591",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/273591.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SAMET TOPAL",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=32204",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/32204.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SELİN AYAZ",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=42947",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/42947.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "YUNUS KUTVAL",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=315652",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/315652.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ÖNDER BALCI",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İktisat",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=111510",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/111510.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        }
+      ],
+      "announcements": [],
+      "news": [],
+      "events": [],
+      "special_pages": {}
+    },
+    "isletme": {
+      "key": "isletme",
+      "name_tr": "İşletme",
+      "name_en": "Business Administration",
+      "aliases": [
+        "işletme",
+        "isletme",
+        "business"
+      ],
+      "root_url": "https://www.kafkas.edu.tr/iibfisletme",
+      "important_links": {
+        "academic_staff": "https://www.kafkas.edu.tr/iibfisletme/tr/akademikpersonel",
+        "announcements": "https://www.kafkas.edu.tr/iibfisletme/tr/tumduyurular2",
+        "news": "https://www.kafkas.edu.tr/iibfisletme/tr/tumHaberler",
+        "events": "https://www.kafkas.edu.tr/iibfisletme/tr/tumEtkinlikler2"
+      },
+      "overview": "İşletme bölüm sayfasında akademik kadro, duyurular, haberler, etkinlikler bağlantıları yer almaktadır.",
+      "personnel": [
+        {
+          "name": "SEYHAN ÖZTÜRK",
+          "academic_title": "Profesör",
+          "roles": [
+            "BÖLÜM BAŞKANI",
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/",
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/MUHASEBE VE FİNANSMAN"
+          ],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=31382",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/31382.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "MEHMET EMİN KARABAYIR",
+          "academic_title": "Profesör",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/MUHASEBE VE FİNANSMAN"
+          ],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=40079",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/40079.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "FİLİZ ASLAN ÇETİN",
+          "academic_title": "Profesör",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/ÜRETİM YÖNETİMİ VE PAZARLAMA"
+          ],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=28933",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/28933.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ALPASLAN YÜCE",
+          "academic_title": "Profesör",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=39666",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/39666.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "LEVENT GELİBOLU",
+          "academic_title": "Profesör",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=45222",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/45222.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ERDOĞAN KAYGIN",
+          "academic_title": "Profesör",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=132677",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/132677.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "GÖZDE KOSA",
+          "academic_title": "Profesör",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=257855",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/257855.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "HÜSNÜ KAPU",
+          "academic_title": "Profesör",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=44871",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/44871.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SEBAHATTİN YILDIZ",
+          "academic_title": "Profesör",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=34095",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/34095.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "YUNUS ZENGİN",
+          "academic_title": "Profesör",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=132680",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/132680.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "EMRE HORASAN",
+          "academic_title": "Doçent",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=29065",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/29065.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ÖMER ATALAY",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/İŞLETME/SAYISAL YÖNTEMLER"
+          ],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=34129",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/34129.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SEDA AĞGÜL",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=33579",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/33579.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "DÜRİYE KORKMAZ DÜZGÜN",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=116472",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/116472.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "MUHAMMET KARALI",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=302639",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/302639.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "RABİA KAYAALTI",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "İşletme",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=365726",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/365726.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        }
+      ],
+      "announcements": [],
+      "news": [],
+      "events": [],
+      "special_pages": {}
+    },
+    "sbky": {
+      "key": "sbky",
+      "name_tr": "Siyaset Bilimi ve Kamu Yönetimi",
+      "name_en": "Political Science and Public Administration",
+      "aliases": [
+        "sbky",
+        "siyaset bilimi ve kamu yönetimi",
+        "political science and public administration"
+      ],
+      "root_url": "https://www.kafkas.edu.tr/iibfsbky",
+      "important_links": {
+        "academic_staff": "https://www.kafkas.edu.tr/iibfsbky/tr/akademikpersonel",
+        "announcements": "https://www.kafkas.edu.tr/iibfsbky/tr/tumduyurular2",
+        "news": "https://www.kafkas.edu.tr/iibfsbky/tr/tumHaberler",
+        "events": "https://www.kafkas.edu.tr/iibfsbky/tr/tumEtkinlikler2"
+      },
+      "overview": "Siyaset Bilimi ve Kamu Yönetimi bölüm sayfasında akademik kadro, duyurular, haberler, etkinlikler bağlantıları yer almaktadır.",
+      "personnel": [
+        {
+          "name": "ATIL CEM ÇİÇEK",
+          "academic_title": "Profesör",
+          "roles": [
+            "BÖLÜM BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/"
+          ],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=35633",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/35633.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "MURAT DEMİREL",
+          "academic_title": "Doçent",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/KENTLEŞME VE ÇEVRE SORUNLARI"
+          ],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=46106",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/46106.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ADEM ÇELİK",
+          "academic_title": "Doçent",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/SİYASET VE SOSYAL BİLİMLER"
+          ],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=50601",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/50601.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SEVGİ KEÇELİ ERCİYAS",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "BÖLÜM BAŞKAN YARDIMCISI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/"
+          ],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=159895",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/159895.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "CENGİZ ERGÜN",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/HUKUK BİLİMLERİ"
+          ],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=39862",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/39862.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "DUYGU DEMİROL DUYAR",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE KAMU YÖNETİMİ/YÖNETİM BİLİMLERİ"
+          ],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=118869",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/118869.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ALİYE BİLGE CERTEL",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=36639",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/36639.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "MAHMUT ÖZDEMİRKOL",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=323264",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/323264.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "METEHAN KARAKURT",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318041",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318041.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "HATİCE KÜBRA ALTUNSOY COŞKUN",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=32814",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/32814.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "AYŞEGÜL POLAT",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=370105",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/370105.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "MEHMET DEMİR",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=114459",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/114459.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "TAYFUN YILDIRIM",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Kamu Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318492",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318492.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        }
+      ],
+      "announcements": [],
+      "news": [],
+      "events": [],
+      "special_pages": {}
+    },
+    "sbui": {
+      "key": "sbui",
+      "name_tr": "Siyaset Bilimi ve Uluslararası İlişkiler",
+      "name_en": "Political Science and International Relations",
+      "aliases": [
+        "sbui",
+        "siyaset bilimi ve uluslararası ilişkiler",
+        "political science and international relations"
+      ],
+      "root_url": "https://www.kafkas.edu.tr/iibfsbui/tr/sayfaYeni16932",
+      "important_links": {
+        "academic_staff": "https://www.kafkas.edu.tr/iibfsbui/tr/akademikpersonel",
+        "announcements": "https://www.kafkas.edu.tr/iibfsbui/tr/tumduyurular2",
+        "news": "https://www.kafkas.edu.tr/iibfsbui/tr/tumHaberler",
+        "events": "https://www.kafkas.edu.tr/iibfsbui/tr/tumEtkinlikler2"
+      },
+      "overview": "Siyaset Bilimi ve Uluslararası İlişkiler bölüm sayfasında akademik kadro, duyurular, haberler, etkinlikler bağlantıları yer almaktadır.",
+      "personnel": [
+        {
+          "name": "ELNUR HASAN MİKAİL",
+          "academic_title": "Profesör",
+          "roles": [
+            "BÖLÜM BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE ULUSLARARASI İLİŞKİLER/"
+          ],
+          "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=2580",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/2580.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "İLYAS TOPÇU",
+          "academic_title": "Doçent",
+          "roles": [
+            "DEKAN YARDIMCISI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ//"
+          ],
+          "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=25650",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/25650.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "HALİT HAMZAOĞLU",
+          "academic_title": "Doçent",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE ULUSLARARASI İLİŞKİLER/SİYASİ TARİH"
+          ],
+          "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=269991",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/269991.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "GÖKHAN ÇAPAR",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SİYASET BİLİMİ VE ULUSLARARASI İLİŞKİLER/ULUSLARARASI HUKUK"
+          ],
+          "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=215585",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/215585.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "DAMLA KOCATEPE",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=221888",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/221888.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "CAVİT EMRE AYTEKİN",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247163",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247163.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "OLGUN UKŞAL",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Siyaset Bilimi ve Uluslararası İlişkiler",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=405927",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/405927.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        }
+      ],
+      "announcements": [],
+      "news": [],
+      "events": [],
+      "special_pages": {}
+    },
+    "utl": {
+      "key": "utl",
+      "name_tr": "Uluslararası Ticaret ve Lojistik",
+      "name_en": "International Trade and Logistics",
+      "aliases": [
+        "utl",
+        "uluslararası ticaret ve lojistik",
+        "international trade and logistics"
+      ],
+      "root_url": "https://www.kafkas.edu.tr/iibfutl",
+      "important_links": {
+        "academic_staff": "https://www.kafkas.edu.tr/iibfutl/tr/akademikpersonel",
+        "announcements": "https://www.kafkas.edu.tr/iibfutl/tr/tumduyurular2",
+        "news": "https://www.kafkas.edu.tr/iibfutl/tr/tumHaberler",
+        "events": "https://www.kafkas.edu.tr/iibfutl/tr/tumEtkinlikler2"
+      },
+      "overview": "Uluslararası Ticaret ve Lojistik bölüm sayfasında akademik kadro, duyurular, haberler, etkinlikler bağlantıları yer almaktadır.",
+      "personnel": [
+        {
+          "name": "NİYAZİ SAVAŞ DEMİRCİ",
+          "academic_title": "Profesör",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=34580",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/34580.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SAVAŞ DURMUŞ",
+          "academic_title": "Doçent",
+          "roles": [
+            "BÖLÜM BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/ULUSLARARASI TİCARET VE LOJİSTİK/"
+          ],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=130827",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/130827.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ALPER TAZEGÜL",
+          "academic_title": "Doçent",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=35234",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/35234.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "CEYDA YERDELEN KAYGIN",
+          "academic_title": "Doçent",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=46049",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/46049.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ÖZLEM KARADAĞ ALBAYRAK",
+          "academic_title": "Doçent",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=33656",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/33656.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "YAĞMUR KERSE",
+          "academic_title": "Doçent",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247162",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247162.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "AZİZE KAHRAMANİ KOÇ",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=285359",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/285359.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "EMEL KILIÇBEY",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318048",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318048.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SEFA TOPUZ",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247632",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247632.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "BAŞAK ÇELİK",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=339569",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/339569.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "NESRİN KOÇ USTALI",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Uluslararası Ticaret ve Lojistik",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=247648",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/247648.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        }
+      ],
+      "announcements": [],
+      "news": [],
+      "events": [],
+      "special_pages": {}
+    },
+    "sosyal-hizmet": {
+      "key": "sosyal-hizmet",
+      "name_tr": "Sosyal Hizmet",
+      "name_en": "Social Work",
+      "aliases": [
+        "sosyal hizmet",
+        "social work"
+      ],
+      "root_url": "https://www.kafkas.edu.tr/iibfsh",
+      "important_links": {
+        "academic_staff": "https://www.kafkas.edu.tr/iibfsh/tr/akademikpersonel",
+        "announcements": "https://www.kafkas.edu.tr/iibfsh/tr/tumduyurular2",
+        "news": "https://www.kafkas.edu.tr/iibfsh/tr/tumHaberler",
+        "events": "https://www.kafkas.edu.tr/iibfsh/tr/tumEtkinlikler2"
+      },
+      "overview": "Sosyal Hizmet bölüm sayfasında akademik kadro, duyurular, haberler, etkinlikler bağlantıları yer almaktadır.",
+      "personnel": [
+        {
+          "name": "AYKUT AYKUTALP",
+          "academic_title": "Doçent",
+          "roles": [
+            "ANABİLİM DALI BAŞKANI",
+            "BÖLÜM BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SOSYAL HİZMET/SOSYAL HİZMET",
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/SOSYAL HİZMET/"
+          ],
+          "department": "Sosyal Hizmet",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=166160",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/166160.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "CİHAN KAYMAZ",
+          "academic_title": "Doçent",
+          "roles": [],
+          "role_paths": [],
+          "department": "Sosyal Hizmet",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=17597",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/17597.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ABDULKADİR YAŞAR",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Sosyal Hizmet",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318587",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318587.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "İHSAN YILKAN",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Sosyal Hizmet",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=239946",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/239946.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SULTAN EBRU BULGURCUOĞLU",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Sosyal Hizmet",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=318490",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/318490.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "HÜSEYİN KESKİN",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Sosyal Hizmet",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=405954",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/405954.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        }
+      ],
+      "announcements": [],
+      "news": [],
+      "events": [],
+      "special_pages": {}
+    },
+    "ybs": {
+      "key": "ybs",
+      "name_tr": "Yönetim Bilişim Sistemleri",
+      "name_en": "Management Information Systems",
+      "aliases": [
+        "ybs",
+        "yönetim bilişim sistemleri",
+        "yonetim bilisim sistemleri",
+        "management information systems"
+      ],
+      "root_url": "https://www.kafkas.edu.tr/iibfybs",
+      "important_links": {
+        "academic_staff": "https://www.kafkas.edu.tr/iibfybs/tr/akademikpersonel",
+        "announcements": "https://www.kafkas.edu.tr/iibfybs/tr/tumduyurular2",
+        "news": "https://www.kafkas.edu.tr/iibfybs/tr/tumHaberler",
+        "events": "https://www.kafkas.edu.tr/iibfybs/tr/tumEtkinlikler2",
+        "management": "https://www.kafkas.edu.tr/iibfybs/tr/sayfaYeni17874",
+        "journal": "https://www.kafkas.edu.tr/iibfybs/tr/sayfaYeni17891",
+        "advising": "https://www.kafkas.edu.tr/dosyalar/iibfybs/a794b8fe-ccb5-45f3-8f61-b3823c2cef48.pdf",
+        "clubs": "https://www.kafkas.edu.tr/iibfybs/tr/sayfaYeni17976"
+      },
+      "overview": "Yönetim Bilişim Sistemleri bölüm sayfasında akademik kadro, duyurular, haberler, etkinlikler, yönetim, bölüm dergisi, akademik danışmanlıklar, öğrenci kulüpleri bağlantıları yer almaktadır.",
+      "personnel": [
+        {
+          "name": "GÖKHAN KERSE",
+          "academic_title": "Profesör",
+          "roles": [
+            "BÖLÜM BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/YÖNETİM BİLİŞİM SİSTEMLERİ/"
+          ],
+          "department": "Yönetim Bilişim Sistemleri",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=23076",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/23076.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "MUHAMMED AKİF YENİKAYA",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "BÖLÜM BAŞKAN YARDIMCISI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/YÖNETİM BİLİŞİM SİSTEMLERİ/"
+          ],
+          "department": "Yönetim Bilişim Sistemleri",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=263033",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/263033.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "DENİZ TANIR",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Yönetim Bilişim Sistemleri",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=279183",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/279183.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "KAMİLE MERİÇ",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Yönetim Bilişim Sistemleri",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=27716",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/27716.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "ONUR OKTAYSOY",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Yönetim Bilişim Sistemleri",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=204605",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/204605.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SEVGÜL EKİNCİ",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Yönetim Bilişim Sistemleri",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=29692",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/29692.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "İMRAN GÜL",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Yönetim Bilişim Sistemleri",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=364797",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/364797.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "NİMET YAMAN",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Yönetim Bilişim Sistemleri",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=339554",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/339554.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        }
+      ],
+      "announcements": [],
+      "news": [],
+      "events": [],
+      "special_pages": {
+        "advising": {
+          "title": "YBS Akademik Danışmanlıklar",
+          "url": "https://www.kafkas.edu.tr/dosyalar/iibfybs/a794b8fe-ccb5-45f3-8f61-b3823c2cef48.pdf",
+          "summary": "PDF dosyasında 1. Sınıf, 2. Sınıf, 3. Sınıf, 4. Sınıf için akademik danışman listeleri ve danışmanlık saatleri yer almaktadır.",
+          "body_excerpt": "Sayfa 1: T.C. KAFKAS ÜNİVERSİTESİ İKTİSADİ ve İDARİ BİLİMLER FAKÜLTESİ YÖNETİM BİLİŞİM SİSTEMLERİ BÖLÜMÜ AKADEMİK DANIŞMAN LİSTESİ I.SINIF Sıra Öğrenci No Ad – Soyad Sınıf Danışman Program Gün ve Saat 1 25****018 AH**** BA**** 1 Prof. Dr. GÖ**** KE**** YBS Pazartesi 09:30-11:30 Çarşamba 09:30-11:30 Cuma 09:30-11:30 2 25****071 AH**** TU**** 1 Prof. Dr. GÖ**** KE**** YBS 3 25****030 A**** KO**** 1 Prof. Dr. GÖ**** KE**** YBS 4 25****031 AL**** BA**** 1 Prof. Dr. GÖ**** KE**** YBS 5 25****045 AR**** DE**** 1 Prof. Dr. GÖ**** KE**** YBS 6 25****019 AS**** BE**** BA**** 1 Prof. Dr. GÖ**** KE**** YBS 7 25****082 A**** ÖZ***** 1 Prof. Dr. GÖ**** KE**** YBS 8 25****024 AY**** AS**** ES**** 1 Prof. Dr. GÖ**** KE**** YBS 9 25****016 AY** YU*** 1 Prof. Dr. GÖ**** KE**** YBS 10 25****041 AY**** EC**** AY**** 1 Prof. Dr. GÖ**** KE**** YBS 11 25****060 AY**** CA**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS Pazartesi 13.15-16.00 Salı 13.15-16.00 12 25****050 BA**** ÇA**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 13 25****078 BE**** ER**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 14 25****106 BE**** BİN**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 15 25****080 Bİ**** BÜ**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 16 25****058 BU**** ÖZ**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 17 25****047 CA**** GÖ**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 18 25****022 Dİ**** FA**** ÇE**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 19 25****083 Dİ**** ÖZ**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 20 25****085 ED**** AL**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 21 25****034 EF**** KA**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 22 25****104 EG**** GÜ**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 23 25****086 EM**** BA**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 24 25****075 ES**** AK**** 1 Dr. Öğr. Üyesi KA**** ME**** YBS 25 25****088 EV**** İZ**** EM**** 1 Dr. Öğr.…",
+          "document_title": "a794b8fe ccb5 45f3 8f61 b3823c2cef48.pdf",
+          "page_count": 13,
+          "extract_error": "",
+          "class_advisors": [
+            {
+              "class_label": "1. Sınıf",
+              "advisors": [
+                {
+                  "academic_title": "Prof. Dr.",
+                  "name": "GÖKHAN KERSE",
+                  "masked_name": "GÖ**** KE****",
+                  "schedule": "Pazartesi 09:30-11:30 Çarşamba 09:30-11:30 Cuma 09:30-11:30"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "KAMİLE MERİÇ",
+                  "masked_name": "KA**** ME****",
+                  "schedule": "Pazartesi 13.15-16.00 Salı 13.15-16.00"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "ONUR OKTAYSOY",
+                  "masked_name": "ON**** OK****",
+                  "schedule": "Çarşamba 13:15-16:00 Perşembe 09:30-11:30 Cuma 13:15-16:00"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "MUHAMMED AKİF YENİKAYA",
+                  "masked_name": "MU** AK** YE**",
+                  "schedule": "Pazartesi 13:15-16:00 Salı 09:30-11:30 Cuma 09:30-11:30"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "SEVGÜL EKİNCİ",
+                  "masked_name": "SE**** EK****",
+                  "schedule": "Pazartesi 13:15-16:00 Salı 09:30-11:30"
+                }
+              ]
+            },
+            {
+              "class_label": "2. Sınıf",
+              "advisors": [
+                {
+                  "academic_title": "Prof. Dr.",
+                  "name": "GÖKHAN KERSE",
+                  "masked_name": "GÖ**** KE****",
+                  "schedule": "Pazartesi 09:30-11:30 Çarşamba 09:30-11:30 Cuma 09:30-11:30"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "KAMİLE MERİÇ",
+                  "masked_name": "KA**** ME****",
+                  "schedule": "Pazartesi 13.15-16.00 Salı 13.15-16.00"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "ONUR OKTAYSOY",
+                  "masked_name": "ON**** OK****",
+                  "schedule": "Çarşamba 13:15-16:00 Perşembe 09:30-11:30 Cuma 13:15-16:00"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "MUHAMMED AKİF YENİKAYA",
+                  "masked_name": "MU** AK** YE**",
+                  "schedule": "Pazartesi 13:15-16:00 Salı 09:30-11:30 Cuma 09:30-11:30"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "SEVGÜL EKİNCİ",
+                  "masked_name": "SE**** EK****",
+                  "schedule": "Pazartesi 13:15-16:00 Salı 09:30-11:30"
+                }
+              ]
+            },
+            {
+              "class_label": "3. Sınıf",
+              "advisors": [
+                {
+                  "academic_title": "Prof. Dr.",
+                  "name": "GÖKHAN KERSE",
+                  "masked_name": "GÖ**** KE****",
+                  "schedule": "Pazartesi 09:30-11:30 Çarşamba 09:30-11:30 Cuma 09:30-11:30"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "KAMİLE MERİÇ",
+                  "masked_name": "KA**** ME****",
+                  "schedule": "Pazartesi 13.15-16.00 Salı 13.15-16.00"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "ONUR OKTAYSOY",
+                  "masked_name": "ON**** OK****",
+                  "schedule": "Çarşamba 13:15-16:00 Perşembe 09:30-11:30 Cuma 13:15-16:00"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "SEVGÜL EKİNCİ",
+                  "masked_name": "SE**** EK****",
+                  "schedule": "Pazartesi 13:15-16:00 Salı 09:30-11:30"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "MUHAMMED AKİF YENİKAYA",
+                  "masked_name": "MU** AK** YE**",
+                  "schedule": "Pazartesi 13:15-16:00 Salı 09:30-11:30 Cuma 09:30-11:30"
+                }
+              ]
+            },
+            {
+              "class_label": "4. Sınıf",
+              "advisors": [
+                {
+                  "academic_title": "Prof. Dr.",
+                  "name": "GÖKHAN KERSE",
+                  "masked_name": "GÖ**** KE****",
+                  "schedule": "Pazartesi 09:30-11:30 Çarşamba 09:30-11:30 Cuma 09:30-11:30"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "KAMİLE MERİÇ",
+                  "masked_name": "KA**** ME****",
+                  "schedule": "Pazartesi 13.15-16.00 Salı 13.15-16.00"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "ONUR OKTAYSOY",
+                  "masked_name": "ON**** OK****",
+                  "schedule": "Çarşamba 13:15-16:00 Perşembe 09:30-11:30 Cuma 13:15-16:00"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "SEVGÜL EKİNCİ",
+                  "masked_name": "SE**** EK****",
+                  "schedule": "Pazartesi 13:15-16:00 Salı 09:30-11:30"
+                },
+                {
+                  "academic_title": "Dr. Öğr. Üyesi",
+                  "name": "MUHAMMED AKİF YENİKAYA",
+                  "masked_name": "MU** AK** YE**",
+                  "schedule": "Pazartesi 13:15-16:00 Salı 09:30-11:30 Cuma 09:30-11:30"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "ety": {
+      "key": "ety",
+      "name_tr": "Elektronik Ticaret ve Yönetimi",
+      "name_en": "Electronic Commerce and Management",
+      "aliases": [
+        "elektronik ticaret ve yönetimi",
+        "electronic commerce and management"
+      ],
+      "root_url": "https://www.kafkas.edu.tr/iibfety",
+      "important_links": {
+        "academic_staff": "https://www.kafkas.edu.tr/iibfety/tr/akademikpersonel",
+        "announcements": "https://www.kafkas.edu.tr/iibfety/tr/tumduyurular2",
+        "news": "https://www.kafkas.edu.tr/iibfety/tr/tumHaberler",
+        "events": "https://www.kafkas.edu.tr/iibfety/tr/tumEtkinlikler2"
+      },
+      "overview": "Elektronik Ticaret ve Yönetimi bölüm sayfasında akademik kadro, duyurular, haberler, etkinlikler bağlantıları yer almaktadır.",
+      "personnel": [
+        {
+          "name": "MURAT AYKIRI",
+          "academic_title": "Doçent",
+          "roles": [
+            "BÖLÜM BAŞKANI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/ELEKTRONİK TİCERET VE YÖNETİMİ/"
+          ],
+          "department": "Elektronik Ticaret ve Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=46430",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/46430.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "KÜBRA ÇELİK",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "BÖLÜM BAŞKAN YARDIMCISI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/ELEKTRONİK TİCERET VE YÖNETİMİ/"
+          ],
+          "department": "Elektronik Ticaret ve Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=386029",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/386029.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "SELÇUK TAZEGÜL",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [
+            "BÖLÜM BAŞKAN YARDIMCISI"
+          ],
+          "role_paths": [
+            "İKTİSADİ VE İDARİ BİLİMLER FAKÜLTESİ/ELEKTRONİK TİCERET VE YÖNETİMİ/"
+          ],
+          "department": "Elektronik Ticaret ve Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=267441",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/267441.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "FATİH KALEMKUŞ",
+          "academic_title": "Doktor Öğreti̇m Üyesi̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Elektronik Ticaret ve Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=342118",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/342118.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        },
+        {
+          "name": "TALHA CEVHER GÜL",
+          "academic_title": "Araştirma Görevli̇si̇",
+          "roles": [],
+          "role_paths": [],
+          "department": "Elektronik Ticaret ve Yönetimi",
+          "detail_url": "https://portal2.kafkas.edu.tr/abs/kisiselBilgiler.aspx?id=364662",
+          "image_url": "https://portal2.kafkas.edu.tr/ABS/profilResim/364662.jpg",
+          "source_url": "https://www.kafkas.edu.tr/iibf/tr/akademikpersonel"
+        }
+      ],
+      "announcements": [],
+      "news": [],
+      "events": [],
+      "special_pages": {}
+    }
+  },
+  "department_order": [
+    "iktisat",
+    "isletme",
+    "sbky",
+    "sbui",
+    "utl",
+    "sosyal-hizmet",
+    "ybs",
+    "ety"
+  ]
+}

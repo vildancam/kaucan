@@ -34,6 +34,7 @@ Bu konuda kesin bir bilgiye ulaşılamadı. Detaylı bilgi için ilgili fakülte
 ```bash
 python -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 pip install -e .
 ```
@@ -42,6 +43,9 @@ pip install -e .
 Site yoğun istekleri geçici olarak sınırlayabildiği için `KAU_REQUEST_DELAY` değerini çok düşürmemeniz önerilir.
 
 ## Siteyi Tarama ve İndeksleme
+
+Repo içinde hızlı başlangıç için örnek `data/pages.jsonl` ve `data/search_index.joblib`
+dosyaları bulunur. En güncel sonuçlar için yine de yeniden tarama önerilir.
 
 ```bash
 python -m kau_can_bot refresh --max-pages 1000
