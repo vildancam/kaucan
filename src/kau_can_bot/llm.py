@@ -217,7 +217,11 @@ def _general_prompt_for_query(query: str) -> str:
         return GENERAL_SYSTEM_PROMPT + "\n- Give the final answer naturally and concisely in Arabic."
     if is_english_query(query):
         return GENERAL_SYSTEM_PROMPT + "\n- Keep the tone natural and concise in English."
-    return GENERAL_SYSTEM_PROMPT
+    return (
+        GENERAL_SYSTEM_PROMPT
+        + "\n- Final answer must be fully natural Turkish."
+        + "\n- Do not leave any English word, broken token, or mixed Turkish-English expression inside Turkish sentences."
+    )
 
 
 def _general_input(query: str, memory_context: str, support_context: str = "") -> str:

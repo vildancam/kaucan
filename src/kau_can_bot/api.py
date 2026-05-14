@@ -15,6 +15,7 @@ from .config import INDEX_PATH, ROOT_DIR, Settings
 from .learning import learning_summary, log_feedback
 from .logging_utils import get_logger
 from .official_data import ensure_faculty_content, get_official_snapshot
+from .user_session import clear_conversation_context
 
 
 api = FastAPI(title="KAÜ CAN Chat Bot", version="0.1.0")
@@ -53,6 +54,7 @@ class AskResponse(BaseModel):
     sources: List[SourceItem] = Field(default_factory=list)
     interaction_id: Optional[str] = None
     status: str = "ok"
+    show_google_button: bool = False
     normalized_query: str = ""
     actions: List[Dict[str, str]] = Field(default_factory=list)
     cards: List[Dict[str, Any]] = Field(default_factory=list)
@@ -63,6 +65,10 @@ class FeedbackRequest(BaseModel):
     interaction_id: str
     rating: str
     comment: str = ""
+
+
+class SessionClearRequest(BaseModel):
+    client_id: str = ""
 
 
 class HighlightItem(BaseModel):
@@ -142,6 +148,7 @@ def ask(request: AskRequest) -> AskResponse:
             ],
             interaction_id=response.interaction_id,
             status=response.status,
+            show_google_button=response.show_google_button,
             normalized_query=response.normalized_query,
             actions=[{"label": item.label, "url": item.url, "kind": item.kind} for item in response.actions],
             cards=[
@@ -183,6 +190,12 @@ def feedback(request: FeedbackRequest) -> Dict[str, Any]:
     if rating not in {"up", "down"}:
         raise HTTPException(status_code=400, detail="Geçerli değerler: up, down.")
     log_feedback(request.interaction_id, rating, request.comment)
+    return {"ok": True}
+
+
+@api.post("/session/clear")
+def clear_session(request: SessionClearRequest) -> Dict[str, Any]:
+    clear_conversation_context(request.client_id)
     return {"ok": True}
 
 

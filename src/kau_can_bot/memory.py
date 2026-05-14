@@ -284,7 +284,7 @@ def _ensure_user(store: dict[str, Any], client_id: str) -> dict[str, Any]:
 
 
 def _extract_name(message: str, normalized_message: str) -> str:
-    if _looks_like_question(message, normalized_message):
+    if _looks_like_question(message, normalized_message) or _looks_like_negative_name_statement(normalized_message):
         return ""
 
     patterns = (
@@ -299,7 +299,7 @@ def _extract_name(message: str, normalized_message: str) -> str:
 
 
 def _extract_preferred_name(message: str, normalized_message: str) -> str:
-    if _looks_like_question(message, normalized_message):
+    if _looks_like_question(message, normalized_message) or _looks_like_negative_name_statement(normalized_message):
         return ""
 
     patterns = (
@@ -400,11 +400,19 @@ def _is_non_teachable_message(message: str, normalized_message: str) -> bool:
         return True
     if _looks_like_question(message, normalized_message):
         return True
+    if _looks_like_negative_name_statement(normalized_message):
+        return True
     return normalized_message in {"merhaba", "selam", "hello", "hi", "thanks", "tesekkurler"}
 
 
 def _looks_like_question(message: str, normalized_message: str) -> bool:
     return any(hint in message or hint in normalized_message for hint in QUESTION_HINTS)
+
+
+def _looks_like_negative_name_statement(normalized_message: str) -> bool:
+    return bool(
+        re.search(r"\b(?:adim|adım|ismim|benim adim|benim adım)\s+[a-zçğıöşü' -]{2,40}\s+(?:degil|değil)\b", normalized_message)
+    )
 
 
 def _department_name_for_language(department_key: str, language: str) -> str:

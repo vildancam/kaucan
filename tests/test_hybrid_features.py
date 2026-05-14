@@ -9,6 +9,7 @@ from kau_can_bot.message_router import HybridMessageRouter
 from kau_can_bot.safety_filter import apply_safety_filter
 from kau_can_bot.scraper_manager import DocumentCatalogEntry
 from kau_can_bot.text_normalizer import normalize_user_message
+from kau_can_bot.user_session import get_session_state, remember_turn
 
 
 class HybridFeatureTests(unittest.TestCase):
@@ -51,6 +52,56 @@ class HybridFeatureTests(unittest.TestCase):
         self.assertEqual(solved.status, "general")
         self.assertTrue(solved.answer.startswith("Mustafa,"))
         self.assertIn("90", solved.answer)
+
+    def test_address_correction_is_not_sent_to_rag(self) -> None:
+        remember_turn(
+            "user-2b",
+            user_message="bana bir dilekçe yaz",
+            user_intent="document",
+            bot_response="Ahmet, aşağıda dilekçe taslağını paylaşıyorum.",
+            bot_intent="document",
+            document_type="petition",
+            topic="bana bir dilekçe yaz",
+        )
+
+        response = self.router.route("ahmet deme", "tr", client_id="user-2b")
+
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status, "address_correction")
+        self.assertIn("o isimle hitap etmeyeceğim", response.answer)
+
+    def test_revision_request_uses_previous_context(self) -> None:
+        remember_turn(
+            "user-2c",
+            user_message="öğrenci işleri için mail yaz",
+            user_intent="document",
+            bot_response="Resmi e-posta taslağı:\n\nKonu: Bilgi Talebi\n\nMerhaba,\n\nBilgi rica ediyorum.",
+            bot_intent="document",
+            document_type="email",
+            topic="öğrenci işleri için mail yaz",
+        )
+
+        response = self.router.route("daha resmi yaz", "tr", client_id="user-2c")
+
+        self.assertIsNotNone(response)
+        self.assertIn("yeniden düzenledim", response.answer)
+        self.assertIn("Konu:", response.answer)
+
+    def test_name_usage_preference_is_saved(self) -> None:
+        response = self.router.route("ismimi kullanma", "tr", client_id="user-2d")
+        session = get_session_state("user-2d")
+
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status, "address_correction")
+        self.assertFalse(session.get("user_name_allowed", True))
+
+    def test_name_rejection_adds_disallowed_name(self) -> None:
+        response = self.router.route("ismim Ahmet değil", "tr", client_id="user-2e")
+        session = get_session_state("user-2e")
+
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status, "address_correction")
+        self.assertIn("Ahmet", " ".join(session.get("disallowed_names", [])))
 
     @patch("kau_can_bot.message_router.fetch_document_catalog")
     def test_document_lookup_returns_cards_and_actions(self, mock_catalog) -> None:

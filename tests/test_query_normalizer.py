@@ -4,10 +4,12 @@ import unittest
 
 from kau_can_bot.query_normalizer import (
     is_arabic_query,
-    is_smalltalk_query,
     is_coding_query,
     is_english_query,
     is_greeting_query,
+    is_identity_query,
+    is_short_iibf_query,
+    is_smalltalk_query,
     looks_actionable,
     normalize_query,
 )
@@ -20,6 +22,7 @@ class QueryNormalizerTests(unittest.TestCase):
             "merhb": "merhaba",
             "mrb": "merhaba",
             "slm": "merhaba",
+            "selamun aleyküm": "merhaba",
             "iibf": "iktisadi ve idari bilimler fakültesi",
             "ııbf": "iktisadi ve idari bilimler fakültesi",
             " ibf ": "iktisadi ve idari bilimler fakültesi",
@@ -30,6 +33,10 @@ class QueryNormalizerTests(unittest.TestCase):
             "sınv": "sınav",
             "akademk takvim": "akademik takvim",
             "ybs": "yönetim bilişim sistemleri",
+            "nbr": "naber",
+            "saool": "teşekkürler",
+            "gorusuruz": "görüşürüz",
+            "iibf contcat": "iktisadi ve idari bilimler fakültesi iletişim",
         }
 
         for raw, expected in samples.items():
@@ -48,11 +55,19 @@ class QueryNormalizerTests(unittest.TestCase):
 
     def test_english_and_coding_queries_are_detected(self) -> None:
         self.assertTrue(is_english_query("iibf contact"))
+        self.assertTrue(is_english_query("merhaba what can you do"))
         self.assertTrue(is_coding_query("fix this python error"))
         self.assertTrue(is_coding_query("kod hata veriyor"))
         self.assertFalse(is_english_query("python nedir"))
         self.assertTrue(is_arabic_query("مرحبا كيف حالك"))
         self.assertTrue(is_smalltalk_query("nasıl gidiyor"))
+
+    def test_smalltalk_and_identity_shortcuts_are_detected(self) -> None:
+        self.assertTrue(is_smalltalk_query("nbr"))
+        self.assertTrue(is_smalltalk_query("napıyon"))
+        self.assertTrue(is_identity_query("sen kimsin"))
+        self.assertTrue(is_identity_query("ne yapabilirsin"))
+        self.assertTrue(is_short_iibf_query("ibf"))
 
 
 if __name__ == "__main__":

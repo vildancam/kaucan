@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from typing import List
 from unittest.mock import patch
 
 from kau_can_bot.answer import WebsiteGroundedAssistant
@@ -11,7 +12,7 @@ from kau_can_bot.config import Settings
 
 
 class DummyIndex:
-    def search(self, query: str, top_k: int = 3) -> list:
+    def search(self, query: str, top_k: int = 3) -> List[object]:
         return []
 
 
@@ -20,11 +21,15 @@ class MemoryBehaviorTests(unittest.TestCase):
         self.settings = Settings(llm_provider="local", use_openai=False, top_k=3)
         self.temp_dir = tempfile.TemporaryDirectory()
         self.memory_path = Path(self.temp_dir.name) / "user_memory.json"
+        self.session_path = Path(self.temp_dir.name) / "user_sessions.json"
         self.memory_patcher = patch("kau_can_bot.memory.USER_MEMORY_PATH", self.memory_path)
+        self.session_patcher = patch("kau_can_bot.user_session.SESSION_STATE_PATH", self.session_path)
         self.memory_patcher.start()
+        self.session_patcher.start()
 
     def tearDown(self) -> None:
         self.memory_patcher.stop()
+        self.session_patcher.stop()
         self.temp_dir.cleanup()
 
     @patch("kau_can_bot.answer.log_interaction", return_value=SimpleNamespace(id="test-id"))

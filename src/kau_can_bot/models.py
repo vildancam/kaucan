@@ -81,6 +81,7 @@ class AssistantResponse:
     sources: List[SearchResult] = field(default_factory=list)
     interaction_id: Optional[str] = None
     status: str = "ok"
+    show_google_button: bool = False
     actions: List[UiAction] = field(default_factory=list)
     cards: List[UiCard] = field(default_factory=list)
     table: Optional[UiTable] = None

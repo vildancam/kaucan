@@ -3,6 +3,7 @@ from __future__ import annotations
 import difflib
 import re
 import unicodedata
+from typing import Dict, List, Set, Tuple
 
 from .utils import clean_text
 
@@ -18,7 +19,7 @@ TURKISH_ASCII_MAP = str.maketrans(
     }
 )
 
-PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
+PHRASE_CORRECTIONS: Dict[str, Tuple[str, ...]] = {
     "merhaba": (
         "mrbb",
         "merhb",
@@ -27,6 +28,16 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "mrb",
         "slm",
         "selm",
+        "selamun aleykum",
+        "selamun aleyküm",
+        "selam aleykum",
+        "selam aleyküm",
+        "selamunaleykum",
+        "selamunaleyküm",
+        "assalamu alaikum",
+        "assalamu alaykum",
+        "as salam alaikum",
+        "salam alaikum",
         "hello",
         "hi",
         "hey",
@@ -105,6 +116,10 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "iltisim",
         "iletism",
         "contact",
+        "contcat",
+        "conatct",
+        "contactt",
+        "cntact",
     ),
     "personel": (
         "personl",
@@ -169,9 +184,11 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "كيفك",
         "كيف الحال",
     ),
-    "ne haber": (
+    "naber": (
         "naber",
+        "nbr",
         "naaber",
+        "ne haber",
         "ne haberler",
         "whats up",
         "what s up",
@@ -185,6 +202,8 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
     "ne yapıyorsun": (
         "napıyorsun",
         "napiyorsun",
+        "napıyon",
+        "napiyon",
         "ne yapiyorsun",
         "napion",
         "what are you doing",
@@ -199,14 +218,36 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
     ),
     "teşekkürler": (
         "tesekkurler",
+        "tesekkürler",
+        "tesekurler",
         "tskler",
+        "tsk",
+        "tşk",
+        "sagol",
+        "sağol",
+        "saol",
+        "saool",
         "eyw",
+        "eyvallah",
         "thank you",
         "thanks",
         "thx",
         "ty",
         "شكرا",
         "شكراً",
+    ),
+    "görüşürüz": (
+        "gorusuruz",
+        "gorusuruk",
+        "görüşürüz",
+        "görüsürüz",
+        "bb",
+        "bye",
+        "by",
+        "goodbye",
+        "see you",
+        "see ya",
+        "kendine iyi bak",
     ),
     "rektör": (
         "rektor",
@@ -237,6 +278,19 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
         "nrd",
         "where",
     ),
+    "nasıl giderim": (
+        "nasil giderim",
+        "nasıl giderim",
+        "nasil gidebilirim",
+        "nasıl gidebilirim",
+        "nasil gidilir",
+        "nasıl gidilir",
+        "nasli gidem",
+        "nasil gidem",
+        "nasıl gidem",
+        "nasil gidicem",
+        "nasıl gidicem",
+    ),
     "obs": (
         "student information system",
     ),
@@ -255,11 +309,15 @@ PHRASE_CORRECTIONS: dict[str, tuple[str, ...]] = {
     ),
 }
 
-TOKEN_CORRECTIONS: dict[str, str] = {
+TOKEN_CORRECTIONS: Dict[str, str] = {
     "iibf": "iktisadi ve idari bilimler fakültesi",
     "ibf": "iktisadi ve idari bilimler fakültesi",
     "merhaba": "merhaba",
     "selam": "merhaba",
+    "slm": "merhaba",
+    "mrb": "merhaba",
+    "mrbb": "merhaba",
+    "merhb": "merhaba",
     "duyurular": "duyurular",
     "duyuru": "duyuru",
     "sinav": "sınav",
@@ -276,6 +334,10 @@ TOKEN_CORRECTIONS: dict[str, str] = {
     "rektor": "rektör",
     "konum": "konum",
     "nerede": "nerede",
+    "nasli": "nasil",
+    "gidem": "giderim",
+    "gidilir": "giderim",
+    "gidicem": "giderim",
     "contact": "iletişim",
     "location": "konum",
     "where": "nerede",
@@ -292,10 +354,16 @@ TOKEN_CORRECTIONS: dict[str, str] = {
     "chair": "bölüm başkanı",
     "staff": "personel",
     "ybs": "yönetim bilişim sistemleri",
+    "nbr": "naber",
+    "naber": "naber",
+    "nasilsin": "nasılsın",
+    "kimsin": "kimsin",
     "thanks": "teşekkürler",
     "hello": "merhaba",
     "hi": "merhaba",
     "hey": "merhaba",
+    "bye": "görüşürüz",
+    "goodbye": "görüşürüz",
 }
 
 GREETING_PATTERNS = {
@@ -354,6 +422,11 @@ SMALLTALK_PATTERNS = {
     "thanks",
     "thx",
     "ty",
+    "gorusuruz",
+    "bye",
+    "goodbye",
+    "see you",
+    "kendine iyi bak",
     "كيف حالك",
     "كيفك",
     "كيف الحال",
@@ -365,6 +438,41 @@ SMALLTALK_PATTERNS = {
     "شكرا",
 }
 
+IDENTITY_PATTERNS = {
+    "sen kimsin",
+    "siz kimsiniz",
+    "kimsin",
+    "adin ne",
+    "ismin ne",
+    "kendini tanit",
+    "kendini tanitir misin",
+    "ne yapabilirsin",
+    "neler yapabilirsin",
+    "kendini tanit",
+    "who are you",
+    "what can you do",
+    "introduce yourself",
+}
+
+SHORT_IIBF_PATTERNS = {
+    "iktisadi ve idari bilimler fakultesi",
+    "iktisadi ve idari bilimler fakultesi nedir",
+    "iktisadi ve idari bilimler fakultesi hakkinda",
+}
+
+SHORT_AMBIGUOUS_PATTERNS = {
+    "hoca",
+    "hocalar",
+    "dekan",
+    "personel",
+    "bolum",
+    "ders",
+    "kim",
+    "ne",
+    "tamam",
+    "hmm",
+}
+
 ACTIONABLE_KEYWORDS = {
     "akademik",
     "akademik takvim",
@@ -372,15 +480,25 @@ ACTIONABLE_KEYWORDS = {
     "bolumler",
     "duyuru",
     "duyurular",
+    "ebys",
     "fakulte",
+    "formlar",
     "iibf",
     "iletisim",
+    "komisyon",
+    "komisyonlar",
+    "kutuphane",
+    "library",
     "menu",
+    "misyon",
+    "obs",
     "personel",
     "rehber",
     "sinav",
     "takvim",
     "telefon",
+    "vizyon",
+    "wifi",
     "yemek",
     "yemekhane",
     "rektor",
@@ -412,9 +530,15 @@ ENGLISH_HINT_WORDS = {
     "calendar",
     "department",
     "departments",
+    "do",
     "events",
     "code",
+    "can",
     "contact",
+    "contcat",
+    "conatct",
+    "contactt",
+    "cntact",
     "debug",
     "error",
     "exam",
@@ -437,6 +561,22 @@ ENGLISH_HINT_WORDS = {
     "where",
     "who",
     "why",
+    "you",
+    "your",
+    "bye",
+    "goodbye",
+}
+
+ENGLISH_HINT_PHRASES = {
+    "what can you do",
+    "who are you",
+    "how are you",
+    "what are you doing",
+    "what s up",
+    "see you",
+    "good morning",
+    "good evening",
+    "good afternoon",
 }
 
 ARABIC_HINT_WORDS = {
@@ -541,7 +681,7 @@ def normalize_query(text: str) -> str:
         pattern = rf"(?<!\w){re.escape(variant)}(?!\w)"
         working = re.sub(pattern, f" {canonical} ", working)
 
-    corrected_tokens: list[str] = []
+    corrected_tokens: List[str] = []
     for token in working.split():
         corrected_tokens.append(_correct_token(token))
 
@@ -568,27 +708,56 @@ def is_smalltalk_query(text: str) -> bool:
     normalized = normalize_for_matching(normalize_query(text) or text)
     if not normalized:
         return False
-    return any(pattern in normalized for pattern in SMALLTALK_PATTERNS)
+    return _matches_exact_phrase(normalized, SMALLTALK_PATTERNS)
+
+
+def is_identity_query(text: str) -> bool:
+    normalized = normalize_for_matching(normalize_query(text) or text)
+    if not normalized:
+        return False
+    return _matches_exact_phrase(normalized, IDENTITY_PATTERNS)
+
+
+def is_short_iibf_query(text: str) -> bool:
+    normalized = normalize_for_matching(normalize_query(text) or text)
+    if not normalized:
+        return False
+    return normalized in SHORT_IIBF_PATTERNS
+
+
+def is_short_ambiguous_query(text: str) -> bool:
+    normalized = normalize_for_matching(normalize_query(text) or text)
+    if not normalized:
+        return False
+    return normalized in SHORT_AMBIGUOUS_PATTERNS
 
 
 def is_english_query(text: str) -> bool:
-    normalized = normalize_for_matching(text)
-    if not normalized:
+    if has_arabic_text(text):
+        return False
+    raw_normalized = normalize_for_matching(text)
+    normalized = normalize_for_matching(normalize_query(text) or text)
+    if not raw_normalized and not normalized:
         return False
 
-    tokens = normalized.split()
+    tokens = raw_normalized.split()
     english_hits = sum(1 for token in tokens if token in ENGLISH_HINT_WORDS)
     turkish_hits = sum(1 for token in tokens if token in TURKISH_HINT_WORDS)
+    english_phrase_hits = sum(1 for phrase in ENGLISH_HINT_PHRASES if phrase in raw_normalized)
     arabic_hits = sum(1 for token in tokens if token in ARABIC_HINT_WORDS)
     has_turkish_chars = any(char in text for char in "çğıöşüÇĞİÖŞÜ")
     if arabic_hits >= 1 or has_arabic_text(text):
         return False
 
-    if has_turkish_chars and english_hits == 0:
+    if has_turkish_chars and english_hits == 0 and english_phrase_hits == 0:
         return False
+    if english_phrase_hits >= 1 and turkish_hits <= 1:
+        return True
     if english_hits >= 1 and turkish_hits == 0:
         return True
-    if english_hits >= 2:
+    if english_hits >= 2 and turkish_hits <= 1:
+        return True
+    if english_hits >= 3:
         return True
     return False
 
@@ -639,8 +808,8 @@ def _correct_token(token: str) -> str:
     return token
 
 
-def _sorted_phrase_pairs() -> list[tuple[str, str]]:
-    pairs: list[tuple[str, str]] = []
+def _sorted_phrase_pairs() -> List[Tuple[str, str]]:
+    pairs: List[Tuple[str, str]] = []
     for canonical, variants in PHRASE_CORRECTIONS.items():
         canonical_variant = normalize_for_matching(canonical)
         pairs.append((canonical_variant, canonical))
@@ -648,3 +817,8 @@ def _sorted_phrase_pairs() -> list[tuple[str, str]]:
             pairs.append((normalize_for_matching(variant), canonical))
     pairs.sort(key=lambda item: len(item[0]), reverse=True)
     return pairs
+
+
+def _matches_exact_phrase(normalized_text: str, patterns: Set[str]) -> bool:
+    padded = f" {normalized_text} "
+    return any(f" {pattern} " in padded for pattern in patterns)

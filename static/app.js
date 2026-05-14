@@ -796,8 +796,16 @@
     return "<p>" + escapeHtml(text) + "</p>";
   }
 
-  function renderSources(sources) {
-    var uniqueSources = dedupeSources(sources);
+  function renderSources(sources, showGoogleButton) {
+    var uniqueSources = dedupeSources(sources).filter(function (item) {
+      if (!item || !item.url) {
+        return false;
+      }
+      if (showGoogleButton === false && /google\.com\/search/i.test(String(item.url))) {
+        return false;
+      }
+      return true;
+    });
     var wrapper;
     var index;
 
@@ -955,7 +963,20 @@
 
   function shouldRenderSources(meta) {
     var status = meta && meta.status ? String(meta.status) : "";
-    return status !== "blocked_abuse" && status !== "clarification";
+    return !(
+      status === "address_correction" ||
+      status === "blocked_abuse" ||
+      status === "blocked_language" ||
+      status === "blocked_safety" ||
+      status === "clarification" ||
+      status === "document" ||
+      status === "farewell" ||
+      status === "greeting" ||
+      status === "memory_saved" ||
+      status === "smalltalk" ||
+      status === "style_revision" ||
+      status === "thanks"
+    );
   }
 
   function ensureToast() {
@@ -1456,7 +1477,7 @@
         bubble.appendChild(actionButtons);
       }
 
-      var sourceLinks = shouldRenderSources(meta) ? renderSources(meta.sources || []) : null;
+      var sourceLinks = shouldRenderSources(meta) ? renderSources(meta.sources || [], meta.showGoogleButton) : null;
       if (sourceLinks) {
         bubble.appendChild(sourceLinks);
       }
@@ -1752,6 +1773,7 @@
       actions: Array.isArray(message && message.actions) ? message.actions : [],
       cards: Array.isArray(message && message.cards) ? message.cards : [],
       table: message && message.table ? message.table : null,
+      showGoogleButton: message && typeof message.showGoogleButton === "boolean" ? message.showGoogleButton : false,
     };
   }
 
@@ -2023,6 +2045,7 @@
     persistState();
     renderHistoryList();
     renderConversation();
+    clearServerContext();
     closeHistory();
     playTone("delete");
   }
@@ -2294,6 +2317,7 @@
       actions: Array.isArray(meta && meta.actions) ? meta.actions : [],
       cards: Array.isArray(meta && meta.cards) ? meta.cards : [],
       table: meta && meta.table ? meta.table : null,
+      showGoogleButton: meta && typeof meta.showGoogleButton === "boolean" ? meta.showGoogleButton : false,
     };
 
     if (!message.text) {
@@ -2328,6 +2352,7 @@
     input.value = "";
     autoResize();
     input.focus();
+    clearServerContext();
     closeHistory();
     playTone("new-chat");
   }
@@ -2344,7 +2369,21 @@
     input.value = "";
     autoResize();
     input.focus();
+    clearServerContext();
     playTone("clear");
+  }
+
+  function clearServerContext() {
+    if (!state.clientId) {
+      return;
+    }
+    fetch("/session/clear", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ client_id: state.clientId }),
+    }).catch(function () {
+      return;
+    });
   }
 
   function questionNeedsLocation(question) {
@@ -2442,6 +2481,7 @@
             actions: data.actions || [],
             cards: data.cards || [],
             table: data.table || null,
+            showGoogleButton: !!data.show_google_button,
           },
           state.activeConversationId === conversationId
         );

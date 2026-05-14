@@ -4,8 +4,12 @@ import json
 from functools import lru_cache
 from typing import Dict, List, Optional
 
+import requests
+
 from .config import DATA_DIR
+from .extractor import extract_html, extract_pdf
 from .models import PageDocument
+from .official_data import YBS_ADVISING_PDF_URL, YBS_CLUBS_URL, YBS_JOURNAL_URL, YBS_MANAGEMENT_URL
 from .query_normalizer import normalize_for_matching
 from .utils import clean_text, stable_id
 
@@ -13,6 +17,36 @@ from .utils import clean_text, stable_id
 DORMITORIES_PATH = DATA_DIR / "dormitories_kars.json"
 TRANSPORT_PATH = DATA_DIR / "transport_kars.json"
 CITY_PATH = DATA_DIR / "kars_city.json"
+YBS_REMOTE_SOURCES = (
+    {
+        "url": YBS_MANAGEMENT_URL,
+        "kind": "html",
+        "title": "YBS Bölüm Yönetimi",
+        "source_type": "department",
+        "category": "ybs_management",
+    },
+    {
+        "url": YBS_JOURNAL_URL,
+        "kind": "html",
+        "title": "YBS Bölüm Dergisi",
+        "source_type": "department",
+        "category": "ybs_journal",
+    },
+    {
+        "url": YBS_CLUBS_URL,
+        "kind": "html",
+        "title": "YBS Öğrenci Kulüpleri",
+        "source_type": "department",
+        "category": "ybs_clubs",
+    },
+    {
+        "url": YBS_ADVISING_PDF_URL,
+        "kind": "pdf",
+        "title": "YBS Akademik Danışmanlıklar",
+        "source_type": "document",
+        "category": "ybs_advising",
+    },
+)
 
 
 @lru_cache(maxsize=1)
@@ -118,6 +152,8 @@ def build_local_knowledge_documents() -> List[PageDocument]:
             )
         )
 
+    documents.extend(build_ybs_official_documents())
+
     return [
         document
         for document in documents
@@ -189,6 +225,40 @@ def search_city_places(normalized_query: str) -> List[dict]:
 
 def get_transport_network() -> Dict[str, object]:
     return load_transport_network().get("network", {})
+
+
+@lru_cache(maxsize=1)
+def build_ybs_official_documents() -> List[PageDocument]:
+    documents: List[PageDocument] = []
+    headers = {"User-Agent": "KAUCAN/1.0 (+https://www.kafkas.edu.tr)"}
+
+    for source in YBS_REMOTE_SOURCES:
+        url = str(source.get("url", ""))
+        kind = str(source.get("kind", "html"))
+        if not clean_text(url):
+            continue
+        try:
+            response = requests.get(url, timeout=18, headers=headers)
+            response.raise_for_status()
+        except requests.RequestException:
+            continue
+
+        if kind == "pdf":
+            document = extract_pdf(response.content, url)
+        else:
+            document = extract_html(response.text, url)
+
+        document.title = clean_text(str(source.get("title", ""))) or document.title
+        document.metadata.update(
+            {
+                "source_type": source.get("source_type", "department"),
+                "category": source.get("category", ""),
+                "fetched_at": document.fetched_at,
+            }
+        )
+        documents.append(document)
+
+    return documents
 
 
 def _primary_source_url(entry: dict) -> str:

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import re
 from typing import List, Optional
 
 from .code_helper import build_code_help_response, is_code_help_query
+from .conversation_manager import handle_pre_router
 from .document_generator import generate_document_response
 from .math_solver import solve_math
 from .models import AssistantResponse, UiAction, UiCard, UiTable
@@ -14,11 +14,7 @@ from .scraper_manager import OIDB_FORMS_URL, fetch_document_catalog
 from .source_manager import build_source_results
 from .static_knowledge import get_transport_network, search_city_places, search_dormitories
 from .text_normalizer import normalize_user_message
-from .user_session import (
-    disable_addressing,
-    get_preferred_address,
-    set_preferred_address,
-)
+from .user_session import get_preferred_address
 from .utils import clean_text
 
 
@@ -40,10 +36,15 @@ class HybridMessageRouter:
                 normalized_query=normalized.normalized,
             )
 
-        addressing = self._handle_addressing_preferences(query, client_id)
-        if addressing is not None:
-            addressing.normalized_query = normalized.normalized
-            return addressing
+        conversation_response = handle_pre_router(
+            query,
+            session=None,
+            language=language,
+            client_id=client_id,
+        )
+        if conversation_response is not None:
+            conversation_response.normalized_query = normalized.normalized
+            return conversation_response
 
         if self._is_form_lookup_query(normalized.normalized_for_matching):
             return self._document_catalog_response(normalized.normalized, user_memory or {}, client_id)
@@ -74,10 +75,7 @@ class HybridMessageRouter:
         document_response = generate_document_response(query, language)
         if document_response is not None:
             return AssistantResponse(
-                answer=maybe_prefix_with_address(
-                    document_response.answer,
-                    get_preferred_address(client_id, user_memory),
-                ),
+                answer=document_response.answer,
                 status="general",
                 normalized_query=normalized.normalized,
             )
@@ -91,38 +89,6 @@ class HybridMessageRouter:
         if self._is_city_query(normalized.normalized_for_matching):
             return self._city_response(normalized.normalized, user_memory or {}, client_id)
 
-        return None
-
-    def _handle_addressing_preferences(self, query: str, client_id: str) -> Optional[AssistantResponse]:
-        if not clean_text(client_id):
-            return None
-
-        cleaned = clean_text(query)
-        lower = cleaned.lower()
-        if any(phrase in lower for phrase in ("hitap kullanma", "isimsiz hitap", "isimle hitap etme")):
-            disable_addressing(client_id)
-            return AssistantResponse(
-                answer="Tabii, size isimsiz şekilde yardımcı olabilirim.",
-                status="memory_saved",
-            )
-
-        patterns = (
-            r"(?i)\bbana artık ([A-Za-zÇĞİÖŞÜçğıöşü0-9' -]{2,30}) diye hitap et\b",
-            r"(?i)\bbana ([A-Za-zÇĞİÖŞÜçğıöşü0-9' -]{2,30}) diye hitap et\b",
-            r"(?i)\bbana ([A-Za-zÇĞİÖŞÜçğıöşü0-9' -]{2,30}) de\b",
-            r"(?i)\bbundan sonra ([A-Za-zÇĞİÖŞÜçğıöşü0-9' -]{2,30}) de\b",
-        )
-        for pattern in patterns:
-            match = re.search(pattern, cleaned)
-            if match:
-                preferred = self._clean_address_value(match.group(1))
-                if not preferred:
-                    continue
-                set_preferred_address(client_id, preferred)
-                return AssistantResponse(
-                    answer=f"Memnun oldum {preferred} 😊 Size nasıl yardımcı olabilirim?",
-                    status="memory_saved",
-                )
         return None
 
     def _document_catalog_response(
