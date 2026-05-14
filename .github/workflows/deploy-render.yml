@@ -8,7 +8,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+    env:
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
     steps:
+      - name: Skip when deploy hook is not configured
+        if: ${{ env.RENDER_DEPLOY_HOOK_URL == '' }}
+        run: echo "RENDER_DEPLOY_HOOK_URL secret not set; skipping Render deploy."
+
       - name: Trigger Render deploy hook
+        if: ${{ env.RENDER_DEPLOY_HOOK_URL != '' }}
         run: curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
